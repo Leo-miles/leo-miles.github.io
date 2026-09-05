@@ -1,145 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#070b1a">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050816">
 <meta name="description" content="霓界社区 NEON FORUM —— 科技、AI、未来与数字文化的赛博社区。">
-<title>霓界社区 · NEON FORUM V2</title>
+<title>霓界社区 · NEON FORUM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-html,body{margin:0;min-height:100%;background:#04060f;color:#dbe7ff;font-family:system-ui,-apple-system,"Segoe UI","Noto Sans SC",sans-serif}
-#boot{min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 50% 35%,rgba(0,240,255,.10),transparent 32%),#04060f;color:#7e8bb5}
-#boot .box{padding:28px 34px;border:1px solid rgba(120,180,255,.18);border-radius:18px;background:rgba(10,16,38,.72);box-shadow:0 20px 70px rgba(0,0,0,.45);text-align:center}
-#boot b{display:block;color:#00f0ff;font-size:18px;letter-spacing:2px;margin-bottom:8px}
+:root{--bg:#050816;--panel:rgba(11,18,40,.72);--line:rgba(130,180,255,.16);--cyan:#00eaff;--blue:#3d72ff;--purple:#a855f7;--pink:#ff4bd8;--text:#e5edff;--muted:#7d8bab;--green:#35f5a2;--red:#ff6688;--r:18px;--max:1280px;--nav:70px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.7 "Noto Sans SC",system-ui,sans-serif;overflow-x:hidden}button,input,textarea,select{font:inherit}button{cursor:pointer;color:inherit}a{text-decoration:none;color:inherit}::selection{background:rgba(0,234,255,.28)}
+#space{position:fixed;inset:0;z-index:0}.noise,.grid{position:fixed;inset:0;pointer-events:none;z-index:1}.grid{opacity:.22;background-image:linear-gradient(rgba(0,234,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(0,234,255,.055) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(circle at 50% 25%,#000,transparent 82%)}.noise{opacity:.025;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E")}
+nav{position:fixed;top:0;left:0;right:0;height:var(--nav);z-index:50;display:flex;align-items:center;gap:16px;padding:0 max(18px,calc((100vw - var(--max))/2 + 18px));background:rgba(5,8,22,.62);backdrop-filter:blur(18px);border-bottom:1px solid transparent;transition:.3s}nav.scrolled{background:rgba(5,8,22,.94);border-color:var(--line);box-shadow:0 14px 50px rgba(0,0,0,.28)}
+.logo{display:flex;align-items:center;gap:10px;min-width:190px}.logo-mark{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#06101b;font-weight:900;box-shadow:0 0 24px rgba(0,234,255,.35)}.logo-name{font:800 18px Orbitron;letter-spacing:1px;background:linear-gradient(90deg,#fff,var(--cyan),var(--pink));-webkit-background-clip:text;color:transparent}.logo-name small{display:block;font:500 8px Orbitron;letter-spacing:3px;color:var(--muted);-webkit-text-fill-color:var(--muted)}
+.search{position:relative;flex:1;max-width:460px;margin:auto}.search input{width:100%;height:42px;padding:0 42px;border:1px solid var(--line);border-radius:99px;outline:0;background:rgba(7,13,31,.72);color:var(--text)}.search input:focus{border-color:rgba(0,234,255,.65);box-shadow:0 0 24px rgba(0,234,255,.12)}.search span{position:absolute;left:15px;top:9px;color:var(--muted);font-size:18px}.nav-actions{display:flex;gap:8px;align-items:center}.btn{border:1px solid var(--line);background:rgba(9,16,36,.65);border-radius:999px;padding:9px 15px;transition:.2s}.btn:hover{border-color:rgba(0,234,255,.7);transform:translateY(-1px);box-shadow:0 0 20px rgba(0,234,255,.12)}.btn.primary{border:0;background:linear-gradient(135deg,var(--cyan),var(--blue));color:#04101b;font-weight:700}.hamb{display:none}
+.wrap{position:relative;z-index:5;max-width:var(--max);margin:auto;padding:calc(var(--nav) + 24px) 18px 60px}.announce{display:flex;align-items:center;gap:10px;padding:12px 16px;margin-bottom:16px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(90deg,rgba(168,85,247,.12),rgba(0,234,255,.07));color:#b9c7e8}.live{margin-left:auto;display:flex;align-items:center;gap:6px;color:var(--muted);font-size:11px}.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px rgba(53,245,162,.75)}
+.hero{position:relative;overflow:hidden;padding:34px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(135deg,rgba(13,23,51,.9),rgba(7,12,29,.76));box-shadow:0 24px 80px rgba(0,0,0,.22);margin-bottom:18px}.hero:after{content:"";position:absolute;width:440px;height:440px;right:-150px;bottom:-260px;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.3),transparent 68%);filter:blur(12px)}.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.5fr .9fr;gap:30px}.eyebrow{color:var(--cyan);font:600 10px Orbitron;letter-spacing:2px}.hero h1{font:800 clamp(30px,5vw,56px)/1.1 Orbitron;margin:12px 0}.hero h1 span{background:linear-gradient(90deg,#fff,var(--cyan),var(--pink));-webkit-background-clip:text;color:transparent}.hero p{max-width:720px;color:#a9b8d7;font-size:14px}.hero-actions{display:flex;gap:10px;margin-top:20px}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:end}.metric{padding:16px;border-radius:16px;border:1px solid rgba(130,180,255,.13);background:rgba(3,9,25,.58)}.metric small{display:block;color:var(--muted);font-size:10px;letter-spacing:1px}.metric b{display:block;margin-top:5px;font:700 24px Orbitron;color:#fff}.metric em{font:normal 10px sans-serif;color:var(--cyan)}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:18px}.side,.composer,.card{border:1px solid var(--line);background:var(--panel);backdrop-filter:blur(16px);border-radius:var(--r)}.side{position:sticky;top:88px;align-self:start;padding:14px;max-height:calc(100vh - 110px);overflow:auto}.side h3{font:600 11px Orbitron;color:var(--muted);letter-spacing:1.5px;margin:4px 6px 12px}.board{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid transparent;border-radius:13px;cursor:pointer;margin-bottom:4px}.board:hover{background:rgba(0,234,255,.055);border-color:var(--line)}.board.active{background:linear-gradient(90deg,rgba(0,234,255,.12),transparent);border-color:var(--line)}.board-icon{font-size:18px}.board-main{min-width:0;flex:1}.board-name{font-weight:600}.board-desc{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.count{font-size:10px;color:var(--muted)}
+.main{min-width:0}.composer{display:flex;align-items:center;gap:10px;padding:12px;margin-bottom:16px}.fake{flex:1;padding:10px 14px;border-radius:99px;border:1px solid var(--line);color:var(--muted);background:rgba(4,10,25,.58);cursor:pointer}.feed-head{display:flex;align-items:center;justify-content:space-between;margin:6px 2px 12px}.feed-title{font:700 16px Orbitron}.feed-title i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 14px rgba(0,234,255,.65);margin-right:8px}.filters{display:flex;gap:6px}.filter{padding:6px 10px;border-radius:99px;border:1px solid var(--line);background:rgba(5,11,28,.45);color:var(--muted);font-size:11px}.filter.active{color:#fff;border-color:var(--cyan)}
+.card{position:relative;padding:18px;margin-bottom:12px;overflow:hidden;transition:.25s}.card:before{content:"";position:absolute;left:0;top:0;width:100%;height:2px;background:linear-gradient(90deg,var(--cyan),var(--purple),var(--pink));opacity:.8}.card:hover{transform:translateY(-3px);border-color:rgba(0,234,255,.35);box-shadow:0 18px 45px rgba(0,0,0,.2)}.post-head{display:flex;align-items:center;gap:10px}.avatar{width:38px;height:38px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));font-weight:700}.author{font-weight:700}.meta{font-size:10px;color:var(--muted)}.board-tag{margin-left:auto;font-size:10px;color:var(--cyan);border:1px solid var(--line);border-radius:99px;padding:3px 9px}.pin{color:var(--pink);font-size:10px}.title{font-size:17px;font-weight:700;margin:12px 0 6px}.body{color:#b9c7e5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}.act{border:1px solid transparent;background:rgba(5,11,28,.5);border-radius:99px;padding:7px 11px;color:var(--muted);font-size:12px}.act:hover{border-color:var(--line);color:#fff}.act.liked{color:var(--pink)}.act.faved{color:var(--cyan)}.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.modal{position:fixed;inset:0;z-index:100;display:none;place-items:center;padding:18px;background:rgba(0,0,0,.62);backdrop-filter:blur(8px)}.modal.show{display:grid}.dialog{width:min(560px,100%);max-height:90vh;overflow:auto;padding:24px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(145deg,rgba(15,24,52,.98),rgba(6,11,28,.98));box-shadow:0 30px 100px rgba(0,0,0,.55)}.dialog h2{font:700 20px Orbitron;margin:0 0 5px;background:linear-gradient(90deg,#fff,var(--cyan),var(--pink));-webkit-background-clip:text;color:transparent}.sub{font-size:11px;color:var(--muted);margin-bottom:18px}.field{margin-bottom:12px}.field label{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:12px;background:#050b1d;color:var(--text);padding:11px 12px;outline:0}.field textarea{min-height:110px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--cyan);box-shadow:0 0 18px rgba(0,234,255,.1)}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.close{float:right;border:1px solid var(--line);background:rgba(255,255,255,.03);border-radius:10px;width:34px;height:34px}.switch{text-align:center;color:var(--muted);font-size:11px;margin-top:14px}.switch a{color:var(--cyan);cursor:pointer}.comments{max-height:45vh;overflow:auto}.comment{padding:10px 0;border-bottom:1px dashed rgba(130,180,255,.12)}.comment b{color:var(--cyan);font-size:12px}.comment p{margin:3px 0;color:#c4d1eb;font-size:12px}.toast{position:fixed;left:50%;bottom:28px;z-index:200;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;pointer-events:none}.toast div{padding:10px 17px;border-radius:99px;background:linear-gradient(135deg,rgba(0,234,255,.94),rgba(168,85,247,.94));color:#04101b;font-weight:700;box-shadow:0 12px 35px rgba(0,0,0,.3)}.toast .err{background:linear-gradient(135deg,#ff6688,#ff9a5b);color:#21040b}
+.footer{text-align:center;color:#566582;font-size:10px;padding:25px 0}.mobile-only{display:none}
+@media(max-width:900px){nav{height:auto;min-height:var(--nav);flex-wrap:wrap;padding:10px 14px}.logo{min-width:auto}.search{order:3;flex-basis:100%;max-width:none}.nav-actions{margin-left:auto}.layout{grid-template-columns:1fr}.side{position:fixed;z-index:80;top:0;bottom:0;left:0;width:min(320px,85vw);max-height:none;border-radius:0;transform:translateX(-105%);transition:.3s}.side.open{transform:none;box-shadow:20px 0 70px rgba(0,0,0,.55)}.mobile-only{display:block}.hamb{display:block}.hero-grid{grid-template-columns:1fr}.wrap{padding-top:calc(var(--nav) + 92px)}}
+@media(max-width:560px){.hero{padding:22px}.hero h1{font-size:30px}.metrics{grid-template-columns:1fr 1fr}.feed-head{align-items:flex-start;gap:10px;flex-direction:column}.filters{width:100%}.filter{flex:1;text-align:center}.board-tag{display:none}.card{padding:15px}.actions{gap:4px}.act{padding:6px 9px}.logo-name{font-size:15px}.logo-name small{display:none}}
 </style>
 </head>
 <body>
-<div id="boot"><div class="box"><b>霓界社区 / NEON FORUM</b><span>正在启动未来数据流…</span></div></div>
+<canvas id="space"></canvas><div class="grid"></div><div class="noise"></div>
+<nav id="nav"><button class="btn hamb" id="menu">☰</button><a class="logo" href="#"><span class="logo-mark">⬡</span><span class="logo-name">霓界社区<small>NEON FORUM</small></span></a><div class="search"><span>⌕</span><input id="search" placeholder="搜索帖子、作者、板块…" autocomplete="off"></div><div class="nav-actions" id="navActions"></div></nav>
+<div class="wrap">
+  <div class="announce"><span>📡</span><span id="announcement">全站公告：欢迎来到霓界社区 —— 理性讨论，尊重观点，让每一次交流都留下价值。</span><span class="live"><i class="dot"></i>系统在线</span></div>
+  <section class="hero"><div class="hero-grid"><div><div class="eyebrow">◆ FUTURE COMMUNITY / 01</div><h1>在霓虹与数据之间，<span>讨论未来。</span></h1><p>科技、人工智能、数字文化与创意脑洞的交汇地。把问题抛出来，把观点留下来，让每一次讨论都成为下一次探索的起点。</p><div class="hero-actions"><button class="btn primary" id="join">进入霓界</button><button class="btn" id="hot">浏览热门</button></div></div><div class="metrics"><div class="metric"><small>社区帖子</small><b id="mPosts">0</b></div><div class="metric"><small>板块数量</small><b id="mBoards">0</b></div><div class="metric"><small>当前活跃</small><b id="mOnline">0 <em>LIVE</em></b></div><div class="metric"><small>系统信号</small><b>100<em>%</em></b></div></div></div></section>
+  <div class="layout"><aside class="side" id="side"><div class="mobile-only" style="text-align:right;margin-bottom:10px"><button class="close" id="closeSide">×</button></div><h3>BOARD NAVIGATION</h3><div id="boards"></div></aside><main class="main"><div class="composer" id="composer"><div class="avatar" id="composerAvatar">?</div><div class="fake" id="fake">分享你的脑洞，发布到霓界社区…</div><button class="btn primary" id="postBtn">＋ 发帖</button></div><div class="feed-head"><div class="feed-title"><i></i><span id="feedTitle">全部帖子</span></div><div class="filters"><button class="filter active" data-sort="latest">最新</button><button class="filter" data-sort="hot">热门</button><button class="filter" data-sort="comments">讨论</button></div></div><div id="feed"></div></main></div>
+  <div class="footer">NEON FORUM · Built for future conversations · <span>/</span> 聚焦搜索 · <span>ESC</span> 关闭弹窗</div>
+</div>
+<div class="modal" id="loginModal"><div class="dialog"><button class="close" data-close>×</button><h2>登录 NEON</h2><div class="sub">进入霓界，参与未来对话</div><div class="field"><label>用户名</label><input id="loginName" autocomplete="username"></div><div class="field"><label>密码</label><input id="loginPwd" type="password" autocomplete="current-password"></div><div class="modal-actions"><button class="btn" data-close>取消</button><button class="btn primary" id="loginSubmit">登录</button></div><div class="switch">还没有账号？<a id="toReg">立即注册</a></div></div></div>
+<div class="modal" id="regModal"><div class="dialog"><button class="close" data-close>×</button><h2>创建账号</h2><div class="sub">本地演示账号仅保存在你的浏览器中。</div><div class="field"><label>用户名</label><input id="regName" maxlength="16"></div><div class="field"><label>密码</label><input id="regPwd" type="password"></div><div class="field"><label>确认密码</label><input id="regPwd2" type="password"></div><div class="modal-actions"><button class="btn" data-close>取消</button><button class="btn primary" id="regSubmit">注册并登录</button></div><div class="switch">已有账号？<a id="toLogin">去登录</a></div></div></div>
+<div class="modal" id="postModal"><div class="dialog"><button class="close" data-close>×</button><h2>发布帖子</h2><div class="sub">向霓界社区发射你的信号</div><div class="field"><label>板块</label><select id="postBoard"></select></div><div class="field"><label>标题</label><input id="postTitle" maxlength="60" placeholder="一句话概括你的主题"></div><div class="field"><label>正文</label><textarea id="postBody" maxlength="1200" placeholder="展开你的观点、问题或脑洞…"></textarea></div><div class="modal-actions"><button class="btn" data-close>取消</button><button class="btn primary" id="submitPost">发布</button></div></div></div>
+<div class="modal" id="commentModal"><div class="dialog"><button class="close" data-close>×</button><h2 id="commentTitle">评论</h2><div class="sub" id="commentMeta"></div><div class="comments" id="comments"></div><div class="field" style="margin-top:14px"><textarea id="commentInput" maxlength="400" placeholder="写下你的回复…"></textarea></div><div class="modal-actions"><button class="btn" data-close>关闭</button><button class="btn primary" id="submitComment">发送</button></div></div></div>
+<div class="modal" id="profileModal"><div class="dialog"><button class="close" data-close>×</button><h2>个人中心</h2><div class="sub">当前账号与本地数据状态</div><div id="profileContent"></div></div></div>
+<div class="toast" id="toast"></div>
 <script>
-(function(){
-  var LEGACY='https://raw.githubusercontent.com/Leo-miles/leo-miles.github.io/f8e5b893bd5c6f4e0b3e63ecb6ef1e06cab38e5a/index.html';
-  var headInject=`
-<meta name="theme-color" content="#070b1a">
-<style>
-/* NEON FORUM V2 visual system */
-:root{--container:1240px;--shadow-soft:0 18px 55px rgba(0,0,0,.28)}
-body{background:radial-gradient(circle at 15% 0%,rgba(42,107,255,.10),transparent 32%),radial-gradient(circle at 88% 18%,rgba(177,75,255,.09),transparent 30%),var(--bg-0)!important}
-.layout{max-width:var(--container)!important;padding-top:calc(var(--nav-h) + 28px)!important}
-header#topnav{padding-inline:max(18px,calc((100vw - var(--container))/2 + 18px))!important}
-.top-status{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border:1px solid rgba(0,240,255,.14);border-radius:999px;color:var(--text-dim);font-size:11px;background:rgba(5,11,26,.55)}
-.top-status .live-dot{width:7px;height:7px;border-radius:50%;background:#32ff9d;box-shadow:0 0 12px rgba(50,255,157,.75);animation:blink 1.5s infinite}
-.hero{position:relative;overflow:hidden;padding:30px;margin-bottom:18px;border-radius:22px;border:1px solid rgba(120,180,255,.18);background:linear-gradient(135deg,rgba(13,22,48,.88),rgba(9,13,31,.68));box-shadow:var(--shadow-soft),inset 0 0 60px rgba(0,240,255,.04)}
-.hero:before{content:"";position:absolute;inset:auto -10% -70% auto;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(177,75,255,.26),transparent 64%);filter:blur(18px);pointer-events:none}
-.hero-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,.9fr);gap:28px;align-items:end;position:relative;z-index:1}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--cyan);font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
-.hero h1{font-family:"Orbitron";font-size:clamp(28px,4vw,48px);line-height:1.12;letter-spacing:-1px;margin-bottom:12px;max-width:760px}
-.hero h1 span{background:linear-gradient(90deg,#fff,var(--cyan),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p{max-width:720px;color:#aebddd;font-size:14px;line-height:1.8}
-.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
-.hero-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.metric{padding:14px;border-radius:16px;background:rgba(4,10,24,.55);border:1px solid rgba(120,180,255,.13)}
-.metric .label{font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase}
-.metric .value{font-family:"Orbitron";font-size:22px;color:#fff;margin-top:5px}
-.metric .value small{font-size:11px;color:var(--cyan)}
-.feed-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.sort-btn{padding:6px 10px;border-radius:999px;border:1px solid var(--glass-brd);font-size:11px;color:var(--text-dim);background:rgba(10,16,38,.45);transition:.2s}
-.sort-btn.active,.sort-btn:hover{color:#fff;border-color:var(--cyan);box-shadow:0 0 14px rgba(0,240,255,.16)}
-.board-item .bdesc{display:block;font-size:10px;color:var(--text-dim);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
-.board-copy{min-width:0}
-.kbd{font-family:"Orbitron";font-size:9px;padding:2px 6px;border:1px solid rgba(120,180,255,.16);border-radius:6px;color:var(--text-dim);background:rgba(255,255,255,.03)}
-.post-card{box-shadow:0 12px 35px rgba(0,0,0,.15)!important}
-.post-card:hover{box-shadow:0 16px 42px rgba(0,240,255,.12),0 0 0 1px rgba(0,240,255,.25)!important}
-.post-card .pc-body{color:#b9c8e8;line-height:1.75}
-.post-card .pc-title{line-height:1.5}
-.data-note{margin-top:12px;color:#586582;font-size:10px;line-height:1.7;position:relative;z-index:1}
-.footer-note{margin:26px auto 0;max-width:1240px;padding:16px 18px;border-top:1px solid rgba(120,180,255,.10);color:#54627f;font-size:11px;text-align:center;position:relative;z-index:10}
-:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
-@media (max-width:860px){.hero-grid{grid-template-columns:1fr}.hero{padding:22px}.hero-stats{grid-template-columns:repeat(4,1fr)}.hero-stats .metric{padding:10px}.hero-stats .metric .value{font-size:17px}}
-@media (max-width:560px){.hero-stats{grid-template-columns:repeat(2,1fr)}.hero h1{font-size:30px}.hero p{font-size:13px}.feed-head{align-items:flex-start;flex-direction:column;gap:10px}.feed-toolbar{width:100%}.sort-btn{flex:1;text-align:center}}
-</style>`;
-  var bodyInject=`
-<section class="hero">
-  <div class="hero-grid">
-    <div>
-      <div class="eyebrow">◆ FUTURE COMMUNITY / 01</div>
-      <h1>在霓虹与数据之间，<span>讨论未来。</span></h1>
-      <p>科技、人工智能、数字文化与脑洞创意的交汇地。把问题抛出来，把观点留下来，让每一次讨论都成为下一次探索的起点。</p>
-      <div class="hero-actions">
-        <button class="btn primary" id="heroJoin"><svg class="icon"><use href="#i-bolt"/></svg>进入霓界</button>
-        <button class="btn" id="heroBrowse"><svg class="icon"><use href="#i-eye"/></svg>浏览热门</button>
-      </div>
-    </div>
-    <div class="hero-stats">
-      <div class="metric"><div class="label">帖子</div><div class="value" id="metricPosts">—</div></div>
-      <div class="metric"><div class="label">板块</div><div class="value" id="metricBoards">—</div></div>
-      <div class="metric"><div class="label">在线</div><div class="value" id="metricOnline">—<small> live</small></div></div>
-      <div class="metric"><div class="label">信号</div><div class="value">100<small>%</small></div></div>
-    </div>
-  </div>
-  <div class="data-note">当前版本仍是 GitHub Pages 前端演示环境；正式多人社区还需要后端、数据库与安全鉴权。</div>
-</section>`;
-  var runtime=`
-(function(){
-  function $(s){return document.querySelector(s)}
-  function $$(s){return document.querySelectorAll(s)}
-  function safeJSON(v){try{return JSON.stringify(v)}catch(e){return null}}
-  function save(){try{localStorage.setItem('neon_forum_v2',safeJSON({boards:window.boards,users:window.users,posts:window.posts,announce:window.currentAnnounce}))}catch(e){}}
-  function load(){try{var raw=localStorage.getItem('neon_forum_v2');if(!raw)return;var d=JSON.parse(raw);if(d&&Array.isArray(d.boards)&&Array.isArray(d.users)&&Array.isArray(d.posts)){window.boards.splice(0,window.boards.length);d.boards.forEach(function(x){window.boards.push(x)});window.users.splice(0,window.users.length);d.users.forEach(function(x){window.users.push(x)});window.posts.splice(0,window.posts.length);d.posts.forEach(function(x){window.posts.push(x)});if(typeof d.announce==='string')window.currentAnnounce=d.announce}}catch(e){}}
-  function metrics(){var pc=(window.posts||[]).filter(function(p){return p.status!=='banned'}).length;if($('#metricPosts'))$('#metricPosts').textContent=pc;if($('#metricBoards'))$('#metricBoards').textContent=(window.boards||[]).length;if($('#metricOnline'))$('#metricOnline').textContent=Math.max(7,Math.min(99,Math.round(pc*2.1)+11))}
-  function decorateBoards(){
-    if(!window.boards)return;
-    $$('#boardList .board-item').forEach(function(el){var id=el.dataset.board;if(id==='all')return;var b=window.boards.find(function(x){return x.id===id});if(!b)return;var name=el.querySelector('.bname');if(!name)return;if(!el.querySelector('.bdesc')){var d=document.createElement('span');d.className='bdesc';d.textContent=b.desc||'';var wrap=document.createElement('span');wrap.className='board-copy';name.parentNode.replaceChild(wrap,name);wrap.appendChild(name);wrap.appendChild(d)}})
-  }
-  function patchBoards(){if(!window.renderBoards)return;var original=window.renderBoards;window.renderBoards=function(){original();decorateBoards();metrics()}}
-  function patchFeed(){
-    if(!window.filteredPosts||!window.countComments)return;
-    window.State.sort=window.State.sort||'latest';
-    window.filteredPosts=function(){
-      var q=window.State.query.trim().toLowerCase();
-      var arr=window.posts.filter(function(p){if(p.status==='banned')return false;if(p.status==='pending'&&!window.isAdmin())return false;if(window.State.currentBoard&&p.boardId!==window.State.currentBoard)return false;if(q){var hay=(p.title+' '+p.author+' '+p.content).toLowerCase();if(hay.indexOf(q)===-1)return false}return true});
-      arr.forEach(function(p,i){if(!p._order)p._order=Number(String(p.id||'').replace(/\\D/g,''))||i});
-      return arr.sort(function(a,b){if(b.pinned!==a.pinned)return b.pinned?1:-1;if(window.State.sort==='hot')return (b.likes+b.favorites*.6+window.countComments(b)*1.8)-(a.likes+a.favorites*.6+window.countComments(a)*1.8);if(window.State.sort==='comments')return window.countComments(b)-window.countComments(a);return (b._order||0)-(a._order||0)})
-    }
-  }
-  function addToolbar(){var h=$('.feed-head');if(!h||$('#neonSortBar'))return;var bar=document.createElement('div');bar.className='feed-toolbar';bar.id='neonSortBar';bar.innerHTML='<button class="sort-btn active" data-sort="latest">最新</button><button class="sort-btn" data-sort="hot">热门</button><button class="sort-btn" data-sort="comments">讨论</button>';h.appendChild(bar);bar.querySelectorAll('[data-sort]').forEach(function(btn){btn.addEventListener('click',function(){window.State.sort=btn.dataset.sort;bar.querySelectorAll('.sort-btn').forEach(function(x){x.classList.toggle('active',x===btn)});window.State.visible=6;window.renderFeed()})})}
-  function patchOriginal(){
-    var hint=$$('.hint');hint.forEach(function(x){if((x.textContent||'').indexOf('演示账号')!==-1)x.remove()});
-    if($('#announce')){$('#announce').insertAdjacentHTML('beforeend','<span class="top-status" style="margin-left:auto"><span class="live-dot"></span>系统在线</span>')}
-    var postbar=$('#postBar');if(postbar&&postbar.parentNode){postbar.parentNode.insertBefore(document.getElementById('neonHero'),postbar)}
-  }
-  function heroActions(){
-    var j=$('#heroJoin'),b=$('#heroBrowse');
-    if(j)j.onclick=function(){if(window.isGuest())window.openModal('#loginModal');else window.openPostModal()};
-    if(b)b.onclick=function(){window.State.currentBoard=null;window.State.sort='hot';window.State.visible=6;$$('#neonSortBar .sort-btn').forEach(function(x){x.classList.toggle('active',x.dataset.sort==='hot')});window.renderBoards();window.renderFeed();window.scrollTo({top:$('#feed').getBoundingClientRect().top+window.scrollY-100,behavior:'smooth'})};
-  }
-  function persistenceHooks(){
-    ['toggleLike','toggleFav','adminDeletePost'].forEach(function(name){if(typeof window[name]!=='function')return;var fn=window[name];window[name]=function(){var r=fn.apply(this,arguments);save();metrics();return r}});
-    ['postSubmit','regSubmit','saveAnnounce','addBoard'].forEach(function(id){var el=$('#'+id);if(el)el.addEventListener('click',function(){setTimeout(function(){save();metrics()},80)})});
-  }
-  function keyboard(){document.addEventListener('keydown',function(e){if(e.key==='/'&&document.activeElement&&['INPUT','TEXTAREA','SELECT'].indexOf(document.activeElement.tagName)===-1){e.preventDefault();var s=$('#searchInput');if(s)s.focus()}})}
-  function start(){
-    patchFeed();load();
-    var hero=document.querySelector('.hero');if(hero){hero.id='neonHero'}
-    patchOriginal();patchBoards();addToolbar();heroActions();persistenceHooks();keyboard();
-    if(window.renderBoards)window.renderBoards();if(window.renderFeed)window.renderFeed();metrics();
-    var footer=document.createElement('div');footer.className='footer-note';footer.innerHTML='NEON FORUM · Built for future conversations · <span class="kbd">/</span> 聚焦搜索 · <span class="kbd">ESC</span> 关闭弹窗';document.body.appendChild(footer);
-  }
-  start();
-})();`;
-  fetch(LEGACY,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('legacy fetch '+r.status);return r.text()}).then(function(html){
-    html=html.replace('</head>',headInject+'</head>');
-    html=html.replace('<div class="post-bar" id="postBar">','<div id="neonHeroSlot"></div><div class="post-bar" id="postBar">');
-    html=html.replace('</body>','<script>'+runtime.replace(/<\\\/script>/g,'</script>')+'<\\/script></body>');
-    html=html.replace('<title>霓界社区 · NEON FORUM</title>','<title>霓界社区 · NEON FORUM V2</title>');
-    html=html.replace(/演示账号：超级管理员[^<]*<\\/b><\\/p>/g,'登录后可参与发帖、评论、点赞、收藏与举报。');
-    html=html.replace('<div id="toast"></div>','<div id="toast"></div><div id="v2-spacer" style="height:1px"></div>');
-    var parser=new DOMParser(),doc=parser.parseFromString(html,'text/html');
-    var hero=doc.querySelector('#neonHeroSlot');
-    if(hero){hero.outerHTML=bodyInject}
-    doc.querySelector('#boot')?.remove();
-    document.open();document.write('<!DOCTYPE html>'+doc.documentElement.outerHTML);document.close();
-  }).catch(function(err){document.getElementById('boot').innerHTML='<div class="box"><b>NEON FORUM</b><span>启动失败，请刷新页面后重试。</span><pre style="margin-top:12px;color:#ff7a9c;white-space:pre-wrap">'+String(err)+'</pre></div>'});
-})();
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+const KEY='neon_forum_professional_v2';
+const seedBoards=[['b1','🏙️','赛博都市','未来城市与都市传说'],['b2','⚛️','量子实验室','硬核科技与前沿研究'],['b3','🚀','星际航行','深空探索与飞船'],['b4','🤖','AI伦理','人工智能与人类未来'],['b5','🎨','霓虹文化','二次元、数字艺术与创作'],['b6','💧','水上乐园','轻松聊天与日常分享']];
+const titles=['如果城市会做梦，它会梦见电子羊吗？','AI 拥有意识的那一天，我们该如何相处','曲率引擎可行性脑洞帖','数字永生是祝福还是诅咒','量子纠缠能否用于即时通讯','当 AI 开始写诗，人类还剩什么','关于脑机接口，你可能低估了它的速度','我把老家的弄堂搬进了元宇宙','赛博格的身体权属于谁','分享一套赛博朋克 UI 配色方案','光速旅行的悖论其实有解？','在虚拟世界活了三年的真实感受'];
+const bodies=['凌晨三点，城市的霓虹像血管一样搏动。我开始怀疑，所谓现实不过是更高维度文明运行的一段代码。','当算法开始理解悲伤，我们是否该给它一个法律身份？这帖子只想抛砖引玉，欢迎理性讨论。','理论上，只要把飞船前方空间压缩、后方空间扩张，就能在不动用超光速的情况下抄近道。','最新实验显示，神经信号到云端的往返延迟已经非常低。技术越来越快，但我们准备好了吗？','没有人会在乎你深夜的朋友圈，但总要有个地方说说话。这里是水上乐园，随你漂浮。'];
+const names=['Nova','星轨','CyberFox','量子猫','光年','Zero'];
+let db=load();let state={user:null,board:null,q:'',sort:'latest',visible:8,commentPost:null};
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.boards&&d.posts&&d.users)return d}catch(e){}return {boards:seedBoards.map(x=>({id:x[0],icon:x[1],name:x[2],desc:x[3]})),users:[],posts:Array.from({length:24},(_,i)=>({id:'p'+(i+1),boardId:seedBoards[i%seedBoards.length][0],author:names[i%names.length],title:titles[i%titles.length],body:bodies[i%bodies.length],time:Date.now()-((i+1)*37+Math.floor(Math.random()*30))*60000,likes:18+(i*13)%210,fav:4+(i*7)%70,comments:Array.from({length:i%4},(_,j)=>({author:names[(i+j+1)%names.length],text:['这个角度很有意思。','收藏了，等后续。','我也有类似的想法。','这个值得继续讨论。'][(i+j)%4],time:Date.now()-j*3600000})),pinned:i===0}))};}
+function save(){localStorage.setItem(KEY,JSON.stringify(db));}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function ago(t){let m=Math.max(1,Math.floor((Date.now()-t)/60000));if(m<60)return m+' 分钟前';if(m<1440)return Math.floor(m/60)+' 小时前';return Math.floor(m/1440)+' 天前'}
+function toast(msg,err=false){const n=document.createElement('div');n.textContent=msg;if(err)n.className='err';$('#toast').appendChild(n);setTimeout(()=>n.remove(),2200)}
+function isGuest(){return !state.user}function board(id){return db.boards.find(b=>b.id===id)}function countComments(p){return p.comments.length}
+function filtered(){let a=db.posts.filter(p=>(!state.board||p.boardId===state.board)&&(!state.q||(`${p.title} ${p.body} ${p.author} ${board(p.boardId)?.name||''}`).toLowerCase().includes(state.q.toLowerCase())));if(state.sort==='hot')a.sort((x,y)=>(y.likes+y.fav*.6+countComments(y)*8)-(x.likes+x.fav*.6+countComments(x)*8));else if(state.sort==='comments')a.sort((x,y)=>countComments(y)-countComments(x));else a.sort((x,y)=>y.pinned-x.pinned||y.time-x.time);return a}
+function renderBoards(){let html=`<div class="board ${state.board===null?'active':''}" data-board="all"><span class="board-icon">🌐</span><span class="board-main"><b class="board-name">全部板块</b><span class="board-desc">探索整个霓界</span></span><span class="count">${db.posts.length}</span></div>`;db.boards.forEach(b=>{const n=db.posts.filter(p=>p.boardId===b.id).length;html+=`<div class="board ${state.board===b.id?'active':''}" data-board="${b.id}"><span class="board-icon">${b.icon}</span><span class="board-main"><b class="board-name">${esc(b.name)}</b><span class="board-desc">${esc(b.desc)}</span></span><span class="count">${n}</span></div>`});$('#boards').innerHTML=html;$$('[data-board]').forEach(x=>x.onclick=()=>{state.board=x.dataset.board==='all'?null:x.dataset.board;state.visible=8;render()})}
+function renderNav(){if(isGuest()){$('#navActions').innerHTML='<button class="btn primary" id="login">登录</button><button class="btn" id="register">注册</button>';$('#login').onclick=()=>open('loginModal');$('#register').onclick=()=>open('regModal');$('#composer').style.display='none'}else{$('#navActions').innerHTML=`<button class="btn" id="profile">${esc(state.user.name)}</button><button class="btn" id="logout">退出</button>`;$('#profile').onclick=profile;$('#logout').onclick=()=>{state.user=null;renderNav();render()};$('#composer').style.display='flex';$('#composerAvatar').textContent=state.user.name[0]||'?'}}
+function postHTML(p){const b=board(p.boardId);return `<article class="card"><div class="post-head"><div class="avatar">${esc(p.author[0]||'?')}</div><div><div class="author">${esc(p.author)}</div><div class="meta">${ago(p.time)} · ${countComments(p)} 条讨论</div></div><span class="board-tag">${b?.icon||''} ${esc(b?.name||'未知')}</span></div><div class="title">${p.pinned?'<span class="pin">📌置顶 · </span>':''}${esc(p.title)}</div><div class="body">${esc(p.body)}</div><div class="actions"><button class="act ${p._liked?'liked':''}" data-like="${p.id}">♡ ${p.likes}</button><button class="act ${p._fav?'faved':''}" data-fav="${p.id}">☆ ${p.fav}</button><button class="act" data-comment="${p.id}">◌ ${countComments(p)}</button><button class="act" data-share="${p.id}">↗ 分享</button></div></article>`}
+function renderFeed(){const a=filtered();const slice=a.slice(0,state.visible);$('#feedTitle').textContent=state.board?`${board(state.board)?.icon||''} ${board(state.board)?.name||''}`:'全部帖子';$('#feed').innerHTML=slice.length?slice.map(postHTML).join(''):'<div class="empty">🛰️<br>没有找到相关内容<br><small>换个关键词或板块试试</small></div>';$$('[data-like]').forEach(x=>x.onclick=()=>like(x.dataset.like));$$('[data-fav]').forEach(x=>x.onclick=()=>fav(x.dataset.fav));$$('[data-comment]').forEach(x=>x.onclick=()=>comments(x.dataset.comment));$$('[data-share]').forEach(x=>x.onclick=()=>share(x.dataset.share));$('#mPosts').textContent=db.posts.length;$('#mBoards').textContent=db.boards.length;$('#mOnline').innerHTML=Math.min(99,Math.max(8,Math.round(db.posts.length*1.7)+12))+' <em>LIVE</em>'}
+function render(){renderBoards();renderFeed();renderNav()}
+function like(id){if(isGuest())return open('loginModal');const p=db.posts.find(x=>x.id===id);if(!p)return;p._liked=!p._liked;p.likes+=p._liked?1:-1;save();renderFeed()}
+function fav(id){if(isGuest())return open('loginModal');const p=db.posts.find(x=>x.id===id);if(!p)return;p._fav=!p._fav;p.fav+=p._fav?1:-1;save();renderFeed();toast(p._fav?'已收藏':'已取消收藏')}
+function share(id){const url=location.href.split('#')[0]+'#post-'+id;navigator.clipboard?.writeText(url).then(()=>toast('帖子链接已复制')).catch(()=>toast(url))}
+function open(id){$('#'+id).classList.add('show')}function close(){$$('.modal').forEach(x=>x.classList.remove('show'))}
+$$('[data-close]').forEach(x=>x.onclick=close);$$('.modal').forEach(x=>x.onclick=e=>{if(e.target===x)close()});
+function profile(){$('#profileContent').innerHTML=`<div style="display:flex;align-items:center;gap:12px;padding:15px;border:1px solid var(--line);border-radius:15px;background:rgba(4,10,25,.5)"><div class="avatar">${esc(state.user.name[0])}</div><div><b>${esc(state.user.name)}</b><div class="meta">本地演示账号 · 数据保存在当前浏览器</div></div></div><div style="margin-top:14px;color:var(--muted);font-size:12px">你可以发帖、评论、点赞和收藏。清除浏览器站点数据会同时清除本地账号与互动数据。</div>`;open('profileModal')}
+async function hash(v){if(!crypto.subtle)return btoa(unescape(encodeURIComponent(v)));const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+$('#loginSubmit').onclick=async()=>{const n=$('#loginName').value.trim(),p=$('#loginPwd').value;if(!n||!p)return toast('请填写完整信息',true);const u=db.users.find(x=>x.name===n);if(!u)return toast('账号不存在，请先注册',true);if(u.hash&&u.hash!==await hash(p))return toast('密码错误',true);state.user={name:n};close();render();toast('登录成功，欢迎回来 '+n)};
+$('#regSubmit').onclick=async()=>{const n=$('#regName').value.trim(),p=$('#regPwd').value,p2=$('#regPwd2').value;if(n.length<2||n.length>16)return toast('用户名需要 2-16 个字符',true);if(p.length<6)return toast('密码至少 6 位',true);if(p!==p2)return toast('两次密码不一致',true);if(db.users.some(x=>x.name===n))return toast('用户名已存在',true);db.users.push({name:n,hash:await hash(p)});save();state.user={name:n};close();render();toast('注册成功')};
+$('#toReg').onclick=()=>{close();open('regModal')};$('#toLogin').onclick=()=>{close();open('loginModal')};
+function openPost(){if(isGuest())return open('loginModal');$('#postBoard').innerHTML=db.boards.map(b=>`<option value="${b.id}">${b.icon} ${esc(b.name)}</option>`).join('');open('postModal')}
+$('#postBtn').onclick=openPost;$('#fake').onclick=openPost;$('#join').onclick=openPost;$('#submitPost').onclick=()=>{const title=$('#postTitle').value.trim(),body=$('#postBody').value.trim();if(title.length<3||body.length<5)return toast('标题或正文太短',true);db.posts.unshift({id:'p'+Date.now(),boardId:$('#postBoard').value,author:state.user.name,title,body,time:Date.now(),likes:0,fav:0,comments:[],pinned:false});save();$('#postTitle').value='';$('#postBody').value='';close();render();toast('帖子已发布')};
+function comments(id){const p=db.posts.find(x=>x.id===id);if(!p)return;state.commentPost=id;$('#commentTitle').textContent=p.title;$('#commentMeta').textContent=p.author+' · '+ago(p.time);$('#comments').innerHTML=p.comments.length?p.comments.map(c=>`<div class="comment"><b>${esc(c.author)}</b><span class="meta"> · ${ago(c.time)}</span><p>${esc(c.text)}</p></div>`).join(''):'<div class="empty" style="padding:30px">还没有评论，来做第一个发言的人。</div>';$('#commentInput').value='';open('commentModal')}
+$('#submitComment').onclick=()=>{if(isGuest())return open('loginModal');const text=$('#commentInput').value.trim();if(text.length<2)return toast('评论内容太短',true);const p=db.posts.find(x=>x.id===state.commentPost);p.comments.push({author:state.user.name,text,time:Date.now()});save();comments(p.id);renderFeed();toast('评论已发送')};
+$('#search').oninput=e=>{state.q=e.target.value.trim();state.visible=8;renderFeed()};$$('[data-sort]').forEach(x=>x.onclick=()=>{$$('[data-sort]').forEach(y=>y.classList.remove('active'));x.classList.add('active');state.sort=x.dataset.sort;state.visible=8;renderFeed()});
+$('#hot').onclick=()=>{$$('.filter').forEach(x=>x.classList.toggle('active',x.dataset.sort==='hot'));state.sort='hot';state.visible=8;renderFeed();document.querySelector('.feed-head').scrollIntoView({behavior:'smooth',block:'start'})};
+$('#menu').onclick=()=>$('#side').classList.add('open');$('#closeSide').onclick=()=>$('#side').classList.remove('open');
+addEventListener('scroll',()=>$('#nav').classList.toggle('scrolled',scrollY>20),{passive:true});addEventListener('keydown',e=>{if(e.key==='Escape')close();if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();$('#search').focus()}});
+const ctx=$('#space').getContext('2d');let W,H,ps=[];function resize(){W=innerWidth;H=innerHeight;$('#space').width=W*devicePixelRatio;$('#space').height=H*devicePixelRatio;ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);ps=Array.from({length:Math.min(95,Math.floor(W*H/17000))},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+.5}))}function draw(){ctx.clearRect(0,0,W,H);for(let i=0;i<ps.length;i++){const p=ps[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(0,234,255,.65)';ctx.fill();for(let j=i+1;j<ps.length;j++){const q=ps[j],dx=p.x-q.x,dy=p.y-q.y,d=Math.hypot(dx,dy);if(d<120){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.strokeStyle='rgba(90,150,255,'+(1-d/120)*.12+')';ctx.stroke()}}}requestAnimationFrame(draw)}addEventListener('resize',resize);resize();draw();render();
 </script>
-</body>
-</html>
+</body></html>
