@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================================
-   霓界社区 UI 样式 (已格式化，方便二次修改)
+   霓界社区 UI 样式
    ========================================================================== */
 :root {
   --bg: #050816; --panel: rgba(11, 18, 40, .72); --line: rgba(130, 180, 255, .16);
@@ -97,7 +97,7 @@ nav.scrolled { background: rgba(5, 8, 22, .94); border-color: var(--line); box-s
 .filter { padding: 6px 10px; border-radius: 99px; border: 1px solid var(--line); background: rgba(5, 11, 28, .45); color: var(--muted); font-size: 11px; }
 .filter.active { color: #fff; border-color: var(--cyan); }
 
-/* 帖子卡片 */
+/* 帖子卡片与多媒体支持 */
 .card { position: relative; padding: 18px; margin-bottom: 12px; overflow: hidden; transition: .25s; }
 .card:before { content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 2px; background: linear-gradient(90deg, var(--cyan), var(--purple), var(--pink)); opacity: .8; }
 .card:hover { transform: translateY(-3px); border-color: rgba(0, 234, 255, .35); box-shadow: 0 18px 45px rgba(0, 0, 0, .2); }
@@ -109,6 +109,11 @@ nav.scrolled { background: rgba(5, 8, 22, .94); border-color: var(--line); box-s
 .pin { color: var(--pink); font-size: 10px; }
 .title { font-size: 17px; font-weight: 700; margin: 12px 0 6px; }
 .body { color: #b9c7e5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* 多媒体显示样式 */
+.post-media { width: 100%; max-height: 420px; object-fit: cover; border-radius: 12px; margin-top: 12px; border: 1px solid var(--line); background: #000; display: block; }
+video.post-media { outline: none; }
+
 .actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
 .act { border: 1px solid transparent; background: rgba(5, 11, 28, .5); border-radius: 99px; padding: 7px 11px; color: var(--muted); font-size: 12px; }
 .act:hover { border-color: var(--line); color: #fff; }
@@ -125,6 +130,7 @@ nav.scrolled { background: rgba(5, 8, 22, .94); border-color: var(--line); box-s
 .field { margin-bottom: 12px; }
 .field label { display: block; color: var(--muted); font-size: 11px; margin-bottom: 5px; }
 .field input, .field textarea, .field select { width: 100%; border: 1px solid var(--line); border-radius: 12px; background: #050b1d; color: var(--text); padding: 11px 12px; outline: 0; }
+.field input[type="file"] { padding: 8px; font-size: 12px; }
 .field textarea { min-height: 110px; resize: vertical; }
 .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--cyan); box-shadow: 0 0 18px rgba(0, 234, 255, .1); }
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
@@ -190,9 +196,7 @@ nav.scrolled { background: rgba(5, 8, 22, .94); border-color: var(--line); box-s
     <span>⌕</span>
     <input id="search" placeholder="搜索帖子、作者、板块…" autocomplete="off">
   </div>
-  <div class="nav-actions" id="navActions">
-    <!-- 动态渲染登录/注册 或 头像 -->
-  </div>
+  <div class="nav-actions" id="navActions"></div>
 </nav>
 
 <!-- 主体内容 -->
@@ -228,9 +232,7 @@ nav.scrolled { background: rgba(5, 8, 22, .94); border-color: var(--line); box-s
         <button class="close" id="closeSide">×</button>
       </div>
       <h3>BOARD NAVIGATION</h3>
-      <div id="boards">
-        <!-- 动态渲染板块列表 -->
-      </div>
+      <div id="boards"></div>
     </aside>
 
     <main class="main">
@@ -248,9 +250,7 @@ nav.scrolled { background: rgba(5, 8, 22, .94); border-color: var(--line); box-s
           <button class="filter" data-sort="comments">讨论</button>
         </div>
       </div>
-      <div id="feed">
-        <!-- 动态渲染帖子列表 -->
-      </div>
+      <div id="feed"></div>
     </main>
   </div>
   
@@ -285,7 +285,7 @@ nav.scrolled { background: rgba(5, 8, 22, .94); border-color: var(--line); box-s
   </div>
 </div>
 
-<!-- 发帖弹窗 -->
+<!-- 发帖弹窗（升级：支持图片与视频） -->
 <div class="modal" id="postModal">
   <div class="dialog">
     <button class="close" data-close>×</button>
@@ -294,6 +294,19 @@ nav.scrolled { background: rgba(5, 8, 22, .94); border-color: var(--line); box-s
     <div class="field"><label>板块</label><select id="postBoard"></select></div>
     <div class="field"><label>标题</label><input id="postTitle" maxlength="60" placeholder="一句话概括你的主题"></div>
     <div class="field"><label>正文</label><textarea id="postBody" maxlength="1200" placeholder="展开你的观点、问题或脑洞…"></textarea></div>
+    
+    <!-- 新增多媒体选择框 -->
+    <div class="field">
+      <label>附加图片 (可选)</label>
+      <input type="file" id="postImgFile" accept="image/*">
+      <input id="postImgUrl" placeholder="或输入图片 URL 链接" style="margin-top:6px">
+    </div>
+    <div class="field">
+      <label>附加视频 (可选)</label>
+      <input type="file" id="postVideoFile" accept="video/*">
+      <input id="postVideoUrl" placeholder="或输入视频 URL 链接" style="margin-top:6px">
+    </div>
+
     <div class="modal-actions"><button class="btn" data-close>取消</button><button class="btn primary" id="submitPost">发布</button></div>
   </div>
 </div>
@@ -326,27 +339,16 @@ nav.scrolled { background: rgba(5, 8, 22, .94); border-color: var(--line); box-s
 <div class="toast" id="toast"></div>
 
 <script>
-/**
- * ==============================================================================
- * 霓界社区 (NEON FORUM) - 生产环境准备版
- * ==============================================================================
- * 核心改造说明：
- * 1. 抽离了 API 服务层。后续接入真实后端时，您只需修改 `API` 对象中的函数，
- *    将其替换为 fetch 或 axios 请求，无需修改任何 UI 渲染代码。
- * 2. 增强了 XSS 防护。
- * 3. 加入了模拟网络延迟，让交互更加真实。
- */
-
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 
-// 安全转义函数 (防御 XSS 攻击)
+// 安全转义函数
 function esc(s) {
   if (!s) return '';
   return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
-// 友好的时间格式化
+// 时间转换
 function ago(t) {
   let m = Math.max(1, Math.floor((Date.now() - t) / 60000));
   if (m < 60) return m + ' 分钟前';
@@ -354,7 +356,7 @@ function ago(t) {
   return Math.floor(m / 1440) + ' 天前';
 }
 
-// UI 提示框
+// 提示框
 function toast(msg, err = false) {
   const n = document.createElement('div');
   n.textContent = msg;
@@ -363,23 +365,31 @@ function toast(msg, err = false) {
   setTimeout(() => n.remove(), 2500);
 }
 
+// 异步读取本地文件为 DataURL (Base64)
+function readFileAsDataURL(file) {
+  return new Promise((resolve) => {
+    if (!file) return resolve('');
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result);
+    reader.onerror = () => resolve('');
+    reader.readAsDataURL(file);
+  });
+}
+
 // ==========================================
-// 1. API 模拟服务层 (对接真实后端的接口定义)
+// 1. API 模拟服务层
 // ==========================================
-const KEY = 'neon_forum_prod_ready_v1';
+const KEY = 'neon_forum_prod_ready_v2';
 const API = {
-  // 模拟网络延迟
   async _delay(ms = 300) {
     return new Promise(r => setTimeout(r, ms + Math.random() * 200));
   },
 
-  // 获取本地数据库 (开发使用)
   _getDB() {
     try {
       const d = JSON.parse(localStorage.getItem(KEY));
       if (d && d.boards) return d;
     } catch (e) {}
-    // 初始化空数据结构
     return {
       boards: [
         { id: 'b1', icon: '🏙️', name: '赛博都市', desc: '未来城市与都市传说' },
@@ -396,14 +406,11 @@ const API = {
     localStorage.setItem(KEY, JSON.stringify(db));
   },
 
-  // ---- 以下方法，在有真实后端后，请替换为 fetch API ----
-
   async login(username, password) {
     await this._delay();
     const db = this._getDB();
     const u = db.users.find(x => x.name === username);
     if (!u) throw new Error('账号不存在，请先注册');
-    // 前端简单验证哈希。未来这部分必须交由后端处理！
     if (u.hash !== await this.hashPassword(password)) throw new Error('密码错误');
     return { name: u.name };
   },
@@ -418,13 +425,8 @@ const API = {
     return { name: username };
   },
 
-  async getBoards() {
-    return this._getDB().boards;
-  },
-
-  async getPosts() {
-    return this._getDB().posts;
-  },
+  async getBoards() { return this._getDB().boards; },
+  async getPosts() { return this._getDB().posts; },
 
   async createPost(postData) {
     await this._delay(500);
@@ -456,7 +458,6 @@ const API = {
     return p;
   },
 
-  // 密码哈希生成器
   async hashPassword(v) {
     if (!crypto.subtle) return btoa(unescape(encodeURIComponent(v)));
     const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
@@ -464,9 +465,8 @@ const API = {
   }
 };
 
-
 // ==========================================
-// 2. 状态管理与生命周期
+// 2. 状态管理与初始化
 // ==========================================
 let state = {
   user: null, 
@@ -481,14 +481,12 @@ let state = {
 
 function isGuest() { return !state.user; }
 
-// 初始化应用
 async function initApp() {
   state.boardsData = await API.getBoards();
   state.postsData = await API.getPosts();
   renderAll();
 }
 
-// 统一渲染入口
 function renderAll() {
   renderNav();
   renderBoards();
@@ -496,7 +494,7 @@ function renderAll() {
 }
 
 // ==========================================
-// 3. 视图渲染逻辑
+// 3. 视图渲染
 // ==========================================
 function renderNav() {
   if (isGuest()) {
@@ -554,14 +552,12 @@ function renderBoards() {
 }
 
 function renderFeed() {
-  // 1. 过滤 & 搜索
   let filtered = state.postsData.filter(p => {
     const matchBoard = !state.board || p.boardId === state.board;
     const matchSearch = !state.q || (`${p.title} ${p.body} ${p.author}`).toLowerCase().includes(state.q.toLowerCase());
     return matchBoard && matchSearch;
   });
 
-  // 2. 排序
   if (state.sort === 'hot') {
     filtered.sort((x, y) => (y.likes + y.comments.length * 8) - (x.likes + x.comments.length * 8));
   } else if (state.sort === 'comments') {
@@ -570,9 +566,7 @@ function renderFeed() {
     filtered.sort((x, y) => (y.pinned ? 1 : 0) - (x.pinned ? 1 : 0) || y.time - x.time);
   }
 
-  // 3. 渲染 DOM
   const slice = filtered.slice(0, state.visible);
-  
   const currentBoard = state.boardsData.find(b => b.id === state.board);
   $('#feedTitle').textContent = currentBoard ? `${currentBoard.icon} ${currentBoard.name}` : '全部帖子';
   
@@ -581,6 +575,16 @@ function renderFeed() {
   } else {
     $('#feed').innerHTML = slice.map(p => {
       const b = state.boardsData.find(x => x.id === p.boardId);
+      
+      // 渲染多媒体 HTML
+      let mediaHTML = '';
+      if (p.imageUrl) {
+        mediaHTML += `<img src="${esc(p.imageUrl)}" class="post-media" alt="图片内容" loading="lazy">`;
+      }
+      if (p.videoUrl) {
+        mediaHTML += `<video src="${esc(p.videoUrl)}" class="post-media" controls></video>`;
+      }
+
       return `
         <article class="card">
           <div class="post-head">
@@ -593,6 +597,7 @@ function renderFeed() {
           </div>
           <div class="title">${p.pinned ? '<span class="pin">📌置顶 · </span>' : ''}${esc(p.title)}</div>
           <div class="body">${esc(p.body)}</div>
+          ${mediaHTML}
           <div class="actions">
             <button class="act ${p._liked ? 'liked' : ''}" onclick="handleLike('${p.id}')">♡ ${p.likes}</button>
             <button class="act" onclick="openComments('${p.id}')">◌ ${p.comments.length}</button>
@@ -601,28 +606,24 @@ function renderFeed() {
     }).join('');
   }
 
-  // 更新全局统计数据
   $('#mPosts').textContent = state.postsData.length;
   $('#mBoards').textContent = state.boardsData.length;
   $('#mOnline').innerHTML = Math.max(12, state.postsData.length * 2 + 5) + ' <em>LIVE</em>';
 }
 
 // ==========================================
-// 4. 业务交互逻辑
+// 4. 交互逻辑
 // ==========================================
-
-// 弹窗控制
 function openModal(id) { $('#' + id).classList.add('show'); }
 function closeModal() { $$('.modal').forEach(x => x.classList.remove('show')); }
 $$('[data-close]').forEach(x => x.onclick = closeModal);
 $$('.modal').forEach(x => x.onclick = e => { if (e.target === x) closeModal(); });
 
-// 登录
+// 登录/注册
 $('#loginSubmit').onclick = async () => {
   const n = $('#loginName').value.trim();
   const p = $('#loginPwd').value;
   if (!n || !p) return toast('请填写完整信息', true);
-  
   const btn = $('#loginSubmit');
   btn.textContent = '验证中...';
   try {
@@ -630,18 +631,13 @@ $('#loginSubmit').onclick = async () => {
     closeModal();
     renderAll();
     toast(`登录成功，欢迎回来 ${n}`);
-  } catch (err) {
-    toast(err.message, true);
-  } finally {
-    btn.textContent = '登录';
-  }
+  } catch (err) { toast(err.message, true); }
+  finally { btn.textContent = '登录'; }
 };
 
-// 注册
 $('#regSubmit').onclick = async () => {
   const n = $('#regName').value.trim();
-  const p = $('#regPwd').value;
-  const p2 = $('#regPwd2').value;
+  const p = $('#regPwd').value, p2 = $('#regPwd2').value;
   if (n.length < 2 || n.length > 16) return toast('用户名需 2-16 个字符', true);
   if (p.length < 6) return toast('密码至少 6 位', true);
   if (p !== p2) return toast('两次密码不一致', true);
@@ -653,18 +649,14 @@ $('#regSubmit').onclick = async () => {
     closeModal();
     renderAll();
     toast('注册成功，已自动登录');
-  } catch (err) {
-    toast(err.message, true);
-  } finally {
-    btn.textContent = '注册并登录';
-  }
+  } catch (err) { toast(err.message, true); }
+  finally { btn.textContent = '注册并登录'; }
 };
 
-// 切换注册登录面板
 $('#toReg').onclick = () => { closeModal(); openModal('regModal'); };
 $('#toLogin').onclick = () => { closeModal(); openModal('loginModal'); };
 
-// 发帖相关
+// 发帖（处理多媒体上传）
 function preparePost() {
   if (isGuest()) return openModal('loginModal');
   $('#postBoard').innerHTML = state.boardsData.map(b => `<option value="${b.id}">${b.icon} ${esc(b.name)}</option>`).join('');
@@ -681,31 +673,46 @@ $('#submitPost').onclick = async () => {
   
   const btn = $('#submitPost');
   btn.textContent = '发射中...';
-  
+
+  // 读取图片和视频（优先使用本地选择的文件，其次使用输入的 URL）
+  const imgFile = $('#postImgFile').files[0];
+  const videoFile = $('#postVideoFile').files[0];
+  let imageUrl = $('#postImgUrl').value.trim();
+  let videoUrl = $('#postVideoUrl').value.trim();
+
+  if (imgFile) imageUrl = await readFileAsDataURL(imgFile);
+  if (videoFile) videoUrl = await readFileAsDataURL(videoFile);
+
   await API.createPost({
     boardId: $('#postBoard').value,
     author: state.user.name,
-    title, body
+    title, body, imageUrl, videoUrl
   });
   
-  state.postsData = await API.getPosts(); // 重新拉取
+  state.postsData = await API.getPosts();
+  
+  // 清空表单
   $('#postTitle').value = '';
   $('#postBody').value = '';
+  $('#postImgFile').value = '';
+  $('#postImgUrl').value = '';
+  $('#postVideoFile').value = '';
+  $('#postVideoUrl').value = '';
+
   closeModal();
   renderAll();
-  toast('帖子已成功发布至网络');
+  toast('帖子已成功发布');
   btn.textContent = '发布';
 };
 
-// 点赞
+// 点赞与评论
 async function handleLike(id) {
   if (isGuest()) return openModal('loginModal');
   await API.toggleLike(id);
-  state.postsData = await API.getPosts(); // 同步状态
+  state.postsData = await API.getPosts();
   renderFeed();
 }
 
-// 评论
 function openComments(id) {
   const p = state.postsData.find(x => x.id === id);
   if (!p) return;
@@ -730,15 +737,14 @@ $('#submitComment').onclick = async () => {
   btn.textContent = '发送中...';
   
   await API.addComment(state.commentPost, state.user.name, text);
-  state.postsData = await API.getPosts(); // 同步状态
+  state.postsData = await API.getPosts();
   
-  openComments(state.commentPost); // 重新渲染评论区
-  renderFeed(); // 更新外部评论数
+  openComments(state.commentPost);
+  renderFeed();
   toast('回复成功');
   btn.textContent = '发送';
 };
 
-// 个人中心
 function showProfile() {
   $('#profileContent').innerHTML = `
     <div style="display:flex;align-items:center;gap:12px;padding:15px;border:1px solid var(--line);border-radius:15px;background:rgba(4,10,25,.5)">
@@ -747,14 +753,11 @@ function showProfile() {
         <b>${esc(state.user.name)}</b>
         <div class="meta">网络状态：已连接</div>
       </div>
-    </div>
-    <div style="margin-top:14px;color:var(--muted);font-size:12px">
-      您当前使用的是待连接真实后端的生产环境预备版。
     </div>`;
   openModal('profileModal');
 }
 
-// 搜索与排序控制
+// 搜索与过滤器
 $('#search').oninput = e => {
   state.q = e.target.value.trim();
   state.visible = 8;
@@ -779,11 +782,9 @@ $('#hot').onclick = () => {
   document.querySelector('.feed-head').scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
-// 移动端菜单
 $('#menu').onclick = () => $('#side').classList.add('open');
 $('#closeSide').onclick = () => $('#side').classList.remove('open');
 
-// 全局事件监听
 addEventListener('scroll', () => $('#nav').classList.toggle('scrolled', scrollY > 20), { passive: true });
 addEventListener('keydown', e => {
   if (e.key === 'Escape') closeModal();
@@ -793,9 +794,7 @@ addEventListener('keydown', e => {
   }
 });
 
-// ==========================================
-// 5. Canvas 粒子背景渲染
-// ==========================================
+// Canvas 背景特效
 const ctx = $('#space').getContext('2d');
 let W, H, ps = [];
 function resize() {
@@ -831,7 +830,6 @@ function draw() {
 addEventListener('resize', resize);
 resize(); draw();
 
-// 启动应用
 initApp();
 </script>
 </body>
