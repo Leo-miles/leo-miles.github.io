@@ -1,0 +1,53 @@
+name: Fix admin nickname helper
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Patch index.html
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          helper = "function getAdminNickname(id){try{if(!id)return '';return state.adminNicknames?.[id]||state.products.find(p=>p.created_by===id&&p.uploader_nickname)?.uploader_nickname||''}catch(e){return ''}}"
+          if 'function getAdminNickname(' not in s:
+              marker = 'function buildSettingsPayload()'
+              if marker in s:
+                  s = s.replace(marker, helper + marker, 1)
+              else:
+                  marker2 = 'function renderCatalog()'
+                  if marker2 in s:
+                      s = s.replace(marker2, helper + marker2, 1)
+                  else:
+                      raise SystemExit('Cannot find insertion point')
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "No changes needed"
+            exit 0
+          fi
+          git commit -m "Fix getAdminNickname runtime error"
+          git push
+
+      - name: Remove temporary workflow
+        run: |
+          rm -f .github/workflows/fix-admin-nickname.yml
+          git add .github/workflows/fix-admin-nickname.yml
+          git commit -m "Remove temporary nickname patch workflow"
+          git push
