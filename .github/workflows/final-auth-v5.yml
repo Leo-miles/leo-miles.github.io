@@ -1,0 +1,52 @@
+name: Final auth v5
+on:
+  push:
+    paths:
+      - '.github/workflows/final-auth-v5.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Keep only auth fallback
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          marker='// PI_AUTH_PUBLISH_V4'
+          i=s.find(marker)
+          if i<0: raise SystemExit('V4_MARKER_NOT_FOUND')
+          j=s.find("  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();",i)
+          if j<0: raise SystemExit('BOOT_ANCHOR_NOT_FOUND')
+          login="""  // PI_AUTH_PUBLISH_V5\n  const installAuthFallback=()=>{\n    try{\n      const loginBtn=q('#loginSubmit');\n      if(!loginBtn)return;\n      loginBtn.onclick=async()=>{\n        const raw=(q('#loginName')?.value||'').trim().toLowerCase();\n        const pwd=q('#loginPwd')?.value||'';\n        const st=q('#loginStatus');\n        if(!raw||!pwd){if(st)st.textContent='请输入用户名和密码';return}\n        const email=raw.includes('@')?raw:`${raw}@accounts.leo-product-center.invalid`;\n        if(st)st.textContent='正在验证…';\n        try{\n          const {data,error}=await sb.auth.signInWithPassword({email,password:pwd});\n          if(error)throw error;\n          state.user=data.user;\n          await loadProfile();\n          await loadProducts();\n          renderNav();renderRole();renderSection();renderAll();\n          closeModal('loginModal');\n          toast('登录成功');\n        }catch(e){\n          console.error('[AUTH]',e);\n          if(st)st.textContent='登录失败：'+(e?.message||'账号或密码错误');\n        }\n      };\n    }catch(e){console.error('[AUTH_FALLBACK]',e)}\n  };\n  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installAuthFallback);else installAuthFallback();\n"""
+          # Replace the entire V4 fallback region up to the original boot call.
+          s=s[:i]+login+s[j:]
+          p.write_text(s,encoding='utf-8')
+          print('v5 patched',len(s))
+          PY
+      - name: Validate
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text(encoding='utf-8')
+          assert 'PI_AUTH_PUBLISH_V5' in s
+          assert 'sb.auth.signInWithPassword({email,password:pwd})' in s
+          assert 'products_save_override_absent' not in s
+          assert 'uploadPendingMedia(r.data.id)' not in s
+          print('AUTH_V5_OK')
+          PY
+      - name: Commit and remove workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'keep complete product save flow' || true
+          git push
+          rm -f .github/workflows/final-auth-v5.yml
+          git add -u .github/workflows/final-auth-v5.yml
+          git commit -m 'remove temporary auth workflow'
+          git push
