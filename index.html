@@ -1,47 +1,4262 @@
+```html
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0a2038"><meta name="description" content="产品智库 · 开发、产品与销售资料中心"><title>产品智库 · Product Intelligence Hub</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>:root{--navy:#0a2038;--navy2:#123b5d;--ink:#132536;--muted:#708297;--line:#dce5ed;--white:#fff;--gold:#b28a4a;--gold2:#d5b679;--blue:#2d6b9d;--danger:#b94a5a;--success:#2d7a62;--shadow:0 20px 60px rgba(17,43,66,.10);--r:18px;--max:1320px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(180deg,#fbfcfe,#f5f8fb);color:var(--ink);font:14px/1.7 Inter,"Noto Sans SC",system-ui,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inherit}.topline{height:4px;background:linear-gradient(90deg,var(--navy),var(--gold2),var(--navy2))}nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:22px;padding:14px max(18px,calc((100vw - var(--max))/2 + 18px));background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-bottom:1px solid rgba(220,229,237,.85)}.brand{display:flex;align-items:center;gap:12px;min-width:250px}.mark{width:40px;height:40px;border-radius:11px;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800}.brand h1{font-size:16px;margin:0;color:var(--navy)}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:1.8px}.search{position:relative;flex:1;max-width:520px}.search input{width:100%;height:42px;border:1px solid var(--line);border-radius:999px;padding:0 16px 0 40px;background:#f8fafc;outline:none}.search span{position:absolute;left:15px;top:8px;color:var(--muted)}.nav-actions{margin-left:auto;display:flex;gap:8px;align-items:center}.btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 14px;border-radius:10px;transition:.2s}.btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(17,43,66,.08)}.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}.btn.gold{background:var(--gold);border-color:var(--gold);color:#fff}.btn.danger{color:var(--danger);border-color:#edc4ca}.wrap{max-width:var(--max);margin:auto;padding:28px 18px 72px}.hero{display:grid;grid-template-columns:1.25fr .75fr;gap:24px;padding:36px;border-radius:26px;background:linear-gradient(125deg,#0a2038,#143e60 65%,#1d527a);color:#fff;box-shadow:var(--shadow);overflow:hidden;position:relative}.hero:after{content:"";position:absolute;right:-80px;bottom:-140px;width:360px;height:360px;border-radius:50%;border:1px solid rgba(255,255,255,.12);box-shadow:0 0 0 30px rgba(255,255,255,.03),0 0 0 80px rgba(255,255,255,.02)}.eyebrow{font-size:10px;letter-spacing:2px;color:#d8e8f4}.hero h2{font-size:clamp(30px,4.2vw,50px);line-height:1.12;margin:10px 0 14px}.hero p{max-width:700px;color:#d2e1ec;margin:0}.hero-actions{display:flex;gap:10px;margin-top:22px}.hero .btn{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18);color:#fff}.hero .btn.primary{background:#fff;color:var(--navy);border-color:#fff}.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:end}.stat{padding:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);border-radius:15px}.stat small{color:#b9cad7}.stat b{display:block;font-size:24px;margin-top:3px}.adminbar{display:none;margin:20px 0 16px;padding:14px 16px;background:#fcfbf8;border:1px solid #eadfcb;border-radius:15px}.adminbar.show{display:flex;justify-content:space-between;align-items:center;gap:12px}.adminbar strong{color:#795a29}.admin-actions{display:flex;gap:7px;flex-wrap:wrap}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:26px 0 14px}.tabs{display:flex;gap:7px;flex-wrap:wrap}.tab{padding:8px 13px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--muted)}.tab.active{background:var(--navy);border-color:var(--navy);color:#fff}.layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px}.panel,.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:0 10px 35px rgba(17,43,66,.05)}.panel{padding:16px}.panel h3{font-size:11px;letter-spacing:1.3px;color:var(--muted);margin:0 0 12px}.category{display:flex;align-items:center;gap:10px;padding:10px;border-radius:11px;border:1px solid transparent;margin-bottom:4px;cursor:pointer}.category.active{background:#f1f6fa;border-color:#d9e5ef}.category small{display:block;color:var(--muted);font-size:10px}.cat-main{flex:1}.pill{padding:2px 7px;border-radius:999px;background:#eef3f7;color:#617488;font-size:10px}.catalog{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.product-card{overflow:hidden}.product-cover{height:230px;background:#eaf0f4;position:relative}.product-cover img{width:100%;height:100%;object-fit:cover}.product-cover .tag{position:absolute;left:12px;top:12px;background:rgba(10,32,56,.88);color:#fff;padding:5px 8px;border-radius:7px;font-size:10px}.pc-body{padding:16px}.pc-top{display:flex;justify-content:space-between;gap:10px}.pc-body h3{font-size:18px;line-height:1.35;margin:0 0 5px}.price{color:var(--navy);font-weight:700}.meta{color:var(--muted);font-size:11px}.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.chip{background:#f3f6f8;border:1px solid #e2e9ee;padding:4px 8px;border-radius:999px;font-size:10px;color:#5b7082}.pc-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.mini{padding:7px 10px;border-radius:10px;border:1px solid var(--line);background:#fff;color:#5a6f84;font-size:11px}.empty{padding:70px 15px;text-align:center;color:var(--muted);border:1px dashed #d6e0e7;border-radius:16px}.modal{position:fixed;inset:0;display:none;place-items:center;padding:18px;background:rgba(6,20,34,.55);backdrop-filter:blur(8px);z-index:100}.modal.show{display:grid}.dialog{width:min(760px,100%);max-height:90vh;overflow:auto;padding:24px;border-radius:20px;background:#fff;border:1px solid var(--line);box-shadow:0 30px 100px rgba(6,20,34,.25)}.dialog.wide{width:min(1080px,100%)}.close{float:right;width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:#fff}.dialog h2{margin:0 0 4px;color:var(--navy)}.sub{color:var(--muted);font-size:11px;margin-bottom:18px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin-bottom:12px}.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 11px;outline:none;background:#fbfcfd}.field textarea{min-height:110px;resize:vertical}.file-row{border:1px dashed #cbd7df;padding:12px;border-radius:12px;background:#fafcfd}.help{font-size:10px;color:var(--muted);margin-top:5px}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.sep{height:1px;background:#e7edf2;margin:18px 0}.gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.gallery img,.gallery video{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:#f1f4f8}.info-list{display:grid;grid-template-columns:140px 1fr;gap:8px 14px;font-size:12px}.info-list dt{color:var(--muted)}.info-list dd{margin:0}.comment{padding:11px 0;border-bottom:1px solid #edf1f4}.notice{padding:10px 12px;border-radius:10px;background:#f5f9fc;color:#5f7486;font-size:11px}.role-badge{padding:4px 8px;border-radius:999px;font-size:10px;background:#edf4f8;color:#2f5c7d}.role-admin{background:#f6efe3;color:#8a672f}.role-super{background:#eef0f6;color:#3f4868}.footer{text-align:center;color:#8796a5;font-size:10px;padding:28px 0}.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px}.toast div{padding:10px 16px;border-radius:10px;background:var(--navy);color:#fff;box-shadow:0 12px 30px rgba(6,20,34,.18)}.toast .err{background:var(--danger)}table{width:100%;border-collapse:collapse}th,td{padding:10px 8px;border-bottom:1px solid #edf1f5;text-align:left;font-size:11px;vertical-align:top}th{color:var(--muted)}
-@media(max-width:980px){nav{flex-wrap:wrap}.brand{min-width:auto}.search{order:3;flex-basis:100%;max-width:none}.hero{grid-template-columns:1fr}.layout{grid-template-columns:1fr}.catalog{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr 1fr}}
-@media(max-width:680px){.catalog{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.hero{padding:24px}.wrap{padding:18px 12px 50px}.gallery{grid-template-columns:repeat(2,1fr)}.adminbar.show{flex-direction:column;align-items:flex-start}}
-</style></head>
-<body><div class="topline"></div><nav><a class="brand" href="#"><span class="mark">PI</span><span><h1>产品智库</h1><small>PRODUCT INTELLIGENCE HUB</small></span></a><div class="search"><span>⌕</span><input id="search" placeholder="搜索产品、型号、分类、参数…"></div><div class="nav-actions" id="navActions"></div></nav>
-<div class="wrap"><section class="hero"><div><div class="eyebrow">PRODUCT DEVELOPMENT / SALES ENABLEMENT</div><h2>新品资料，从开发到销售，一处管理。</h2><p>管理员上传新品图片、视频、参数、价格与销售资料；销售端按分类快速浏览并一键复制图片；普通用户可查看产品内容、留言并联系我们。</p><div class="hero-actions"><button class="btn primary" id="browseBtn">浏览产品</button><button class="btn" id="contactBtn">联系我们</button></div></div><div class="stats"><div class="stat"><small>产品数量</small><b id="sProducts">0</b></div><div class="stat"><small>分类</small><b id="sCats">0</b></div><div class="stat"><small>管理员</small><b>11</b></div><div class="stat"><small>资料状态</small><b>集中管理</b></div></div></section>
-<div class="adminbar" id="adminbar"><div><strong id="adminWelcome">管理员工作台</strong><div class="meta">管理员可以发布、编辑、删除产品资料；超级管理员还可以管理用户与禁言。</div></div><div class="admin-actions"><button class="btn gold" id="newProductBtn">＋ 新建产品</button><button class="btn" id="userManageBtn">用户管理</button><button class="btn" id="messageManageBtn">留言中心</button></div></div>
-<div class="toolbar"><div class="tabs" id="tabs"></div><div class="meta">支持按名称、型号、参数、分类搜索</div></div>
-<div class="layout"><aside class="panel"><h3>PRODUCT CATEGORIES</h3><div id="categories"></div><div class="sep"></div><div class="notice">普通用户：浏览产品、查看资料、留言、联系我们。<br>管理员：发布/编辑/删除产品。<br>超级管理员：全部权限。</div></aside><main><div id="catalog" class="catalog"></div></main></div>
-<div class="footer">PRODUCT INTELLIGENCE HUB · 产品开发资料中心 · 管理员与用户权限独立</div></div>
-<div class="modal" id="loginModal"><div class="dialog"><button class="close" data-close>×</button><h2>登录</h2><div class="sub">普通用户与管理员统一从这里登录</div><div class="field"><label>账号</label><input id="loginName" autocomplete="username"></div><div class="field"><label>密码</label><input id="loginPwd" type="password" autocomplete="current-password"></div><div class="notice">普通用户注册后会保存在后台；管理员账号由系统一次性创建，不需要重复注册。</div><div class="modal-actions"><button class="btn" data-close>取消</button><button class="btn primary" id="loginSubmit">登录</button></div><div style="margin-top:12px;text-align:center;font-size:11px;color:var(--muted)">没有账号？<a href="#" id="toRegister" style="color:var(--blue)">注册普通用户</a></div></div></div>
-<div class="modal" id="registerModal"><div class="dialog"><button class="close" data-close>×</button><h2>注册普通用户</h2><div class="sub">账号保存到 Supabase，换设备后仍可用。</div><div class="grid2"><div class="field"><label>用户名</label><input id="regName" maxlength="24"></div><div class="field"><label>密码</label><input id="regPwd" type="password" minlength="6"></div></div><div class="field"><label>确认密码</label><input id="regPwd2" type="password"></div><div class="modal-actions"><button class="btn" data-close>取消</button><button class="btn primary" id="registerSubmit">注册</button></div></div></div>
-<div class="modal" id="productModal"><div class="dialog wide"><button class="close" data-close>×</button><h2 id="productModalTitle">新建产品</h2><div class="sub">一次录入产品名称、型号、分类、价格、参数、卖点及多媒体资料。</div><div class="grid2"><div class="field"><label>产品名称</label><input id="pName" maxlength="80" placeholder="例如：便携式筋膜枪"></div><div class="field"><label>型号</label><input id="pModel" maxlength="40" placeholder="例如：L291"></div><div class="field"><label>分类</label><select id="pCategory"></select></div><div class="field"><label>价格</label><input id="pPrice" placeholder="例如：29 元 / 件"></div></div><div class="field"><label>产品简介</label><textarea id="pDesc" maxlength="1000"></textarea></div><div class="field"><label>产品参数</label><textarea id="pSpecs" placeholder="功率：30W\n电池：2000mAh\n充电：Type-C"></textarea></div><div class="field"><label>卖点</label><textarea id="pSelling" placeholder="一行一个卖点，方便销售端复制"></textarea></div><div class="field"><label>产品图片（支持多张）</label><div class="file-row"><input id="pImages" type="file" accept="image/*" multiple><div class="help">白底图、细节图、包装图、场景图等可一次上传。</div></div><div id="editGallery" class="gallery"></div></div><div class="field"><label>产品视频</label><div class="file-row"><input id="pVideo" type="file" accept="video/*"><div class="help">上传后进入云端产品资料库。</div></div></div><div class="modal-actions"><button class="btn" data-close>取消</button><button class="btn primary" id="saveProductBtn">保存产品</button></div></div></div>
-<div class="modal" id="detailModal"><div class="dialog wide"><button class="close" data-close>×</button><div id="detailContent"></div></div></div>
-<div class="modal" id="commentModal"><div class="dialog"><button class="close" data-close>×</button><h2>留言</h2><div class="sub" id="commentSub"></div><div id="commentList"></div><div class="field" style="margin-top:14px"><label>留言内容</label><textarea id="commentText" maxlength="600" placeholder="写下需求、问题或对产品的反馈…"></textarea></div><div class="modal-actions"><button class="btn" data-close>关闭</button><button class="btn primary" id="sendCommentBtn">发送留言</button></div></div></div>
-<div class="modal" id="contactModal"><div class="dialog"><button class="close" data-close>×</button><h2>联系我们</h2><div class="sub">普通用户可提交合作、采购、产品需求等信息。</div><div class="field"><label>联系方式</label><input id="contactWay" placeholder="微信 / 邮箱 / 电话均可"></div><div class="field"><label>留言</label><textarea id="contactText" maxlength="1000" placeholder="请描述你的需求"></textarea></div><div class="modal-actions"><button class="btn" data-close>取消</button><button class="btn primary" id="sendContactBtn">提交</button></div></div></div>
-<div class="modal" id="usersModal"><div class="dialog wide"><button class="close" data-close>×</button><h2>用户管理</h2><div class="sub">超级管理员可以查看账号资料、禁言和解除禁言。</div><div id="usersList"></div></div></div>
-<div class="modal" id="messagesModal"><div class="dialog wide"><button class="close" data-close>×</button><h2>留言中心</h2><div class="sub">查看产品留言和联系我们消息。</div><div id="messagesList"></div></div></div>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a2038">
+<meta name="description" content="产品智库 · 开发、产品与销售资料中心">
+<title>产品智库 · Product Intelligence Hub</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root{
+  --navy:#0a2038;
+  --navy2:#123b5d;
+  --ink:#132536;
+  --muted:#708297;
+  --line:#dce5ed;
+  --white:#fff;
+  --gold:#b28a4a;
+  --gold2:#d5b679;
+  --blue:#2d6b9d;
+  --danger:#b94a5a;
+  --success:#2d7a62;
+  --shadow:0 20px 60px rgba(17,43,66,.10);
+  --r:18px;
+  --max:1320px;
+}
+
+*{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  background:linear-gradient(180deg,#fbfcfe,#f5f8fb);
+  color:var(--ink);
+  font:14px/1.7 Inter,"Noto Sans SC",system-ui,sans-serif
+}
+
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+a{text-decoration:none;color:inherit}
+
+.topline{
+  height:4px;
+  background:linear-gradient(90deg,var(--navy),var(--gold2),var(--navy2))
+}
+
+nav{
+  position:sticky;
+  top:0;
+  z-index:50;
+  display:flex;
+  align-items:center;
+  gap:22px;
+  padding:14px max(18px,calc((100vw - var(--max))/2 + 18px));
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(220,229,237,.85)
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:250px
+}
+
+.mark{
+  width:40px;
+  height:40px;
+  border-radius:11px;
+  background:var(--navy);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-weight:800
+}
+
+.brand h1{
+  font-size:16px;
+  margin:0;
+  color:var(--navy)
+}
+
+.brand small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:1.8px
+}
+
+.search{
+  position:relative;
+  flex:1;
+  max-width:520px
+}
+
+.search input{
+  width:100%;
+  height:42px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:0 16px 0 40px;
+  background:#f8fafc;
+  outline:none
+}
+
+.search input:focus{
+  border-color:#adc3d4;
+  box-shadow:0 0 0 3px rgba(45,107,157,.08)
+}
+
+.search span{
+  position:absolute;
+  left:15px;
+  top:7px;
+  color:var(--muted);
+  font-size:18px
+}
+
+.nav-actions{
+  margin-left:auto;
+  display:flex;
+  gap:8px;
+  align-items:center
+}
+
+.btn{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--ink);
+  padding:9px 14px;
+  border-radius:10px;
+  transition:.2s
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 20px rgba(17,43,66,.08)
+}
+
+.btn.primary{
+  background:var(--navy);
+  border-color:var(--navy);
+  color:#fff
+}
+
+.btn.gold{
+  background:var(--gold);
+  border-color:var(--gold);
+  color:#fff
+}
+
+.btn.danger{
+  color:var(--danger);
+  border-color:#edc4ca
+}
+
+.wrap{
+  max-width:var(--max);
+  margin:auto;
+  padding:28px 18px 72px
+}
+
+.hero{
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:24px;
+  padding:36px;
+  border-radius:26px;
+  background:linear-gradient(125deg,#0a2038,#143e60 65%,#1d527a);
+  color:#fff;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  position:relative
+}
+
+.hero:after{
+  content:"";
+  position:absolute;
+  right:-80px;
+  bottom:-140px;
+  width:360px;
+  height:360px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:
+    0 0 0 30px rgba(255,255,255,.03),
+    0 0 0 80px rgba(255,255,255,.02)
+}
+
+.eyebrow{
+  font-size:10px;
+  letter-spacing:2px;
+  color:#d8e8f4
+}
+
+.hero h2{
+  font-size:clamp(30px,4.2vw,50px);
+  line-height:1.12;
+  margin:10px 0 14px
+}
+
+.hero p{
+  max-width:700px;
+  color:#d2e1ec;
+  margin:0
+}
+
+.hero-actions{
+  display:flex;
+  gap:10px;
+  margin-top:22px
+}
+
+.hero .btn{
+  background:rgba(255,255,255,.09);
+  border-color:rgba(255,255,255,.18);
+  color:#fff
+}
+
+.hero .btn.primary{
+  background:#fff;
+  color:var(--navy);
+  border-color:#fff
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  align-content:end
+}
+
+.stat{
+  padding:16px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);
+  border-radius:15px
+}
+
+.stat small{
+  color:#b9cad7
+}
+
+.stat b{
+  display:block;
+  font-size:24px;
+  margin-top:3px
+}
+
+.adminbar{
+  display:none;
+  margin:20px 0 16px;
+  padding:14px 16px;
+  background:#fcfbf8;
+  border:1px solid #eadfcb;
+  border-radius:15px
+}
+
+.adminbar.show{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px
+}
+
+.adminbar strong{color:#795a29}
+
+.admin-actions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap
+}
+
+.toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:26px 0 14px
+}
+
+.tabs{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap
+}
+
+.tab{
+  padding:8px 13px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+  color:var(--muted)
+}
+
+.tab.active{
+  background:var(--navy);
+  border-color:var(--navy);
+  color:#fff
+}
+
+.layout{
+  display:grid;
+  grid-template-columns:250px minmax(0,1fr);
+  gap:18px
+}
+
+.panel,.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  box-shadow:0 10px 35px rgba(17,43,66,.05)
+}
+
+.panel{padding:16px}
+
+.panel h3{
+  font-size:11px;
+  letter-spacing:1.3px;
+  color:var(--muted);
+  margin:0 0 12px
+}
+
+.category{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px;
+  border-radius:11px;
+  border:1px solid transparent;
+  margin-bottom:4px;
+  cursor:pointer
+}
+
+.category:hover{
+  background:#f8fafc
+}
+
+.category.active{
+  background:#f1f6fa;
+  border-color:#d9e5ef
+}
+
+.category small{
+  display:block;
+  color:var(--muted);
+  font-size:10px
+}
+
+.cat-main{flex:1}
+
+.pill{
+  padding:2px 7px;
+  border-radius:999px;
+  background:#eef3f7;
+  color:#617488;
+  font-size:10px
+}
+
+.catalog{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px
+}
+
+.product-card{
+  overflow:hidden
+}
+
+.product-cover{
+  height:230px;
+  background:#eaf0f4;
+  position:relative
+}
+
+.product-cover img{
+  width:100%;
+  height:100%;
+  object-fit:cover
+}
+
+.product-cover .tag{
+  position:absolute;
+  left:12px;
+  top:12px;
+  background:rgba(10,32,56,.88);
+  color:#fff;
+  padding:5px 8px;
+  border-radius:7px;
+  font-size:10px
+}
+
+.pc-body{padding:16px}
+
+.pc-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px
+}
+
+.pc-body h3{
+  font-size:18px;
+  line-height:1.35;
+  margin:0 0 5px
+}
+
+.price{
+  color:var(--navy);
+  font-weight:700;
+  white-space:nowrap
+}
+
+.meta{
+  color:var(--muted);
+  font-size:11px
+}
+
+.chips{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin:10px 0
+}
+
+.chip{
+  background:#f3f6f8;
+  border:1px solid #e2e9ee;
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:10px;
+  color:#5b7082
+}
+
+.pc-actions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:12px
+}
+
+.mini{
+  padding:7px 10px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:#fff;
+  color:#5a6f84;
+  font-size:11px
+}
+
+.mini:hover{
+  background:#f7fafc
+}
+
+.mini.danger{
+  color:var(--danger);
+  border-color:#edc4ca
+}
+
+.view-note{
+  margin-top:10px;
+  color:#8796a5;
+  font-size:10px
+}
+
+.empty{
+  padding:70px 15px;
+  text-align:center;
+  color:var(--muted);
+  border:1px dashed #d6e0e7;
+  border-radius:16px
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  display:none;
+  place-items:center;
+  padding:18px;
+  background:rgba(6,20,34,.55);
+  backdrop-filter:blur(8px);
+  z-index:100
+}
+
+.modal.show{
+  display:grid
+}
+
+.dialog{
+  width:min(760px,100%);
+  max-height:90vh;
+  overflow:auto;
+  padding:24px;
+  border-radius:20px;
+  background:#fff;
+  border:1px solid var(--line);
+  box-shadow:0 30px 100px rgba(6,20,34,.25)
+}
+
+.dialog.wide{
+  width:min(1080px,100%)
+}
+
+.close{
+  float:right;
+  width:34px;
+  height:34px;
+  border-radius:9px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-size:20px
+}
+
+.dialog h2{
+  margin:0 0 4px;
+  color:var(--navy)
+}
+
+.sub{
+  color:var(--muted);
+  font-size:11px;
+  margin-bottom:18px
+}
+
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px
+}
+
+.field{
+  margin-bottom:12px
+}
+
+.field label{
+  display:block;
+  font-size:11px;
+  color:var(--muted);
+  margin-bottom:5px
+}
+
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:10px 11px;
+  outline:none;
+  background:#fbfcfd
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus{
+  border-color:#adc3d4;
+  box-shadow:0 0 0 3px rgba(45,107,157,.08)
+}
+
+.field textarea{
+  min-height:110px;
+  resize:vertical
+}
+
+.file-row{
+  border:1px dashed #cbd7df;
+  padding:12px;
+  border-radius:12px;
+  background:#fafcfd
+}
+
+.help{
+  font-size:10px;
+  color:var(--muted);
+  margin-top:5px
+}
+
+.modal-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:16px
+}
+
+.sep{
+  height:1px;
+  background:#e7edf2;
+  margin:18px 0
+}
+
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-top:10px
+}
+
+.gallery img,
+.gallery video{
+  width:100%;
+  aspect-ratio:1/1;
+  object-fit:cover;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:#f1f4f8
+}
+
+.gallery-item{
+  position:relative
+}
+
+.gallery-item .remove-media{
+  position:absolute;
+  top:5px;
+  right:5px;
+  width:28px;
+  height:28px;
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:8px;
+  background:rgba(255,255,255,.92);
+  color:var(--danger);
+  font-weight:700
+}
+
+.info-list{
+  display:grid;
+  grid-template-columns:140px 1fr;
+  gap:8px 14px;
+  font-size:12px
+}
+
+.info-list dt{
+  color:var(--muted)
+}
+
+.info-list dd{
+  margin:0;
+  word-break:break-word
+}
+
+.comment{
+  padding:11px 0;
+  border-bottom:1px solid #edf1f4
+}
+
+.notice{
+  padding:10px 12px;
+  border-radius:10px;
+  background:#f5f9fc;
+  color:#5f7486;
+  font-size:11px
+}
+
+.role-badge{
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:10px;
+  background:#edf4f8;
+  color:#2f5c7d
+}
+
+.role-admin{
+  background:#f6efe3;
+  color:#8a672f
+}
+
+.role-super{
+  background:#eef0f6;
+  color:#3f4868
+}
+
+.footer{
+  text-align:center;
+  color:#8796a5;
+  font-size:10px;
+  padding:28px 0
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:26px;
+  transform:translateX(-50%);
+  z-index:200;
+  display:flex;
+  flex-direction:column;
+  gap:8px
+}
+
+.toast div{
+  padding:10px 16px;
+  border-radius:10px;
+  background:var(--navy);
+  color:#fff;
+  box-shadow:0 12px 30px rgba(6,20,34,.18);
+  max-width:min(92vw,600px);
+  text-align:center
+}
+
+.toast .err{
+  background:var(--danger)
+}
+
+table{
+  width:100%;
+  border-collapse:collapse
+}
+
+th,td{
+  padding:10px 8px;
+  border-bottom:1px solid #edf1f5;
+  text-align:left;
+  font-size:11px;
+  vertical-align:top
+}
+
+th{color:var(--muted)}
+
+.status-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  display:inline-block;
+  background:var(--success);
+  margin-right:5px
+}
+
+@media(max-width:980px){
+  nav{flex-wrap:wrap}
+  .brand{min-width:auto}
+  .search{
+    order:3;
+    flex-basis:100%;
+    max-width:none
+  }
+  .hero{grid-template-columns:1fr}
+  .layout{grid-template-columns:1fr}
+  .catalog{grid-template-columns:1fr 1fr}
+  .grid2{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:680px){
+  .catalog{grid-template-columns:1fr}
+  .grid2{grid-template-columns:1fr}
+  .hero{padding:24px}
+  .wrap{padding:18px 12px 50px}
+  .gallery{grid-template-columns:repeat(2,1fr)}
+  .adminbar.show{
+    flex-direction:column;
+    align-items:flex-start
+  }
+  .info-list{
+    grid-template-columns:1fr
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="topline"></div>
+
+<nav>
+  <a class="brand" href="#">
+    <span class="mark">PI</span>
+    <span>
+      <h1>产品智库</h1>
+      <small>PRODUCT INTELLIGENCE HUB</small>
+    </span>
+  </a>
+
+  <div class="search">
+    <span>⌕</span>
+    <input id="search" placeholder="搜索产品、型号、分类、参数…">
+  </div>
+
+  <div class="nav-actions" id="navActions"></div>
+</nav>
+
+<div class="wrap">
+
+  <section class="hero">
+    <div>
+      <div class="eyebrow">PRODUCT DEVELOPMENT / SALES ENABLEMENT</div>
+      <h2>新品资料，从开发到销售，一处管理。</h2>
+
+      <p>
+        管理员上传新品图片、视频、参数、价格与销售资料；
+        销售端按分类快速浏览并一键复制资料；
+        普通用户可查看产品内容、留言并联系我们。
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn primary" id="browseBtn">浏览产品</button>
+        <button class="btn" id="contactBtn">联系我们</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <small>产品数量</small>
+        <b id="sProducts">0</b>
+      </div>
+
+      <div class="stat">
+        <small>分类</small>
+        <b id="sCats">0</b>
+      </div>
+
+      <div class="stat">
+        <small>管理员</small>
+        <b>11</b>
+      </div>
+
+      <div class="stat">
+        <small>资料状态</small>
+        <b>集中管理</b>
+      </div>
+    </div>
+  </section>
+
+  <div class="adminbar" id="adminbar">
+
+    <div>
+      <strong id="adminWelcome">管理员工作台</strong>
+
+      <div class="meta">
+        管理员可以发布、编辑、删除产品资料；
+        超级管理员还可以管理用户与禁言。
+      </div>
+    </div>
+
+    <div class="admin-actions">
+
+      <button class="btn gold" id="newProductBtn">
+        ＋ 新建产品
+      </button>
+
+      <button class="btn" id="userManageBtn">
+        用户管理
+      </button>
+
+      <button class="btn" id="messageManageBtn">
+        留言中心
+      </button>
+
+    </div>
+  </div>
+
+  <div class="toolbar">
+
+    <div class="tabs" id="tabs"></div>
+
+    <div class="meta">
+      支持按名称、型号、参数、分类搜索
+    </div>
+
+  </div>
+
+  <div class="layout">
+
+    <aside class="panel">
+
+      <h3>PRODUCT CATEGORIES</h3>
+
+      <div id="categories"></div>
+
+      <div class="sep"></div>
+
+      <div class="notice">
+        普通用户：浏览产品、查看资料、留言、联系我们。<br>
+        管理员：发布/编辑/删除产品。<br>
+        超级管理员：全部权限。
+      </div>
+
+    </aside>
+
+    <main>
+      <div id="catalog" class="catalog"></div>
+    </main>
+
+  </div>
+
+  <div class="footer">
+    PRODUCT INTELLIGENCE HUB · 产品开发资料中心 · 管理员与用户权限独立
+  </div>
+
+</div>
+
+
+<!-- 登录 -->
+
+<div class="modal" id="loginModal">
+
+  <div class="dialog">
+
+    <button class="close" data-close>×</button>
+
+    <h2>登录</h2>
+
+    <div class="sub">
+      普通用户与管理员统一从这里登录
+    </div>
+
+    <div class="field">
+      <label>账号</label>
+      <input id="loginName" autocomplete="username">
+    </div>
+
+    <div class="field">
+      <label>密码</label>
+      <input id="loginPwd" type="password" autocomplete="current-password">
+    </div>
+
+    <div class="notice">
+      使用注册时的用户名和密码登录。
+    </div>
+
+    <div class="modal-actions">
+
+      <button class="btn" data-close>
+        取消
+      </button>
+
+      <button class="btn primary" id="loginSubmit">
+        登录
+      </button>
+
+    </div>
+
+    <div style="margin-top:12px;text-align:center;font-size:11px;color:var(--muted)">
+      没有账号？
+      <a href="#" id="toRegister" style="color:var(--blue)">
+        注册普通用户
+      </a>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- 注册 -->
+
+<div class="modal" id="registerModal">
+
+  <div class="dialog">
+
+    <button class="close" data-close>×</button>
+
+    <h2>注册普通用户</h2>
+
+    <div class="sub">
+      注册后账号保存到 Supabase，换设备仍然可以使用。
+    </div>
+
+    <div class="grid2">
+
+      <div class="field">
+        <label>用户名</label>
+        <input id="regName" maxlength="24">
+      </div>
+
+      <div class="field">
+        <label>密码</label>
+        <input id="regPwd" type="password" minlength="6">
+      </div>
+
+    </div>
+
+    <div class="field">
+      <label>确认密码</label>
+      <input id="regPwd2" type="password">
+    </div>
+
+    <div class="modal-actions">
+
+      <button class="btn" data-close>
+        取消
+      </button>
+
+      <button class="btn primary" id="registerSubmit">
+        注册
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- 产品编辑 -->
+
+<div class="modal" id="productModal">
+
+  <div class="dialog wide">
+
+    <button class="close" data-close>×</button>
+
+    <h2 id="productModalTitle">新建产品</h2>
+
+    <div class="sub">
+      一次录入产品名称、型号、分类、价格、参数、卖点及多媒体资料。
+    </div>
+
+    <div class="grid2">
+
+      <div class="field">
+        <label>产品名称</label>
+        <input id="pName" maxlength="80" placeholder="例如：便携式筋膜枪">
+      </div>
+
+      <div class="field">
+        <label>型号</label>
+        <input id="pModel" maxlength="40" placeholder="例如：L291">
+      </div>
+
+      <div class="field">
+        <label>分类</label>
+        <select id="pCategory"></select>
+      </div>
+
+      <div class="field">
+        <label>价格</label>
+        <input id="pPrice" placeholder="例如：29 元 / 件">
+      </div>
+
+    </div>
+
+    <div class="field">
+      <label>产品简介</label>
+      <textarea id="pDesc" maxlength="1000"></textarea>
+    </div>
+
+    <div class="field">
+      <label>产品参数</label>
+      <textarea id="pSpecs" placeholder="功率：30W&#10;电池：2000mAh&#10;充电：Type-C"></textarea>
+    </div>
+
+    <div class="field">
+      <label>卖点</label>
+      <textarea id="pSelling" placeholder="一行一个卖点，方便销售端复制"></textarea>
+    </div>
+
+    <div class="field">
+
+      <label>产品图片（支持多张）</label>
+
+      <div class="file-row">
+
+        <input id="pImages" type="file" accept="image/*" multiple>
+
+        <div class="help">
+          白底图、细节图、包装图、场景图等可一次上传。
+        </div>
+
+      </div>
+
+      <div id="editGallery" class="gallery"></div>
+
+    </div>
+
+
+    <div class="field">
+
+      <label>产品视频</label>
+
+      <div class="file-row">
+
+        <input id="pVideo" type="file" accept="video/*">
+
+        <div class="help">
+          上传后进入云端产品资料库。
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="modal-actions">
+
+      <button class="btn" data-close>
+        取消
+      </button>
+
+      <button class="btn primary" id="saveProductBtn">
+        保存产品
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- 产品详情 -->
+
+<div class="modal" id="detailModal">
+
+  <div class="dialog wide">
+
+    <button class="close" data-close>×</button>
+
+    <div id="detailContent"></div>
+
+  </div>
+
+</div>
+
+
+<!-- 产品评论 -->
+
+<div class="modal" id="commentModal">
+
+  <div class="dialog">
+
+    <button class="close" data-close>×</button>
+
+    <h2>留言</h2>
+
+    <div class="sub" id="commentSub"></div>
+
+    <div id="commentList"></div>
+
+    <div class="field" style="margin-top:14px">
+
+      <label>留言内容</label>
+
+      <textarea
+        id="commentText"
+        maxlength="600"
+        placeholder="写下需求、问题或对产品的反馈…">
+      </textarea>
+
+    </div>
+
+    <div class="modal-actions">
+
+      <button class="btn" data-close>
+        关闭
+      </button>
+
+      <button class="btn primary" id="sendCommentBtn">
+        发送留言
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- 联系我们 -->
+
+<div class="modal" id="contactModal">
+
+  <div class="dialog">
+
+    <button class="close" data-close>×</button>
+
+    <h2>联系我们</h2>
+
+    <div class="sub">
+      普通用户可提交合作、采购、产品需求等信息。
+    </div>
+
+    <div class="field">
+
+      <label>联系方式</label>
+
+      <input
+        id="contactWay"
+        placeholder="微信 / 邮箱 / 电话均可">
+
+    </div>
+
+    <div class="field">
+
+      <label>留言</label>
+
+      <textarea
+        id="contactText"
+        maxlength="1000"
+        placeholder="请描述你的需求">
+      </textarea>
+
+    </div>
+
+    <div class="modal-actions">
+
+      <button class="btn" data-close>
+        取消
+      </button>
+
+      <button class="btn primary" id="sendContactBtn">
+        提交
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- 用户管理 -->
+
+<div class="modal" id="usersModal">
+
+  <div class="dialog wide">
+
+    <button class="close" data-close>×</button>
+
+    <h2>用户管理</h2>
+
+    <div class="sub">
+      超级管理员可以查看账号资料、禁言和解除禁言。
+    </div>
+
+    <div id="usersList"></div>
+
+  </div>
+
+</div>
+
+
+<!-- 留言中心 -->
+
+<div class="modal" id="messagesModal">
+
+  <div class="dialog wide">
+
+    <button class="close" data-close>×</button>
+
+    <h2>留言中心</h2>
+
+    <div class="sub">
+      查看产品留言和联系我们消息。
+    </div>
+
+    <div id="messagesList"></div>
+
+  </div>
+
+</div>
+
+
 <div class="toast" id="toast"></div>
+
+
 <script>
-const SUPABASE_URL='https://zzkujghfxbjafvmlkwqz.supabase.co',SUPABASE_KEY='sb_publishable_LYoWqn32khuKfipDWW40MQ_ggoW0FGf';
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);const ROLE={USER:'user',ADMIN:'admin',SUPER:'superadmin'};const CATS=[{id:'new',name:'新品资料',icon:'✦',desc:'新产品首发与立项'},{id:'electronics',name:'电子产品',icon:'▣',desc:'消费电子与小家电'},{id:'home',name:'家居生活',icon:'⌂',desc:'家居与日用'},{id:'beauty',name:'个护美妆',icon:'◌',desc:'个护美容'},{id:'outdoor',name:'户外休闲',icon:'◒',desc:'户外与旅行'},{id:'other',name:'其他',icon:'＋',desc:'其他产品'}];let state={user:null,profile:null,products:[],q:'',cat:'all',editingId:null,commentProduct:null};
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function toast(t,err=false){const n=document.createElement('div');n.textContent=t;if(err)n.className='err';$('#toast').appendChild(n);setTimeout(()=>n.remove(),2600)}function openModal(id){$('#'+id).classList.add('show')}function closeModal(){$$('.modal').forEach(x=>x.classList.remove('show'));state.editingId=null}$$('[data-close]').forEach(x=>x.onclick=closeModal);$$('.modal').forEach(m=>m.onclick=e=>{if(e.target===m)closeModal()});function roleText(r){return r===ROLE.SUPER?'超级管理员':r===ROLE.ADMIN?'管理员':'普通用户'}function isAdmin(){return !!state.profile&&['admin','superadmin'].includes(state.profile.role)}function isSuper(){return state.profile?.role===ROLE.SUPER}function catName(id){return CATS.find(c=>c.id===id)?.name||'其他'}function pseudoEmail(n){return n.toLowerCase().replace(/[^a-z0-9._-]/g,'_')+'@accounts.leo-product-center.invalid'}
-async function loadProfile(user){if(!user){state.profile=null;return}const {data,error}=await sb.from('profiles').select('*').eq('id',user.id).single();if(error)throw error;state.profile=data}async function loadProducts(){let q=sb.from('products').select('*,product_media(*)').order('created_at',{ascending:false});if(!isAdmin())q=q.eq('published',true);const {data,error}=await q;if(error)throw error;state.products=data||[]}async function boot(){const {data}=await sb.auth.getUser();state.user=data.user||null;try{await loadProfile(state.user);await loadProducts();renderAll()}catch(e){console.error(e);toast('数据库尚未初始化，请先运行仓库里的 supabase/schema.sql',true)}}sb.auth.onAuthStateChange(async(_e,session)=>{state.user=session?.user||null;try{await loadProfile(state.user);await loadProducts();renderAll()}catch(e){console.error(e)}});
-function renderNav(){if(!state.profile){$('#navActions').innerHTML='<button class="btn" id="loginBtn">登录</button><button class="btn primary" id="regBtn">注册</button>'}else{$('#navActions').innerHTML=`<button class="btn">${esc(state.profile.username)} <span class="role-badge ${state.profile.role===ROLE.SUPER?'role-super':state.profile.role===ROLE.ADMIN?'role-admin':''}">${roleText(state.profile.role)}</span></button><button class="btn" id="logoutBtn">退出</button>`;$('#logoutBtn').onclick=()=>sb.auth.signOut()}$('#loginBtn')?.addEventListener('click',()=>openModal('loginModal'));$('#regBtn')?.addEventListener('click',()=>openModal('registerModal'));$('#adminbar').classList.toggle('show',isAdmin());if(isAdmin()){$('#adminWelcome').textContent=state.profile.username+' · '+roleText(state.profile.role)}}
-function renderCats(){let h='<div class="category '+(state.cat==='all'?'active':'')+'" data-cat="all"><span>▦</span><span class="cat-main"><b>全部产品</b><small>完整资料库</small></span><span class="pill">'+state.products.length+'</span></div>';for(const c of CATS){const count=state.products.filter(p=>p.category===c.id).length;h+=`<div class="category ${state.cat===c.id?'active':''}" data-cat="${c.id}"><span>${c.icon}</span><span class="cat-main"><b>${c.name}</b><small>${c.desc}</small></span><span class="pill">${count}</span></div>`}$('#categories').innerHTML=h;$$('[data-cat]').forEach(x=>x.onclick=()=>{state.cat=x.dataset.cat;renderCats();renderCatalog()});$('#tabs').innerHTML=CATS.map(c=>`<button class="tab ${state.cat===c.id?'active':''}" data-tab="${c.id}">${c.icon} ${c.name}</button>`).join('');$$('[data-tab]').forEach(x=>x.onclick=()=>{state.cat=x.dataset.tab;renderCats();renderCatalog()})}
-function media(p,type){return (p.product_media||[]).filter(x=>type?x.media_type===type:true).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0))}function cover(p){return media(p,'image')[0]?.public_url||''}function filtered(){let a=state.products.filter(p=>state.cat==='all'||p.category===state.cat);if(state.q){const q=state.q.toLowerCase();a=a.filter(p=>(p.name+' '+p.model+' '+p.desc+' '+p.specs+' '+p.selling).toLowerCase().includes(q))}return a}
-function renderCatalog(){const a=filtered();$('#catalog').innerHTML=a.length?a.map(p=>{const imgs=media(p,'image');return `<article class="card product-card"><div class="product-cover">${cover(p)?`<img src="${esc(cover(p))}" loading="lazy">`:'<div style="height:100%;display:grid;place-items:center;color:#8a9bab">暂无图片</div>'}<span class="tag">${esc(catName(p.category))}</span></div><div class="pc-body"><div class="pc-top"><div><h3>${esc(p.name)}</h3><div class="meta">型号：${esc(p.model||'未填写')}</div></div><div class="price">${esc(p.price||'')}</div></div><div class="meta" style="margin-top:7px">${esc(p.desc||'暂无简介')}</div><div class="chips">${(p.selling||'').split('\n').filter(Boolean).slice(0,4).map(x=>`<span class="chip">${esc(x)}</span>`).join('')}</div><div class="pc-actions"><button class="mini" data-open="${p.id}">查看资料</button><button class="mini" data-copy="${p.id}">复制资料</button>${state.profile?`<button class="mini" data-comment="${p.id}">留言</button>`:''}${isAdmin()?`<button class="mini" data-edit="${p.id}">编辑</button><button class="mini danger" data-delete="${p.id}">删除</button>`:''}</div><div class="view-note">${imgs.length} 张图片 · ${media(p,'video').length?'含视频':'暂无视频'}</div></div></article>`}).join(''):'<div class="empty" style="grid-column:1/-1">暂无产品资料<br><span>管理员可以在工作台中新建产品。</span></div>';$$('[data-open]').forEach(x=>x.onclick=()=>showProduct(x.dataset.open));$$('[data-copy]').forEach(x=>x.onclick=()=>copyProduct(x.dataset.copy));$$('[data-edit]').forEach(x=>x.onclick=()=>editProduct(x.dataset.edit));$$('[data-delete]').forEach(x=>x.onclick=()=>deleteProduct(x.dataset.delete));$$('[data-comment]').forEach(x=>x.onclick=()=>openComments(x.dataset.comment));$('#sProducts').textContent=state.products.length;$('#sCats').textContent=CATS.length}
-function renderAll(){renderNav();renderCats();renderCatalog()}
-function initForm(p){$('#pCategory').innerHTML=CATS.map(c=>`<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');$('#editGallery').innerHTML='';if(p){$('#productModalTitle').textContent='编辑产品';$('#pName').value=p.name||'';$('#pModel').value=p.model||'';$('#pCategory').value=p.category;$('#pPrice').value=p.price||'';$('#pDesc').value=p.desc||'';$('#pSpecs').value=p.specs||'';$('#pSelling').value=p.selling||'';media(p,'image').slice(0,12).forEach(m=>{const i=document.createElement('img');i.src=m.public_url;$('#editGallery').appendChild(i)})}else{$('#productModalTitle').textContent='新建产品';['pName','pModel','pPrice','pDesc','pSpecs','pSelling'].forEach(id=>$('#'+id).value='');$('#pImages').value='';$('#pVideo').value='';$('#pCategory').value='electronics'}}$('#newProductBtn').onclick=()=>{if(!isAdmin())return;state.editingId=null;initForm();openModal('productModal')}
-async function uploadFiles(productId){const images=[...$('#pImages').files],video=$('#pVideo').files[0];for(let i=0;i<images.length;i++){const f=images[i],path=`products/${productId}/images/${crypto.randomUUID()}-${f.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;const {error}=await sb.storage.from('product-media').upload(path,f,{upsert:false,contentType:f.type});if(error)throw error;const {data}=sb.storage.from('product-media').getPublicUrl(path);const r=await sb.from('product_media').insert({product_id:productId,media_type:'image',storage_path:path,public_url:data.publicUrl,sort_order:i});if(r.error)throw r.error}if(video){const path=`products/${productId}/videos/${crypto.randomUUID()}-${video.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`,u=await sb.storage.from('product-media').upload(path,video,{upsert:false,contentType:video.type});if(u.error)throw u.error;const {data}=sb.storage.from('product-media').getPublicUrl(path);const r=await sb.from('product_media').insert({product_id:productId,media_type:'video',storage_path:path,public_url:data.publicUrl,sort_order:999});if(r.error)throw r.error}}
-$('#saveProductBtn').onclick=async()=>{try{if(!isAdmin())throw new Error('无权限');const payload={name:$('#pName').value.trim(),model:$('#pModel').value.trim(),category:$('#pCategory').value,price:$('#pPrice').value.trim(),desc:$('#pDesc').value.trim(),specs:$('#pSpecs').value.trim(),selling:$('#pSelling').value.trim()};if(payload.name.length<2)throw new Error('产品名称过短');let id=state.editingId;if(id){const {error}=await sb.from('products').update(payload).eq('id',id);if(error)throw error}else{const {data,error}=await sb.from('products').insert({...payload,published:$('#pStatus')?.value!=='draft',created_by:state.user.id}).select().single();if(error)throw error;id=data.id}await uploadFiles(id);closeModal();await loadProducts();renderAll();toast('产品已保存')}catch(e){toast(e.message||'保存失败',true)}};
-async function editProduct(id){if(!isAdmin())return;state.editingId=id;initForm(state.products.find(x=>x.id===id));openModal('productModal')}async function deleteProduct(id){if(!isAdmin()||!confirm('确定删除该产品资料？'))return;const {error}=await sb.from('products').delete().eq('id',id);if(error)return toast(error.message,true);await loadProducts();renderAll();toast('产品已删除')}
-async function copyImages(urls){if(!urls.length)return toast('暂无图片',true);try{if(navigator.clipboard&&window.ClipboardItem){const pairs=[];for(const u of urls.slice(0,12)){const b=await (await fetch(u)).blob();if(b.type.startsWith('image/'))pairs.push([b.type,b])}if(pairs.length){const map={};pairs.forEach(([t,b])=>map[t]=b);await navigator.clipboard.write([new ClipboardItem(map)]);toast('已复制图片')}}catch(e){urls.forEach((u,i)=>setTimeout(()=>{const a=document.createElement('a');a.href=u;a.download='product-image-'+(i+1);a.target='_blank';a.click()},i*160));toast('浏览器限制多图复制，已改为批量打开图片',true)}}
-function copyProduct(id){const p=state.products.find(x=>x.id===id);if(!p)return;const t=`产品名称：${p.name}\n型号：${p.model||'—'}\n分类：${catName(p.category)}\n价格：${p.price||'—'}\n\n产品简介：\n${p.desc||'—'}\n\n参数：\n${p.specs||'—'}\n\n卖点：\n${p.selling||'—'}`;navigator.clipboard?.writeText(t).then(()=>toast('产品资料已复制')).catch(()=>toast('复制失败，请手动复制',true))}
-function showProduct(id){const p=state.products.find(x=>x.id===id);if(!p)return;const imgs=media(p,'image'),videos=media(p,'video');$('#detailContent').innerHTML=`<div class="pc-top"><div><div class="eyebrow" style="color:var(--gold)">${esc(catName(p.category))}</div><h2 style="margin-top:5px">${esc(p.name)}</h2><div class="meta">型号：${esc(p.model||'未填写')} · ${esc(p.price||'')}</div></div><button class="btn gold" id="copyAllBtn">一键复制图片</button></div><div class="gallery" style="margin-top:18px">${imgs.map(m=>`<img src="${esc(m.public_url)}" loading="lazy">`).join('')||'<div class="notice" style="grid-column:1/-1">暂无图片</div>'}</div>${videos.length?videos.map(v=>`<video controls class="product-cover" style="margin-top:12px;height:auto;max-height:480px" src="${esc(v.public_url)}"></video>`).join(''):''}<div class="sep"></div><dl class="info-list"><dt>产品简介</dt><dd>${esc(p.desc||'')}</dd><dt>产品参数</dt><dd>${esc(p.specs||'').replace(/\n/g,'<br>')}</dd><dt>产品卖点</dt><dd>${esc(p.selling||'').replace(/\n/g,'<br>')}</dd></dl><div class="sep"></div><div class="pc-actions"><button class="btn primary" id="detailCommentBtn">留言</button><button class="btn" id="detailContactBtn">联系我们</button></div>`;$('#copyAllBtn').onclick=()=>copyImages(imgs.map(m=>m.public_url));$('#detailCommentBtn').onclick=()=>{closeModal();openComments(p.id)};$('#detailContactBtn').onclick=()=>openModal('contactModal');openModal('detailModal')}
-async function openComments(id){if(!state.profile)return openModal('loginModal');state.commentProduct=id;const {data,error}=await sb.from('comments').select('*,profiles(username)').eq('product_id',id).order('created_at',{ascending:false});if(error)return toast(error.message,true);const p=state.products.find(x=>x.id===id);$('#commentSub').textContent=p?.name||'';$('#commentList').innerHTML=data?.length?data.map(c=>`<div class="comment"><b>${esc(c.profiles?.username||'用户')}</b> <small>${new Date(c.created_at).toLocaleString()}</small><div>${esc(c.body)}</div></div>`).join(''):'<div class="empty" style="padding:26px 10px">暂无留言</div>';$('#commentText').value='';openModal('commentModal')}
-$('#sendCommentBtn').onclick=async()=>{if(!state.profile)return openModal('loginModal');const t=$('#commentText').value.trim();if(t.length<2)return toast('留言内容太短',true);const {data:me}=await sb.auth.getUser();const {error}=await sb.from('comments').insert({product_id:state.commentProduct,author_id:me.user.id,body:t});if(error)return toast(error.message,true);toast('留言已发送');openComments(state.commentProduct)};
-$('#sendContactBtn').onclick=async()=>{if(!state.profile)return openModal('loginModal');const way=$('#contactWay').value.trim(),text=$('#contactText').value.trim();if(!way||text.length<2)return toast('请填写联系方式和留言',true);const {data:me}=await sb.auth.getUser();const {error}=await sb.from('contact_messages').insert({author_id:me.user.id,contact_way:way,body:text});if(error)return toast(error.message,true);$('#contactWay').value='';$('#contactText').value='';closeModal();toast('已提交，我们会尽快联系你')};$('#contactBtn').onclick=()=>state.profile?openModal('contactModal'):openModal('loginModal');$('#browseBtn').onclick=()=>document.querySelector('.toolbar').scrollIntoView({behavior:'smooth'});
-$('#loginSubmit').onclick=async()=>{const n=$('#loginName').value.trim(),p=$('#loginPwd').value;if(!n||!p)return toast('请填写账号和密码',true);const {error}=await sb.auth.signInWithPassword({email:pseudoEmail(n),password:p});if(error)return toast('登录失败：账号或密码错误',true);closeModal();toast('登录成功')};$('#registerSubmit').onclick=async()=>{const n=$('#regName').value.trim(),p=$('#regPwd').value,p2=$('#regPwd2').value;if(n.length<2||p.length<6)return toast('用户名至少2位，密码至少6位',true);if(p!==p2)return toast('两次密码不一致',true);const {data,error}=await sb.auth.signUp({email:pseudoEmail(n),password:p,options:{data:{username:n}}});if(error)return toast(error.message,true);if(data.session){closeModal();toast('注册成功')}else toast('注册成功；请确认 Supabase 已关闭 Confirm email')};$('#toRegister').onclick=e=>{e.preventDefault();closeModal();openModal('registerModal')};
-$('#newProductBtn').onclick=()=>{if(isAdmin()){state.editingId=null;initForm();openModal('productModal')}};$('#userManageBtn').onclick=async()=>{if(!isAdmin())return;let q=sb.from('profiles').select('*').order('created_at',{ascending:false});if(!isSuper())q=q.eq('role','user');const {data,error}=await q;if(error)return toast(error.message,true);$('#usersList').innerHTML=(data||[]).length?data.map(u=>`<div class="panel" style="margin-bottom:8px"><div class="pc-top"><div><b>${esc(u.username)}</b> <span class="role-badge ${u.role===ROLE.SUPER?'role-super':u.role===ROLE.ADMIN?'role-admin':''}">${roleText(u.role)}</span><div class="meta">注册时间：${new Date(u.created_at).toLocaleString()} · 状态：${u.muted?'禁言':'正常'}</div></div>${isSuper()&&u.role==='user'?`<button class="btn" data-mute="${u.id}">${u.muted?'解除禁言':'禁言'}</button>`:''}</div></div>`).join(''):'<div class="empty">暂无用户';openModal('usersModal');$$('[data-mute]').forEach(b=>b.onclick=async()=>{const u=data.find(x=>x.id===b.dataset.mute);if(!u)return;const {error}=await sb.from('profiles').update({muted:!u.muted}).eq('id',u.id);if(error)toast(error.message,true);else $('#userManageBtn').click()})};
-$('#messageManageBtn').onclick=async()=>{if(!isAdmin())return;const [{data:c},{data:m}]=await Promise.all([sb.from('comments').select('*,profiles(username),products(name)').order('created_at',{ascending:false}).limit(100),sb.from('contact_messages').select('*,profiles(username)').order('created_at',{ascending:false}).limit(100)]);const rows=[...(c||[]).map(x=>({type:'产品留言',time:x.created_at,user:x.profiles?.username,text:x.body,product:x.products?.name||'—'})),...(m||[]).map(x=>({type:'联系我们',time:x.created_at,user:x.profiles?.username,text:x.body,product:'—'}))].sort((a,b)=>new Date(b.time)-new Date(a.time));$('#messagesList').innerHTML=rows.length?rows.map(x=>`<div class="panel" style="margin-bottom:8px"><b>${esc(x.user||'用户')}</b> <span class="role-badge">${esc(x.type)}</span><div class="meta">${new Date(x.time).toLocaleString()} · ${esc(x.product)}</div><div>${esc(x.text)}</div></div>`).join(''):'<div class="empty">暂无留言</div>';openModal('messagesModal')};
-$('#search').oninput=e=>{state.q=e.target.value.trim();renderCatalog()};addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();$('#search').focus()}});boot();
-</script></body></html>
+/* =========================
+   Supabase 配置
+========================= */
+
+const SUPABASE_URL =
+  'https://zzkujghfxbjafvmlkwqz.supabase.co';
+
+const SUPABASE_KEY =
+  'sb_publishable_LYoWqn32khuKfipDWW40MQ_ggoW0FGf';
+
+const sb = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth:{
+      persistSession:true,
+      autoRefreshToken:true,
+      detectSessionInUrl:true
+    }
+  }
+);
+
+
+/* =========================
+   工具
+========================= */
+
+const $ = selector =>
+  document.querySelector(selector);
+
+const $$ = selector =>
+  document.querySelectorAll(selector);
+
+const ROLE = {
+  USER:'user',
+  ADMIN:'admin',
+  SUPER:'superadmin'
+};
+
+
+const CATS = [
+  {
+    id:'new',
+    name:'新品资料',
+    icon:'✦',
+    desc:'新产品首发与立项'
+  },
+  {
+    id:'electronics',
+    name:'电子产品',
+    icon:'▣',
+    desc:'消费电子与小家电'
+  },
+  {
+    id:'home',
+    name:'家居生活',
+    icon:'⌂',
+    desc:'家居与日用'
+  },
+  {
+    id:'beauty',
+    name:'个护美妆',
+    icon:'◌',
+    desc:'个护与美容'
+  },
+  {
+    id:'outdoor',
+    name:'户外休闲',
+    icon:'◒',
+    desc:'户外与旅行'
+  },
+  {
+    id:'other',
+    name:'其他',
+    icon:'＋',
+    desc:'其他产品'
+  }
+];
+
+
+let state = {
+  user:null,
+  profile:null,
+  products:[],
+  q:'',
+  cat:'all',
+  editingId:null,
+  commentProduct:null
+};
+
+
+/* =========================
+   基础函数
+========================= */
+
+function esc(s){
+  return String(s ?? '').replace(
+    /[&<>"']/g,
+    c => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#39;'
+    }[c])
+  );
+}
+
+
+function toast(text, err=false){
+
+  const node =
+    document.createElement('div');
+
+  node.textContent = text;
+
+  if(err){
+    node.className = 'err';
+  }
+
+  $('#toast').appendChild(node);
+
+  setTimeout(() => {
+    node.remove();
+  }, 3000);
+}
+
+
+function openModal(id){
+  $('#' + id)?.classList.add('show');
+}
+
+
+function closeModal(){
+
+  $$('.modal').forEach(
+    modal => modal.classList.remove('show')
+  );
+
+  state.editingId = null;
+}
+
+
+$$('[data-close]').forEach(
+  button => {
+    button.onclick = closeModal;
+  }
+);
+
+
+$$('.modal').forEach(
+  modal => {
+    modal.onclick = e => {
+      if(e.target === modal){
+        closeModal();
+      }
+    };
+  }
+);
+
+
+function roleText(role){
+
+  if(role === ROLE.SUPER){
+    return '超级管理员';
+  }
+
+  if(role === ROLE.ADMIN){
+    return '管理员';
+  }
+
+  return '普通用户';
+}
+
+
+function isAdmin(){
+  return !!state.profile &&
+    [
+      ROLE.ADMIN,
+      ROLE.SUPER
+    ].includes(state.profile.role);
+}
+
+
+function isSuper(){
+  return state.profile?.role === ROLE.SUPER;
+}
+
+
+function catName(id){
+  return CATS.find(
+    c => c.id === id
+  )?.name || '其他';
+}
+
+
+function pseudoEmail(name){
+
+  return name
+    .toLowerCase()
+    .replace(
+      /[^a-z0-9._-]/g,
+      '_'
+    )
+    + '@accounts.leo-product-center.invalid';
+}
+
+
+/* =========================
+   用户
+========================= */
+
+async function loadProfile(user){
+
+  if(!user){
+    state.profile = null;
+    return;
+  }
+
+  const {
+    data,
+    error
+  } = await sb
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if(error){
+    throw error;
+  }
+
+  state.profile = data || null;
+}
+
+
+async function loadProducts(){
+
+  let query =
+    sb
+      .from('products')
+      .select(`
+        *,
+        product_media(*)
+      `)
+      .order(
+        'created_at',
+        {ascending:false}
+      );
+
+  if(!isAdmin()){
+    query =
+      query.eq(
+        'published',
+        true
+      );
+  }
+
+  const {
+    data,
+    error
+  } = await query;
+
+  if(error){
+    throw error;
+  }
+
+  state.products = data || [];
+}
+
+
+async function boot(){
+
+  try{
+
+    const {
+      data
+    } = await sb.auth.getUser();
+
+    state.user =
+      data.user || null;
+
+    await loadProfile(
+      state.user
+    );
+
+    await loadProducts();
+
+    renderAll();
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(
+      '数据库连接失败：' +
+      (error.message || '请检查 Supabase 配置'),
+      true
+    );
+  }
+}
+
+
+/* =========================
+   登录状态监听
+========================= */
+
+sb.auth.onAuthStateChange(
+  async(_event, session) => {
+
+    state.user =
+      session?.user || null;
+
+    try{
+
+      await loadProfile(
+        state.user
+      );
+
+      await loadProducts();
+
+      renderAll();
+
+    }catch(error){
+
+      console.error(error);
+
+      toast(
+        error.message || '加载用户数据失败',
+        true
+      );
+    }
+  }
+);
+
+
+/* =========================
+   导航
+========================= */
+
+function renderNav(){
+
+  if(!state.profile){
+
+    $('#navActions').innerHTML = `
+      <button class="btn" id="loginBtn">
+        登录
+      </button>
+
+      <button class="btn primary" id="regBtn">
+        注册
+      </button>
+    `;
+
+  }else{
+
+    const roleClass =
+      state.profile.role === ROLE.SUPER
+        ? 'role-super'
+        : state.profile.role === ROLE.ADMIN
+          ? 'role-admin'
+          : '';
+
+    $('#navActions').innerHTML = `
+      <button class="btn" type="button">
+        ${esc(state.profile.username)}
+        <span class="role-badge ${roleClass}">
+          ${roleText(state.profile.role)}
+        </span>
+      </button>
+
+      <button class="btn" id="logoutBtn">
+        退出
+      </button>
+    `;
+
+    $('#logoutBtn').onclick =
+      async() => {
+
+        const {
+          error
+        } = await sb.auth.signOut();
+
+        if(error){
+          toast(error.message, true);
+        }
+      };
+  }
+
+
+  $('#loginBtn')?.addEventListener(
+    'click',
+    () => openModal('loginModal')
+  );
+
+
+  $('#regBtn')?.addEventListener(
+    'click',
+    () => openModal('registerModal')
+  );
+
+
+  $('#adminbar').classList.toggle(
+    'show',
+    isAdmin()
+  );
+
+
+  if(isAdmin()){
+
+    $('#adminWelcome').textContent =
+      state.profile.username +
+      ' · ' +
+      roleText(state.profile.role);
+
+  }
+
+
+  /* 只有超级管理员显示用户管理 */
+
+  const userManageBtn =
+    $('#userManageBtn');
+
+  if(userManageBtn){
+    userManageBtn.style.display =
+      isSuper() ? '' : 'none';
+  }
+}
+
+
+/* =========================
+   分类
+========================= */
+
+function renderCats(){
+
+  let html = `
+    <div
+      class="category ${state.cat === 'all' ? 'active' : ''}"
+      data-cat="all"
+    >
+      <span>▦</span>
+
+      <span class="cat-main">
+        <b>全部产品</b>
+        <small>完整资料库</small>
+      </span>
+
+      <span class="pill">
+        ${state.products.length}
+      </span>
+    </div>
+  `;
+
+
+  for(const cat of CATS){
+
+    const count =
+      state.products.filter(
+        p => p.category === cat.id
+      ).length;
+
+    html += `
+      <div
+        class="category ${state.cat === cat.id ? 'active' : ''}"
+        data-cat="${esc(cat.id)}"
+      >
+        <span>${cat.icon}</span>
+
+        <span class="cat-main">
+          <b>${esc(cat.name)}</b>
+          <small>${esc(cat.desc)}</small>
+        </span>
+
+        <span class="pill">
+          ${count}
+        </span>
+      </div>
+    `;
+  }
+
+
+  $('#categories').innerHTML = html;
+
+
+  $$('[data-cat]').forEach(
+    node => {
+
+      node.onclick = () => {
+
+        state.cat =
+          node.dataset.cat;
+
+        renderCats();
+        renderCatalog();
+      };
+    }
+  );
+
+
+  $('#tabs').innerHTML =
+    CATS.map(
+      cat => `
+        <button
+          class="tab ${
+            state.cat === cat.id
+              ? 'active'
+              : ''
+          }"
+          data-tab="${esc(cat.id)}"
+        >
+          ${cat.icon}
+          ${esc(cat.name)}
+        </button>
+      `
+    ).join('');
+
+
+  $$('[data-tab]').forEach(
+    node => {
+
+      node.onclick = () => {
+
+        state.cat =
+          node.dataset.tab;
+
+        renderCats();
+        renderCatalog();
+      };
+    }
+  );
+}
+
+
+/* =========================
+   媒体
+========================= */
+
+function media(product, type){
+
+  return (product.product_media || [])
+    .filter(
+      item =>
+        type
+          ? item.media_type === type
+          : true
+    )
+    .sort(
+      (a,b) =>
+        (a.sort_order || 0) -
+        (b.sort_order || 0)
+    );
+}
+
+
+function cover(product){
+
+  return media(
+    product,
+    'image'
+  )[0]?.public_url || '';
+}
+
+
+/* =========================
+   搜索
+========================= */
+
+function filtered(){
+
+  let products =
+    state.products.filter(
+      product =>
+        state.cat === 'all' ||
+        product.category === state.cat
+    );
+
+
+  if(state.q){
+
+    const q =
+      state.q.toLowerCase();
+
+
+    products =
+      products.filter(
+        product => {
+
+          const text = [
+            product.name,
+            product.model,
+            product.description,
+            product.specs,
+            product.selling,
+            catName(product.category)
+          ]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+
+          return text.includes(q);
+        }
+      );
+  }
+
+
+  return products;
+}
+
+
+/* =========================
+   产品列表
+========================= */
+
+function renderCatalog(){
+
+  const products =
+    filtered();
+
+
+  $('#catalog').innerHTML =
+    products.length
+      ? products.map(
+          product => {
+
+            const images =
+              media(
+                product,
+                'image'
+              );
+
+            const videos =
+              media(
+                product,
+                'video'
+              );
+
+            const productCover =
+              cover(product);
+
+            const sellingChips =
+              (product.selling || '')
+                .split('\n')
+                .filter(Boolean)
+                .slice(0,4)
+                .map(
+                  item =>
+                    `<span class="chip">
+                      ${esc(item)}
+                    </span>`
+                )
+                .join('');
+
+
+            return `
+              <article class="card product-card">
+
+                <div class="product-cover">
+
+                  ${
+                    productCover
+                      ? `
+                        <img
+                          src="${esc(productCover)}"
+                          loading="lazy"
+                          alt="${esc(product.name)}"
+                        >
+                      `
+                      : `
+                        <div
+                          style="
+                            height:100%;
+                            display:grid;
+                            place-items:center;
+                            color:#8a9bab
+                          "
+                        >
+                          暂无图片
+                        </div>
+                      `
+                  }
+
+                  <span class="tag">
+                    ${esc(
+                      catName(product.category)
+                    )}
+                  </span>
+
+                </div>
+
+
+                <div class="pc-body">
+
+                  <div class="pc-top">
+
+                    <div>
+
+                      <h3>
+                        ${esc(product.name)}
+                      </h3>
+
+                      <div class="meta">
+                        型号：
+                        ${esc(
+                          product.model ||
+                          '未填写'
+                        )}
+                      </div>
+
+                    </div>
+
+                    <div class="price">
+                      ${esc(
+                        product.price || ''
+                      )}
+                    </div>
+
+                  </div>
+
+
+                  <div
+                    class="meta"
+                    style="margin-top:7px"
+                  >
+                    ${esc(
+                      product.description ||
+                      '暂无简介'
+                    )}
+                  </div>
+
+
+                  <div class="chips">
+                    ${sellingChips}
+                  </div>
+
+
+                  <div class="pc-actions">
+
+                    <button
+                      class="mini"
+                      data-open="${esc(product.id)}"
+                    >
+                      查看资料
+                    </button>
+
+                    <button
+                      class="mini"
+                      data-copy="${esc(product.id)}"
+                    >
+                      复制资料
+                    </button>
+
+                    ${
+                      state.profile
+                        ? `
+                          <button
+                            class="mini"
+                            data-comment="${esc(product.id)}"
+                          >
+                            留言
+                          </button>
+                        `
+                        : ''
+                    }
+
+                    ${
+                      isAdmin()
+                        ? `
+                          <button
+                            class="mini"
+                            data-edit="${esc(product.id)}"
+                          >
+                            编辑
+                          </button>
+
+                          <button
+                            class="mini danger"
+                            data-delete="${esc(product.id)}"
+                          >
+                            删除
+                          </button>
+                        `
+                        : ''
+                    }
+
+                  </div>
+
+
+                  <div class="view-note">
+
+                    ${images.length} 张图片
+                    ·
+                    ${
+                      videos.length
+                        ? '含视频'
+                        : '暂无视频'
+                    }
+
+                  </div>
+
+                </div>
+
+              </article>
+            `;
+          }
+        ).join('')
+      : `
+        <div
+          class="empty"
+          style="grid-column:1/-1"
+        >
+          暂无产品资料
+          <br>
+          <span>
+            管理员可以在工作台中新建产品。
+          </span>
+        </div>
+      `;
+
+
+  $$('[data-open]').forEach(
+    button => {
+
+      button.onclick = () =>
+        showProduct(
+          button.dataset.open
+        );
+    }
+  );
+
+
+  $$('[data-copy]').forEach(
+    button => {
+
+      button.onclick = () =>
+        copyProduct(
+          button.dataset.copy
+        );
+    }
+  );
+
+
+  $$('[data-edit]').forEach(
+    button => {
+
+      button.onclick = () =>
+        editProduct(
+          button.dataset.edit
+        );
+    }
+  );
+
+
+  $$('[data-delete]').forEach(
+    button => {
+
+      button.onclick = () =>
+        deleteProduct(
+          button.dataset.delete
+        );
+    }
+  );
+
+
+  $$('[data-comment]').forEach(
+    button => {
+
+      button.onclick = () =>
+        openComments(
+          button.dataset.comment
+        );
+    }
+  );
+
+
+  $('#sProducts').textContent =
+    state.products.length;
+
+  $('#sCats').textContent =
+    CATS.length;
+}
+
+
+function renderAll(){
+
+  renderNav();
+  renderCats();
+  renderCatalog();
+}
+
+
+/* =========================
+   产品编辑表单
+========================= */
+
+function initForm(product){
+
+  $('#pCategory').innerHTML =
+    CATS.map(
+      cat =>
+        `
+          <option value="${esc(cat.id)}">
+            ${cat.icon} ${esc(cat.name)}
+          </option>
+        `
+    ).join('');
+
+
+  $('#editGallery').innerHTML =
+    '';
+
+
+  if(product){
+
+    $('#productModalTitle').textContent =
+      '编辑产品';
+
+    $('#pName').value =
+      product.name || '';
+
+    $('#pModel').value =
+      product.model || '';
+
+    $('#pCategory').value =
+      product.category || 'other';
+
+    $('#pPrice').value =
+      product.price || '';
+
+    $('#pDesc').value =
+      product.description || '';
+
+    $('#pSpecs').value =
+      product.specs || '';
+
+    $('#pSelling').value =
+      product.selling || '';
+
+
+    const images =
+      media(
+        product,
+        'image'
+      );
+
+
+    images
+      .slice(0, 24)
+      .forEach(
+        item => {
+
+          const wrapper =
+            document.createElement('div');
+
+          wrapper.className =
+            'gallery-item';
+
+
+          const image =
+            document.createElement('img');
+
+          image.src =
+            item.public_url;
+
+          image.loading =
+            'lazy';
+
+
+          const remove =
+            document.createElement('button');
+
+          remove.className =
+            'remove-media';
+
+          remove.type =
+            'button';
+
+          remove.textContent =
+            '×';
+
+          remove.title =
+            '删除图片';
+
+
+          remove.onclick =
+            async() => {
+
+              await deleteMedia(
+                item
+              );
+
+              wrapper.remove();
+            };
+
+
+          wrapper.appendChild(image);
+          wrapper.appendChild(remove);
+
+          $('#editGallery')
+            .appendChild(wrapper);
+        }
+      );
+
+  }else{
+
+    $('#productModalTitle').textContent =
+      '新建产品';
+
+
+    [
+      'pName',
+      'pModel',
+      'pPrice',
+      'pDesc',
+      'pSpecs',
+      'pSelling'
+    ].forEach(
+      id => {
+        $('#' + id).value = '';
+      }
+    );
+
+
+    $('#pImages').value = '';
+    $('#pVideo').value = '';
+    $('#pCategory').value = 'electronics';
+  }
+}
+
+
+/* =========================
+   Storage / Media
+========================= */
+
+async function deleteMedia(item){
+
+  try{
+
+    if(!isAdmin()){
+      throw new Error('无权限');
+    }
+
+
+    const {
+      error:
+        storageError
+    } =
+      await sb.storage
+        .from('product-media')
+        .remove([
+          item.storage_path
+        ]);
+
+
+    if(storageError){
+      throw storageError;
+    }
+
+
+    const {
+      error:
+        dbError
+    } =
+      await sb
+        .from('product_media')
+        .delete()
+        .eq(
+          'id',
+          item.id
+        );
+
+
+    if(dbError){
+      throw dbError;
+    }
+
+
+    toast('媒体文件已删除');
+
+    await loadProducts();
+    renderAll();
+
+  }catch(error){
+
+    toast(
+      error.message ||
+      '删除媒体失败',
+      true
+    );
+  }
+}
+
+
+async function uploadFiles(productId){
+
+  const images =
+    [
+      ...($('#pImages').files || [])
+    ];
+
+  const video =
+    $('#pVideo').files[0];
+
+
+  /* 图片 */
+
+  for(let i = 0; i < images.length; i++){
+
+    const file =
+      images[i];
+
+
+    const safeName =
+      file.name
+        .replace(
+          /[^a-zA-Z0-9._-]/g,
+          '_'
+        );
+
+
+    const path =
+      `products/${productId}/images/${crypto.randomUUID()}-${safeName}`;
+
+
+    const {
+      error:
+        uploadError
+    } =
+      await sb.storage
+        .from('product-media')
+        .upload(
+          path,
+          file,
+          {
+            upsert:false,
+            contentType:file.type
+          }
+        );
+
+
+    if(uploadError){
+      throw uploadError;
+    }
+
+
+    const {
+      data:
+        publicData
+    } =
+      sb.storage
+        .from('product-media')
+        .getPublicUrl(path);
+
+
+    const {
+      error:
+        dbError
+    } =
+      await sb
+        .from('product_media')
+        .insert({
+          product_id:productId,
+          media_type:'image',
+          storage_path:path,
+          public_url:publicData.publicUrl,
+          sort_order:i
+        });
+
+
+    if(dbError){
+      throw dbError;
+    }
+  }
+
+
+  /* 视频 */
+
+  if(video){
+
+    const safeName =
+      video.name
+        .replace(
+          /[^a-zA-Z0-9._-]/g,
+          '_'
+        );
+
+
+    const path =
+      `products/${productId}/videos/${crypto.randomUUID()}-${safeName}`;
+
+
+    const {
+      error:
+        uploadError
+    } =
+      await sb.storage
+        .from('product-media')
+        .upload(
+          path,
+          video,
+          {
+            upsert:false,
+            contentType:video.type
+          }
+        );
+
+
+    if(uploadError){
+      throw uploadError;
+    }
+
+
+    const {
+      data:
+        publicData
+    } =
+      sb.storage
+        .from('product-media')
+        .getPublicUrl(path);
+
+
+    const {
+      error:
+        dbError
+    } =
+      await sb
+        .from('product_media')
+        .insert({
+          product_id:productId,
+          media_type:'video',
+          storage_path:path,
+          public_url:publicData.publicUrl,
+          sort_order:999
+        });
+
+
+    if(dbError){
+      throw dbError;
+    }
+  }
+}
+
+
+/* =========================
+   保存产品
+========================= */
+
+$('#saveProductBtn').onclick =
+  async() => {
+
+    try{
+
+      if(!isAdmin()){
+        throw new Error('无权限');
+      }
+
+
+      const name =
+        $('#pName').value.trim();
+
+
+      if(name.length < 2){
+        throw new Error(
+          '产品名称至少需要 2 个字符'
+        );
+      }
+
+
+      const payload = {
+        name,
+        model:
+          $('#pModel').value.trim(),
+
+        category:
+          $('#pCategory').value,
+
+        price:
+          $('#pPrice').value.trim(),
+
+        description:
+          $('#pDesc').value.trim(),
+
+        specs:
+          $('#pSpecs').value.trim(),
+
+        selling:
+          $('#pSelling').value.trim()
+      };
+
+
+      let productId =
+        state.editingId;
+
+
+      /* 更新 */
+
+      if(productId){
+
+        const {
+          error
+        } =
+          await sb
+            .from('products')
+            .update(payload)
+            .eq(
+              'id',
+              productId
+            );
+
+
+        if(error){
+          throw error;
+        }
+
+      }else{
+
+        /* 新建 */
+
+        const {
+          data,
+          error
+        } =
+          await sb
+            .from('products')
+            .insert({
+              ...payload,
+              published:true,
+              created_by:state.user.id
+            })
+            .select()
+            .single();
+
+
+        if(error){
+          throw error;
+        }
+
+
+        productId =
+          data.id;
+      }
+
+
+      /* 上传媒体 */
+
+      await uploadFiles(
+        productId
+      );
+
+
+      closeModal();
+
+      await loadProducts();
+
+      renderAll();
+
+      toast(
+        state.editingId
+          ? '产品已更新'
+          : '产品已创建'
+      );
+
+
+    }catch(error){
+
+      console.error(error);
+
+      toast(
+        error.message ||
+        '保存产品失败',
+        true
+      );
+    }
+  };
+
+
+/* =========================
+   新建产品
+========================= */
+
+$('#newProductBtn').onclick =
+  () => {
+
+    if(!isAdmin()){
+      return;
+    }
+
+    state.editingId =
+      null;
+
+    initForm();
+
+    openModal(
+      'productModal'
+    );
+  };
+
+
+/* =========================
+   编辑产品
+========================= */
+
+async function editProduct(id){
+
+  if(!isAdmin()){
+    return;
+  }
+
+
+  const product =
+    state.products.find(
+      item => item.id === id
+    );
+
+
+  if(!product){
+    toast(
+      '找不到产品',
+      true
+    );
+
+    return;
+  }
+
+
+  state.editingId =
+    id;
+
+  initForm(product);
+
+  openModal(
+    'productModal'
+  );
+}
+
+
+/* =========================
+   删除产品
+========================= */
+
+async function deleteProduct(id){
+
+  if(!isAdmin()){
+    return;
+  }
+
+
+  const product =
+    state.products.find(
+      item => item.id === id
+    );
+
+
+  if(!product){
+    return;
+  }
+
+
+  const confirmed =
+    confirm(
+      `确定删除「${product.name}」及其全部资料吗？`
+    );
+
+
+  if(!confirmed){
+    return;
+  }
+
+
+  try{
+
+    /* 先删除 Storage */
+
+    const mediaItems =
+      product.product_media || [];
+
+
+    const paths =
+      mediaItems
+        .map(
+          item =>
+            item.storage_path
+        )
+        .filter(Boolean);
+
+
+    if(paths.length){
+
+      const {
+        error:
+          storageError
+      } =
+        await sb.storage
+          .from('product-media')
+          .remove(paths);
+
+
+      if(storageError){
+        console.warn(
+          'Storage 删除部分失败:',
+          storageError
+        );
+      }
+    }
+
+
+    /* 再删除产品 */
+
+    const {
+      error
+    } =
+      await sb
+        .from('products')
+        .delete()
+        .eq(
+          'id',
+          id
+        );
+
+
+    if(error){
+      throw error;
+    }
+
+
+    await loadProducts();
+
+    renderAll();
+
+    toast(
+      '产品及相关资料已删除'
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(
+      error.message ||
+      '删除产品失败',
+      true
+    );
+  }
+}
+
+
+/* =========================
+   复制图片
+========================= */
+
+async function copyImages(urls){
+
+  if(!urls.length){
+    toast(
+      '暂无图片',
+      true
+    );
+
+    return;
+  }
+
+
+  try{
+
+    if(
+      navigator.clipboard &&
+      window.ClipboardItem
+    ){
+
+      const blobs =
+        [];
+
+
+      for(
+        const url of urls.slice(0,12)
+      ){
+
+        try{
+
+          const response =
+            await fetch(url);
+
+
+          const blob =
+            await response.blob();
+
+
+          if(
+            blob.type.startsWith(
+              'image/'
+            )
+          ){
+
+            blobs.push(
+              blob
+            );
+          }
+
+        }catch(error){
+
+          console.warn(
+            '图片读取失败:',
+            error
+          );
+        }
+      }
+
+
+      if(blobs.length){
+
+        const clipboardItems =
+          blobs.map(
+            blob =>
+              new ClipboardItem({
+                [blob.type]:blob
+              })
+          );
+
+
+        await navigator.clipboard.write(
+          clipboardItems
+        );
+
+
+        toast(
+          '图片已复制'
+        );
+
+        return;
+      }
+    }
+
+  }catch(error){
+
+    console.warn(
+      'Clipboard 写入失败:',
+      error
+    );
+  }
+
+
+  /* 浏览器不允许直接复制图片时 */
+
+  urls.forEach(
+    (url,index) => {
+
+      setTimeout(
+        () => {
+
+          const link =
+            document.createElement('a');
+
+          link.href =
+            url;
+
+          link.target =
+            '_blank';
+
+          link.rel =
+            'noopener noreferrer';
+
+          link.download =
+            `product-image-${index + 1}`;
+
+          document.body.appendChild(
+            link
+          );
+
+          link.click();
+
+          link.remove();
+
+        },
+        index * 160
+      );
+    }
+  );
+
+
+  toast(
+    '浏览器限制图片直接复制，已打开图片',
+    true
+  );
+}
+
+
+/* =========================
+   复制产品资料
+========================= */
+
+async function copyProduct(id){
+
+  const product =
+    state.products.find(
+      item => item.id === id
+    );
+
+
+  if(!product){
+    return;
+  }
+
+
+  const text = `
+产品名称：${product.name}
+型号：${product.model || '—'}
+分类：${catName(product.category)}
+价格：${product.price || '—'}
+
+产品简介：
+${product.description || '—'}
+
+参数：
+${product.specs || '—'}
+
+卖点：
+${product.selling || '—'}
+`.trim();
+
+
+  try{
+
+    await navigator.clipboard.writeText(
+      text
+    );
+
+    toast(
+      '产品资料已复制'
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(
+      '复制失败，请手动复制',
+      true
+    );
+  }
+}
+
+
+/* =========================
+   产品详情
+========================= */
+
+function showProduct(id){
+
+  const product =
+    state.products.find(
+      item => item.id === id
+    );
+
+
+  if(!product){
+    return;
+  }
+
+
+  const images =
+    media(
+      product,
+      'image'
+    );
+
+
+  const videos =
+    media(
+      product,
+      'video'
+    );
+
+
+  const galleryHTML =
+    images.length
+      ? images.map(
+          item =>
+            `
+              <img
+                src="${esc(item.public_url)}"
+                loading="lazy"
+                alt="${esc(product.name)}"
+              >
+            `
+        ).join('')
+      : `
+        <div
+          class="notice"
+          style="grid-column:1/-1"
+        >
+          暂无图片
+        </div>
+      `;
+
+
+  const videoHTML =
+    videos.length
+      ? videos.map(
+          video =>
+            `
+              <video
+                controls
+                class="product-cover"
+                style="
+                  margin-top:12px;
+                  height:auto;
+                  max-height:480px
+                "
+                src="${esc(video.public_url)}"
+              ></video>
+            `
+        ).join('')
+      : '';
+
+
+  $('#detailContent').innerHTML = `
+
+    <div class="pc-top">
+
+      <div>
+
+        <div
+          class="eyebrow"
+          style="color:var(--gold)"
+        >
+          ${esc(
+            catName(
+              product.category
+            )
+          )}
+        </div>
+
+        <h2 style="margin-top:5px">
+          ${esc(product.name)}
+        </h2>
+
+        <div class="meta">
+          型号：
+          ${esc(
+            product.model ||
+            '未填写'
+          )}
+          ·
+          ${esc(
+            product.price ||
+            ''
+          )}
+        </div>
+
+      </div>
+
+      <button
+        class="btn gold"
+        id="copyAllBtn"
+      >
+        一键复制图片
+      </button>
+
+    </div>
+
+
+    <div
+      class="gallery"
+      style="margin-top:18px"
+    >
+      ${galleryHTML}
+    </div>
+
+    ${videoHTML}
+
+
+    <div class="sep"></div>
+
+
+    <dl class="info-list">
+
+      <dt>产品简介</dt>
+
+      <dd>
+        ${esc(
+          product.description ||
+          ''
+        )}
+      </dd>
+
+
+      <dt>产品参数</dt>
+
+      <dd>
+        ${esc(
+          product.specs ||
+          ''
+        ).replace(
+          /\n/g,
+          '<br>'
+        )}
+      </dd>
+
+
+      <dt>产品卖点</dt>
+
+      <dd>
+        ${esc(
+          product.selling ||
+          ''
+        ).replace(
+          /\n/g,
+          '<br>'
+        )}
+      </dd>
+
+    </dl>
+
+
+    <div class="sep"></div>
+
+
+    <div class="pc-actions">
+
+      ${
+        state.profile
+          ? `
+            <button
+              class="btn primary"
+              id="detailCommentBtn"
+            >
+              留言
+            </button>
+          `
+          : ''
+      }
+
+      <button
+        class="btn"
+        id="detailContactBtn"
+      >
+        联系我们
+      </button>
+
+    </div>
+  `;
+
+
+  $('#copyAllBtn').onclick =
+    () =>
+      copyImages(
+        images.map(
+          item =>
+            item.public_url
+        )
+      );
+
+
+  if(state.profile){
+
+    $('#detailCommentBtn').onclick =
+      () => {
+
+        closeModal();
+
+        openComments(
+          product.id
+        );
+      };
+  }
+
+
+  $('#detailContactBtn').onclick =
+    () => {
+
+      closeModal();
+
+      if(state.profile){
+        openModal(
+          'contactModal'
+        );
+      }else{
+        openModal(
+          'loginModal'
+        );
+      }
+    };
+
+
+  openModal(
+    'detailModal'
+  );
+}
+
+
+/* =========================
+   评论
+========================= */
+
+async function openComments(id){
+
+  if(!state.profile){
+
+    openModal(
+      'loginModal'
+    );
+
+    return;
+  }
+
+
+  state.commentProduct =
+    id;
+
+
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from('comments')
+      .select(`
+        *,
+        profiles(username)
+      `)
+      .eq(
+        'product_id',
+        id
+      )
+      .order(
+        'created_at',
+        {ascending:false}
+      );
+
+
+  if(error){
+
+    toast(
+      error.message ||
+      '读取留言失败',
+      true
+    );
+
+    return;
+  }
+
+
+  const product =
+    state.products.find(
+      item => item.id === id
+    );
+
+
+  $('#commentSub').textContent =
+    product?.name || '';
+
+
+  $('#commentList').innerHTML =
+    data?.length
+      ? data.map(
+          comment =>
+            `
+              <div class="comment">
+
+                <b>
+                  ${esc(
+                    comment.profiles?.username ||
+                    '用户'
+                  )}
+                </b>
+
+                <small>
+                  ${new Date(
+                    comment.created_at
+                  ).toLocaleString()}
+                </small>
+
+                <div>
+                  ${esc(
+                    comment.body
+                  )}
+                </div>
+
+              </div>
+            `
+        ).join('')
+      : `
+        <div
+          class="empty"
+          style="padding:26px 10px"
+        >
+          暂无留言
+        </div>
+      `;
+
+
+  $('#commentText').value =
+    '';
+
+
+  openModal(
+    'commentModal'
+  );
+}
+
+
+$('#sendCommentBtn').onclick =
+  async() => {
+
+    if(!state.profile){
+
+      openModal(
+        'loginModal'
+      );
+
+      return;
+    }
+
+
+    const text =
+      $('#commentText').value.trim();
+
+
+    if(text.length < 2){
+
+      toast(
+        '留言内容太短',
+        true
+      );
+
+      return;
+    }
+
+
+    try{
+
+      const {
+        data:
+          userData
+      } =
+        await sb.auth.getUser();
+
+
+      const user =
+        userData.user;
+
+
+      if(!user){
+
+        throw new Error(
+          '登录状态已失效，请重新登录'
+        );
+      }
+
+
+      const {
+        error
+      } =
+        await sb
+          .from('comments')
+          .insert({
+            product_id:
+              state.commentProduct,
+
+            author_id:
+              user.id,
+
+            body:
+              text
+          });
+
+
+      if(error){
+        throw error;
+      }
+
+
+      toast(
+        '留言已发送'
+      );
+
+
+      await openComments(
+        state.commentProduct
+      );
+
+    }catch(error){
+
+      toast(
+        error.message ||
+        '留言发送失败',
+        true
+      );
+    }
+  };
+
+
+/* =========================
+   联系我们
+========================= */
+
+$('#contactBtn').onclick =
+  () => {
+
+    if(state.profile){
+
+      openModal(
+        'contactModal'
+      );
+
+    }else{
+
+      openModal(
+        'loginModal'
+      );
+    }
+  };
+
+
+$('#sendContactBtn').onclick =
+  async() => {
+
+    if(!state.profile){
+
+      openModal(
+        'loginModal'
+      );
+
+      return;
+    }
+
+
+    const way =
+      $('#contactWay')
+        .value
+        .trim();
+
+
+    const text =
+      $('#contactText')
+        .value
+        .trim();
+
+
+    if(!way){
+
+      toast(
+        '请填写联系方式',
+        true
+      );
+
+      return;
+    }
+
+
+    if(text.length < 2){
+
+      toast(
+        '留言内容太短',
+        true
+      );
+
+      return;
+    }
+
+
+    try{
+
+      const {
+        data:
+          userData
+      } =
+        await sb.auth.getUser();
+
+
+      const user =
+        userData.user;
+
+
+      if(!user){
+
+        throw new Error(
+          '登录状态已失效，请重新登录'
+        );
+      }
+
+
+      const {
+        error
+      } =
+        await sb
+          .from('contact_messages')
+          .insert({
+            author_id:user.id,
+            contact_way:way,
+            body:text
+          });
+
+
+      if(error){
+        throw error;
+      }
+
+
+      $('#contactWay').value =
+        '';
+
+      $('#contactText').value =
+        '';
+
+
+      closeModal();
+
+
+      toast(
+        '已提交，我们会尽快联系你'
+      );
+
+    }catch(error){
+
+      toast(
+        error.message ||
+        '提交失败',
+        true
+      );
+    }
+  };
+
+
+/* =========================
+   登录
+========================= */
+
+$('#loginSubmit').onclick =
+  async() => {
+
+    const name =
+      $('#loginName')
+        .value
+        .trim();
+
+
+    const password =
+      $('#loginPwd')
+        .value;
+
+
+    if(!name || !password){
+
+      toast(
+        '请填写账号和密码',
+        true
+      );
+
+      return;
+    }
+
+
+    try{
+
+      const {
+        error
+      } =
+        await sb.auth
+          .signInWithPassword({
+            email:
+              pseudoEmail(name),
+
+            password
+          });
+
+
+      if(error){
+
+        toast(
+          '登录失败：' +
+          error.message,
+          true
+        );
+
+        return;
+      }
+
+
+      closeModal();
+
+      $('#loginName').value =
+        '';
+
+      $('#loginPwd').value =
+        '';
+
+
+      toast(
+        '登录成功'
+      );
+
+    }catch(error){
+
+      toast(
+        error.message ||
+        '登录失败',
+        true
+      );
+    }
+  };
+
+
+/* =========================
+   注册
+========================= */
+
+$('#registerSubmit').onclick =
+  async() => {
+
+    const name =
+      $('#regName')
+        .value
+        .trim();
+
+
+    const password =
+      $('#regPwd')
+        .value;
+
+
+    const confirmPassword =
+      $('#regPwd2')
+        .value;
+
+
+    if(name.length < 2){
+
+      toast(
+        '用户名至少 2 位',
+        true
+      );
+
+      return;
+    }
+
+
+    if(!/^[a-zA-Z0-9_-]+$/.test(name)){
+
+      toast(
+        '用户名建议只使用英文、数字、下划线或短横线',
+        true
+      );
+
+      return;
+    }
+
+
+    if(password.length < 6){
+
+      toast(
+        '密码至少 6 位',
+        true
+      );
+
+      return;
+    }
+
+
+    if(password !== confirmPassword){
+
+      toast(
+        '两次密码不一致',
+        true
+      );
+
+      return;
+    }
+
+
+    try{
+
+      const {
+        data,
+        error
+      } =
+        await sb.auth.signUp({
+          email:
+            pseudoEmail(name),
+
+          password,
+
+          options:{
+            data:{
+              username:name
+            }
+          }
+        });
+
+
+      if(error){
+
+        toast(
+          error.message,
+          true
+        );
+
+        return;
+      }
+
+
+      $('#regName').value =
+        '';
+
+      $('#regPwd').value =
+        '';
+
+      $('#regPwd2').value =
+        '';
+
+
+      if(data.session){
+
+        closeModal();
+
+        toast(
+          '注册成功'
+        );
+
+      }else{
+
+        toast(
+          '注册成功。若 Supabase 开启邮箱确认，请完成确认后再登录。'
+        );
+      }
+
+    }catch(error){
+
+      toast(
+        error.message ||
+        '注册失败',
+        true
+      );
+    }
+  };
+
+
+/* =========================
+   注册跳转
+========================= */
+
+$('#toRegister').onclick =
+  event => {
+
+    event.preventDefault();
+
+    closeModal();
+
+    openModal(
+      'registerModal'
+    );
+  };
+
+
+/* =========================
+   超级管理员用户管理
+========================= */
+
+$('#userManageBtn').onclick =
+  async() => {
+
+    if(!isSuper()){
+
+      toast(
+        '只有超级管理员可以管理用户',
+        true
+      );
+
+      return;
+    }
+
+
+    try{
+
+      const {
+        data,
+        error
+      } =
+        await sb
+          .from('profiles')
+          .select('*')
+          .order(
+            'created_at',
+            {ascending:false}
+          );
+
+
+      if(error){
+        throw error;
+      }
+
+
+      const users =
+        data || [];
+
+
+      $('#usersList').innerHTML =
+        users.length
+          ? users.map(
+              user => {
+
+                const roleClass =
+                  user.role === ROLE.SUPER
+                    ? 'role-super'
+                    : user.role === ROLE.ADMIN
+                      ? 'role-admin'
+                      : '';
+
+
+                return `
+                  <div
+                    class="panel"
+                    style="margin-bottom:8px"
+                  >
+
+                    <div class="pc-top">
+
+                      <div>
+
+                        <b>
+                          ${esc(user.username)}
+                        </b>
+
+                        <span
+                          class="role-badge ${roleClass}"
+                        >
+                          ${roleText(user.role)}
+                        </span>
+
+                        <div class="meta">
+
+                          注册时间：
+                          ${new Date(
+                            user.created_at
+                          ).toLocaleString()}
+
+                          ·
+
+                          状态：
+                          ${
+                            user.muted
+                              ? '禁言'
+                              : '正常'
+                          }
+
+                        </div>
+
+                      </div>
+
+
+                      ${
+                        user.role === ROLE.USER
+                          ? `
+                            <button
+                              class="btn"
+                              data-mute="${esc(user.id)}"
+                              data-muted="${user.muted ? '1' : '0'}"
+                            >
+                              ${
+                                user.muted
+                                  ? '解除禁言'
+                                  : '禁言'
+                              }
+                            </button>
+                          `
+                          : ''
+                      }
+
+                    </div>
+
+                  </div>
+                `;
+              }
+            ).join('')
+          : `
+            <div class="empty">
+              暂无用户
+            </div>
+          `;
+
+
+      openModal(
+        'usersModal'
+      );
+
+
+      $$('[data-mute]').forEach(
+        button => {
+
+          button.onclick =
+            async() => {
+
+              const userId =
+                button.dataset.mute;
+
+              const muted =
+                button.dataset.muted === '1';
+
+
+              try{
+
+                const {
+                  error
+                } =
+                  await sb
+                    .from('profiles')
+                    .update({
+                      muted:!muted
+                    })
+                    .eq(
+                      'id',
+                      userId
+                    );
+
+
+                if(error){
+                  throw error;
+                }
+
+
+                toast(
+                  muted
+                    ? '已解除禁言'
+                    : '已禁言'
+                );
+
+
+                $('#userManageBtn').click();
+
+              }catch(error){
+
+                toast(
+                  error.message ||
+                  '操作失败',
+                  true
+                );
+              }
+            };
+        }
+      );
+
+    }catch(error){
+
+      toast(
+        error.message ||
+        '读取用户失败',
+        true
+      );
+    }
+  };
+
+
+/* =========================
+   留言中心
+========================= */
+
+$('#messageManageBtn').onclick =
+  async() => {
+
+    if(!isAdmin()){
+
+      toast(
+        '无权限',
+        true
+      );
+
+      return;
+    }
+
+
+    try{
+
+      const [
+        commentsResult,
+        contactResult
+      ] =
+        await Promise.all([
+
+          sb
+            .from('comments')
+            .select(`
+              *,
+              profiles(username),
+              products(name)
+            `)
+            .order(
+              'created_at',
+              {ascending:false}
+            )
+            .limit(100),
+
+          sb
+            .from('contact_messages')
+            .select(`
+              *,
+              profiles(username)
+            `)
+            .order(
+              'created_at',
+              {ascending:false}
+            )
+            .limit(100)
+
+        ]);
+
+
+      if(commentsResult.error){
+        throw commentsResult.error;
+      }
+
+
+      if(contactResult.error){
+        throw contactResult.error;
+      }
+
+
+      const comments =
+        commentsResult.data || [];
+
+
+      const messages =
+        contactResult.data || [];
+
+
+      const rows = [
+
+        ...comments.map(
+          item => ({
+            type:'产品留言',
+            time:item.created_at,
+            user:item.profiles?.username,
+            text:item.body,
+            product:
+              item.products?.name ||
+              '—'
+          })
+        ),
+
+        ...messages.map(
+          item => ({
+            type:'联系我们',
+            time:item.created_at,
+            user:item.profiles?.username,
+            text:item.body,
+            product:'—'
+          })
+        )
+
+      ].sort(
+        (a,b) =>
+          new Date(b.time) -
+          new Date(a.time)
+      );
+
+
+      $('#messagesList').innerHTML =
+        rows.length
+          ? rows.map(
+              row =>
+                `
+                  <div
+                    class="panel"
+                    style="margin-bottom:8px"
+                  >
+
+                    <b>
+                      ${esc(
+                        row.user ||
+                        '用户'
+                      )}
+                    </b>
+
+                    <span
+                      class="role-badge"
+                    >
+                      ${esc(row.type)}
+                    </span>
+
+                    <div class="meta">
+
+                      ${new Date(
+                        row.time
+                      ).toLocaleString()}
+
+                      ·
+
+                      ${esc(
+                        row.product
+                      )}
+
+                    </div>
+
+                    <div>
+                      ${esc(
+                        row.text
+                      )}
+                    </div>
+
+                  </div>
+                `
+            ).join('')
+          : `
+            <div class="empty">
+              暂无留言
+            </div>
+          `;
+
+
+      openModal(
+        'messagesModal'
+      );
+
+    }catch(error){
+
+      console.error(error);
+
+      toast(
+        error.message ||
+        '读取留言失败',
+        true
+      );
+    }
+  };
+
+
+/* =========================
+   搜索
+========================= */
+
+$('#search').oninput =
+  event => {
+
+    state.q =
+      event.target.value.trim();
+
+    renderCatalog();
+  };
+
+
+/* =========================
+   快捷键
+========================= */
+
+addEventListener(
+  'keydown',
+  event => {
+
+    if(event.key === 'Escape'){
+
+      closeModal();
+    }
+
+
+    if(
+      event.key === '/' &&
+      ![
+        'INPUT',
+        'TEXTAREA',
+        'SELECT'
+      ].includes(
+        document.activeElement.tagName
+      )
+    ){
+
+      event.preventDefault();
+
+      $('#search').focus();
+    }
+  }
+);
+
+
+/* =========================
+   浏览产品
+========================= */
+
+$('#browseBtn').onclick =
+  () => {
+
+    document
+      .querySelector('.toolbar')
+      .scrollIntoView({
+        behavior:'smooth'
+      });
+  };
+
+
+/* =========================
+   启动
+========================= */
+
+boot();
+
+</script>
+
+</body>
+</html>
+```
