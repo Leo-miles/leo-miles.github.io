@@ -1,6 +1,6 @@
--- 产品智库 V3 / Supabase schema（与当前 index.html 字段保持一致）
--- Supabase Dashboard -> SQL Editor -> 粘贴全文 -> Run
--- 不要把 Secret/Service key 写入网页或 GitHub。
+-- 产品智库 V3 / Supabase schema（与当前 index.html 对齐）
+-- 在 Supabase Dashboard -> SQL Editor 中一次性执行。
+-- 不要把 Secret/Service key 写入网页或仓库。
 
 create extension if not exists pgcrypto;
 
@@ -132,24 +132,24 @@ alter table public.comments enable row level security;
 alter table public.contact_messages enable row level security;
 alter table public.moderation_logs enable row level security;
 
--- profiles
- drop policy if exists profiles_self_read on public.profiles;
-create policy profiles_self_read on public.profiles for select using(auth.uid()=id or public.is_admin());
+-- profiles：普通用户只能读/改自己的非权限资料；超级管理员可看全部并管理。
+drop policy if exists profiles_self_read on public.profiles;
+create policy profiles_self_read on public.profiles for select using(auth.uid()=id or public.is_superadmin());
 drop policy if exists profiles_self_insert on public.profiles;
 create policy profiles_self_insert on public.profiles for insert with check(auth.uid()=id);
 drop policy if exists profiles_self_update on public.profiles;
-create policy profiles_self_update on public.profiles for update using(auth.uid()=id) with check(auth.uid()=id);
+create policy profiles_self_update on public.profiles for update using(auth.uid()=id) with check(auth.uid()=id and role=public.current_role());
 drop policy if exists profiles_super_update on public.profiles;
 create policy profiles_super_update on public.profiles for update using(public.is_superadmin()) with check(public.is_superadmin());
 
 -- categories
- drop policy if exists categories_read on public.categories;
+drop policy if exists categories_read on public.categories;
 create policy categories_read on public.categories for select using(true);
 drop policy if exists categories_manage on public.categories;
 create policy categories_manage on public.categories for all using(public.is_superadmin()) with check(public.is_superadmin());
 
 -- products
- drop policy if exists products_read on public.products;
+drop policy if exists products_read on public.products;
 create policy products_read on public.products for select using(published=true or public.is_admin());
 drop policy if exists products_insert on public.products;
 create policy products_insert on public.products for insert with check(public.is_admin() and created_by=auth.uid());
@@ -158,14 +158,14 @@ create policy products_update on public.products for update using(public.is_admi
 drop policy if exists products_delete on public.products;
 create policy products_delete on public.products for delete using(public.is_admin());
 
--- media
- drop policy if exists media_read on public.product_media;
+-- product media
+drop policy if exists media_read on public.product_media;
 create policy media_read on public.product_media for select using(true);
 drop policy if exists media_manage on public.product_media;
 create policy media_manage on public.product_media for all using(public.is_admin()) with check(public.is_admin());
 
 -- comments
- drop policy if exists comments_read on public.comments;
+drop policy if exists comments_read on public.comments;
 create policy comments_read on public.comments for select using(true);
 drop policy if exists comments_insert on public.comments;
 create policy comments_insert on public.comments for insert with check(auth.uid()=author_id and not exists(select 1 from public.profiles p where p.id=auth.uid() and p.muted));
@@ -173,8 +173,8 @@ drop policy if exists comments_delete on public.comments;
 create policy comments_delete on public.comments for delete using(auth.uid()=author_id or public.is_admin());
 
 -- contact messages
- drop policy if exists contact_insert on public.contact_messages;
-create policy contact_insert on public.contact_messages for insert with check(auth.uid()=author_id);
+drop policy if exists contact_insert on public.contact_messages;
+create policy contact_insert on public.contact_messages for insert with check(auth.uid()=author_id and not exists(select 1 from public.profiles p where p.id=auth.uid() and p.muted));
 drop policy if exists contact_read on public.contact_messages;
 create policy contact_read on public.contact_messages for select using(public.is_admin() or auth.uid()=author_id);
 drop policy if exists contact_update on public.contact_messages;
@@ -182,13 +182,13 @@ create policy contact_update on public.contact_messages for update using(public.
 drop policy if exists contact_delete on public.contact_messages;
 create policy contact_delete on public.contact_messages for delete using(public.is_admin());
 
--- moderation logs
- drop policy if exists logs_super_read on public.moderation_logs;
+-- moderation logs：只有超级管理员能查阅。
+drop policy if exists logs_super_read on public.moderation_logs;
 create policy logs_super_read on public.moderation_logs for select using(public.is_superadmin());
 drop policy if exists logs_super_insert on public.moderation_logs;
 create policy logs_super_insert on public.moderation_logs for insert with check(public.is_superadmin());
 
--- storage bucket and policies
+-- Storage：产品图片/视频公开读取，只有管理员上传、修改、删除。
 insert into storage.buckets(id,name,public) values('product-media','product-media',true) on conflict(id) do update set public=true;
 drop policy if exists product_media_public_read on storage.objects;
 create policy product_media_public_read on storage.objects for select using(bucket_id='product-media');
@@ -199,12 +199,12 @@ create policy product_media_admin_update on storage.objects for update using(buc
 drop policy if exists product_media_admin_delete on storage.objects;
 create policy product_media_admin_delete on storage.objects for delete using(bucket_id='product-media' and public.is_admin());
 
--- Data API grants
 grant select on public.categories to anon,authenticated;
 grant select on public.products to anon,authenticated;
-grant select,insert,delete on public.product_media to authenticated;
-grant select on public.product_media to anon;
+grant select on public.product_media to anon,authenticated;
 grant select,insert,delete on public.comments to authenticated;
 grant select,insert,update,delete on public.contact_messages to authenticated;
 grant select,update,delete on public.profiles to authenticated;
 grant select,insert on public.moderation_logs to authenticated;
+grant insert,update,delete on public.products to authenticated;
+grant insert,update,delete on public.product_media to authenticated;
