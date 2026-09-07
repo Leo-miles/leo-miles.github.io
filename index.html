@@ -209,6 +209,48 @@ $('#search').oninput=e=>{state.q=e.target.value.trim();renderCatalog()};$('#brow
 };
     window.showProduct=function(id){const p=state.products.find(x=>x.id===id);if(!p)return;const x=getExtra(p),imgs=media(p,'image'),vids=media(p,'video');const base=p.category==='powerbank'?`<dt>供应商名称</dt><dd>${esc(x.supplier||'—')}</dd><dt>成本明细</dt><dd>套料价格：¥${money(p.kit_price)}<br>电芯型号：${esc(p.cell_model||'—')}<br>电芯数量：${num(p.cell_count)} 颗<br>实际使用电芯容量：${p.actual_cell_capacity?num(p.actual_cell_capacity)+' mAh':'—'}<br>电芯价格：¥${money(p.cell_price)} / 颗<br>组装费：¥${money(p.assembly_fee)}<br>其他费用预估：¥${money(p.other_cost)}<br><strong>合计成本：¥${money(p.total_cost)}</strong></dd><dt>MOQ</dt><dd>${esc(x.moq||'—')}</dd><dt>最大输出功率</dt><dd>${esc(x.maxOutputPower||'—')}</dd>`:`<dt>供应商名称</dt><dd>${esc(x.supplier||'—')}</dd><dt>产品价格</dt><dd>¥${money(p.price)}</dd><dt>价格构成</dt><dd>${esc(x.priceComposition||'—')}</dd><dt>MOQ</dt><dd>${esc(x.moq||'—')}</dd><dt>交期</dt><dd>${esc(x.delivery||'—')}</dd><dt>装箱规格</dt><dd>${esc(x.carton||'—')}</dd>`;q('#detailContent').innerHTML=`<div class="ptop"><div><div class="eyebrow" style="color:var(--g)">${esc(catName(p.category))}</div><h2>${esc(p.name)}</h2><div class="meta">型号：${esc(p.model||'未填写')} · ${p.category==='powerbank'?'合计成本 ¥'+money(p.total_cost):(p.price!=null?'价格 ¥'+money(p.price):'价格未填写')}</div>${(!state.profile||isAdmin())&&(getAdminNickname(p.created_by)||p.uploader_nickname)?`<div class="uploader">上传者 <b>${esc(getAdminNickname(p.created_by)||p.uploader_nickname)}</b></div>`:''}</div><button class="btn gold" id="copyAllBtn">一键复制图片</button></div><div class="gallery">${imgs.length?imgs.map(x=>`<img src="${esc(x.public_url)}">`).join(''):'<div class="notice" style="grid-column:1/-1">暂无图片</div>'}</div>${vids.map(v=>`<video controls style="width:100%;max-height:500px;margin-top:10px;border-radius:12px;background:#0b2034" src="${esc(v.public_url)}"></video>`).join('')}<div style="height:1px;background:#e8eef3;margin:18px 0"></div><dl class="info">${base}<dt>产品参数</dt><dd>${esc(p.specs||'—').replace(/\n/g,'<br>')}</dd><dt>产品卖点</dt><dd>${esc(p.selling||'—').replace(/\n/g,'<br>')}</dd></dl><div class="pc-actions">${state.profile?'<button class="btn primary" id="detailCommentBtn">留言</button>':''}<button class="btn" id="detailContactBtn">联系我们</button></div>`;q('#copyAllBtn').onclick=()=>copyImages(imgs.map(x=>x.public_url));if(state.profile)q('#detailCommentBtn').onclick=()=>{closeModal();openComments(p.id)};q('#detailContactBtn').onclick=()=>{closeModal();state.profile?(renderContactMethods(),openModal('contactModal')):openModal('loginModal')};openModal('detailModal')};
   }
+  // PI_AUTH_PUBLISH_V4
+  const installAuthPublishFallback=()=>{
+    try{
+      const loginBtn=q('#loginSubmit');
+      if(loginBtn){loginBtn.onclick=async()=>{
+        const raw=(q('#loginName')?.value||'').trim().toLowerCase(),pwd=q('#loginPwd')?.value||'',st=q('#loginStatus');
+        if(!raw||!pwd){if(st)st.textContent='请输入用户名和密码';return}
+        const email=raw.includes('@')?raw:`${raw}@accounts.leo-product-center.invalid`;
+        if(st)st.textContent='正在验证…';
+        try{
+          const {data,error}=await sb.auth.signInWithPassword({email,password:pwd});
+          if(error)throw error;
+          state.user=data.user;
+          await loadProfile();
+          await loadProducts();
+          renderNav();renderRole();renderSection();renderAll();
+          closeModal('loginModal');
+          toast('登录成功');
+        }catch(e){console.error('[AUTH]',e);if(st)st.textContent='登录失败：'+(e?.message||'账号或密码错误')}
+      }}
+      const saveBtn=q('#saveProductBtn');
+      if(saveBtn){saveBtn.onclick=async()=>{
+        if(!state.user){openModal('loginModal');return}
+        if(!isAdmin()){toast('当前账号没有产品发布权限',true);return}
+        const old=state.editingId?state.products.find(x=>x.id===state.editingId):null;
+        const name=q('#pName')?.value.trim();
+        if(!name){toast('请填写产品名称',true);return}
+        const payload={name,model:q('#pModel')?.value.trim()||null,category:q('#pCategory')?.value||null,price:q('#pPrice')?.value.trim()||null,description:JSON.stringify({supplier:q('#pSupplier')?.value.trim()||'',priceComposition:q('#pPriceComposition')?.value.trim()||'',moq:q('#pMOQ')?.value.trim()||'',delivery:q('#pDelivery')?.value.trim()||'',carton:q('#pCarton')?.value.trim()||'',maxOutputPower:q('#pMaxOutputPower')?.value.trim()||'',kitPrice:q('#pKitPrice')?.value||'',cellModel:q('#pCellModel')?.value.trim()||'',cellCount:q('#pCellCount')?.value||'',actualCellCapacity:q('#pActualCellCapacity')?.value||'',cellPrice:q('#pCellPrice')?.value||'',assemblyFee:q('#pAssemblyFee')?.value||'',otherCost:q('#pOtherCost')?.value||'',totalCost:q('#pTotalCostPreview')?.textContent?.replace(/[^0-9.]/g,'')||'0'}),specs:q('#pSpecs')?.value.trim()||'',selling:q('#pSelling')?.value.trim()||'',published:true,updated_at:new Date().toISOString()};
+        try{
+          let r;
+          if(old) r=await sb.from('products').update(payload).eq('id',old.id).select().single();
+          else r=await sb.from('products').insert({...payload,created_by:state.user.id}).select().single();
+          if(r.error)throw r.error;
+          state.editingId=r.data.id;
+          // Upload pending media after the product row exists.
+          if(typeof uploadPendingMedia==='function')await uploadPendingMedia(r.data.id);
+          await loadProducts();renderAll();closeModal('productModal');toast(old?'产品已更新并发布':'产品已发布');
+        }catch(e){console.error('[PRODUCT_SAVE]',e);toast('发布失败：'+(e?.message||'数据库写入失败'),true)}
+      }}
+    }catch(e){console.error('[V4]',e)}
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installAuthPublishFallback);else installAuthPublishFallback();
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
 </script>
