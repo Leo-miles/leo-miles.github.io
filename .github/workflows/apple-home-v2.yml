@@ -34,7 +34,6 @@ jobs:
           s=s.replace('state.profile.nickname || state.profile.username','(getAdminNickname(state.profile.id)||state.profile.username)',1)
           s=s.replace('u.nickname||u.username','(getAdminNickname(u.id)||u.username)')
           p.write_text(s,encoding='utf-8')
-          # syntax validation
           s2=p.read_text(encoding='utf-8')
           js='\n'.join(re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',s2,re.S|re.I))
           Path('/tmp/pi.js').write_text(js,encoding='utf-8')
@@ -45,7 +44,7 @@ jobs:
           rm -f apple-home.trigger
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html apple-home.trigger
+          git add index.html
           if git diff --cached --quiet; then exit 0; fi
           git commit -m 'Redesign product intelligence homepage in Apple style'
           git push
