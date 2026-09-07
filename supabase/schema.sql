@@ -30,6 +30,7 @@ create table if not exists public.categories(
 insert into public.categories(id,name,icon,description,sort_order) values
 ('new','新品资料','✦','新产品首发与立项',10),
 ('electronics','电子产品','▣','消费电子与小家电',20),
+('powerbank','充电宝','▰','移动电源与储能产品',25),
 ('home','家居生活','⌂','家居与日用',30),
 ('beauty','个护美妆','◌','个护与美容',40),
 ('outdoor','户外休闲','◒','户外与旅行',50),
@@ -42,7 +43,7 @@ create table if not exists public.products(
   model text,
   category text references public.categories(id) on delete set null,
   price text,
-  desc text,
+  description text,
   specs text,
   selling text,
   published boolean not null default true,
