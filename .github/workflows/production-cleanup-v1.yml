@@ -1,0 +1,81 @@
+name: Production Cleanup V1
+on:
+  push:
+    paths:
+      - 'production-cleanup-v1.trigger'
+      - '.github/workflows/production-cleanup-v1.yml'
+permissions:
+  contents: write
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Normalize frontend and backend contract
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+
+          # 1) The live database uses public.products.description, not a desc column.
+          s=s.replace("price:pb?String(calcTotal()):String(Number(q('#pPrice').value||0)),desc:JSON.stringify(legacy),specs:", "price:pb?String(calcTotal()):String(Number(q('#pPrice').value||0)),description:JSON.stringify(legacy),specs:")
+          s=s.replace("price:pb?String(calcTotal()):String(Number(q('#pPrice').value||0)),desc:JSON.stringify(extra),specs:", "price:pb?String(calcTotal()):String(Number(q('#pPrice').value||0)),description:JSON.stringify(extra),specs:")
+          if 'description:JSON.stringify(legacy)' not in s and 'description:JSON.stringify(extra)' not in s:
+              raise SystemExit('normalized product payload not found')
+
+          # 2) Keep compatibility reads for old data, but write the real column.
+          s=s.replace("getExtra(p){try{return JSON.parse(p?.desc||p?.description||'{}')||{}}catch{return{}}}", "getExtra(p){try{return JSON.parse(p?.description||p?.desc||'{}')||{}}catch{return{}}}")
+
+          # 3) Remove duplicated legacy V2 homepage markup/script/style, leaving V3 as the single homepage.
+          s=re.sub(r'<!-- PI_APPLE_HOME_V2 -->.*?</style>\s*', '', s, count=1, flags=re.S)
+          s=re.sub(r'<section class="pi-v2" id="piV2Home">.*?</section><div class="pi-v2-metrics">.*?</div>\s*<div class="pi-v2-head">.*?</div>', '', s, count=1, flags=re.S)
+          s=re.sub(r'<script id="pi-apple-home-v2-js">.*?</script>\s*', '', s, count=1, flags=re.S)
+
+          # 4) Remove superseded auth shortcut code that references an element that never exists.
+          s=re.sub(r'<script id="pi-auth-entry-v1-js">.*?</script>\s*', '', s, count=1, flags=re.S)
+          s=re.sub(r'<style id="pi-auth-entry-v1">.*?</style>\s*', '', s, count=1, flags=re.S)
+          s=re.sub(r'<div class="pi-auth-dock" id="piAuthDock".*?</div>\s*', '', s, count=1, flags=re.S)
+
+          p.write_text(s,encoding='utf-8')
+          PY
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('index.html').read_text(encoding='utf-8')
+          js='\n'.join(re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',s,re.S|re.I))
+          Path('/tmp/page.js').write_text(js,encoding='utf-8')
+          Path('/tmp/check.txt').write_text('\n'.join([
+            f"description_writer={s.count('description:JSON.stringify(')}",
+            f"desc_writer={s.count('desc:JSON.stringify(')}",
+            f"v2_marker={'PI_APPLE_HOME_V2' in s}",
+            f"v2_section={'id=\"piV2Home\"' in s}",
+            f"auth_dock={'pi-auth-entry-v1' in s}",
+          ]),encoding='utf-8')
+          PY
+          node --check /tmp/page.js
+          cat /tmp/check.txt
+
+      - name: Normalize repository schema
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('supabase/schema.sql')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace("  desc text,", "  description text,")
+          if "('powerbank','充电宝'" not in s:
+              s=s.replace("('electronics','电子产品','▣','消费电子与小家电',20),", "('electronics','电子产品','▣','消费电子与小家电',20),\n('powerbank','充电宝','▰','移动电源与储能产品',25),")
+          p.write_text(s,encoding='utf-8')
+          PY
+
+      - name: Commit canonical production version
+        run: |
+          rm -f production-cleanup-v1.trigger
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html supabase/schema.sql production-cleanup-v1.trigger
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'chore: consolidate production frontend and database contract'
+          git push origin main
