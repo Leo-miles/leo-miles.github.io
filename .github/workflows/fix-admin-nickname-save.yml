@@ -1,0 +1,42 @@
+name: Fix admin nickname save
+on:
+  push:
+    branches: [main]
+    paths:
+      - "fix-admin-nickname-save.trigger"
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch index.html
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          old="""let state={user:null,profile:null,products:[],q:'',cat:'all',editingId:null,commentProduct:null,pendingImages:[],pendingVideo:null};"""
+          new="""let state={user:null,profile:null,products:[],q:'',cat:'all',editingId:null,commentProduct:null,pendingImages:[],pendingVideo:null,adminNicknames:{}};"""
+          s=s.replace(old,new,1)
+          old2="""$('#userManageBtn').onclick=async()=>{if(!isSuper())return toast('只有超级管理员可以管理用户',true);try{let{data,error}=await sb.from('profiles').select('*').order('created_at',{ascending:false});if(error)throw error;$('#usersList').innerHTML=data?.length?data.map(u=>{let rc=u.role===ROLE.SUPER?'role-super':u.role===ROLE.ADMIN?'role-admin':'';return `<div class=\"userrow\"><div><b>${esc(u.username)}</b><span class=\"badge ${rc}\">${roleText(u.role)}</span></div><div><input id=\"nick-${u.id}\" value=\"${esc(u.nickname||'')}\" placeholder=\"管理员昵称\"></div><div>${u.muted?'禁言':'正常'}</div><div>${u.role===ROLE.ADMIN?`<button class=\"mini\" data-nick=\"${u.id}\">保存昵称</button>`:''}${u.role===ROLE.USER?`<button class=\"mini\" data-mute=\"${u.id}\" data-muted=\"${u.muted?'1':'0'}\">${u.muted?'解除禁言':'禁言'}</button>`:''}</div></div>`}).join(''):'<div class=\"empty\">暂无用户</div>';openModal('usersModal');$$('[data-nick]').forEach(b=>b.onclick=async()=>{let id=b.dataset.nick,nick=$('#nick-'+id).value.trim();let{error}=await sb.from('profiles').update({nickname:nick||null}).eq('id',id);if(error)toast(error.message,true);else{toast('昵称已保存');$('#userManageBtn').click()}});$$('[data-mute]').forEach(b=>b.onclick=async()=>{let muted=b.dataset.muted==='1',id=b.dataset.mute;let{error}=await sb.from('profiles').update({muted:!muted}).eq('id',id);if(error)toast(error.message,true);else{toast(muted?'已解除禁言':'已禁言');$('#userManageBtn').click()}})}catch(e){toast(e.message||'读取用户失败',true)}};"""
+          new2="""async function refreshUserManagement(){if(!isSuper())return;let{data,error}=await sb.from('profiles').select('*').order('created_at',{ascending:false});if(error)throw error;state.adminNicknames={};(data||[]).forEach(u=>{if(u.role===ROLE.ADMIN)state.adminNicknames[u.id]=u.nickname||''});$('#usersList').innerHTML=data?.length?data.map(u=>{let rc=u.role===ROLE.SUPER?'role-super':u.role===ROLE.ADMIN?'role-admin':'';return `<div class=\"userrow\"><div><b>${esc(u.username)}</b><span class=\"badge ${rc}\">${roleText(u.role)}</span></div><div>${u.role===ROLE.ADMIN?`<input id=\"nick-${u.id}\" value=\"${esc(u.nickname||'')}\" placeholder=\"管理员昵称\">`:'—'}</div><div>${u.muted?'禁言':'正常'}</div><div>${u.role===ROLE.ADMIN?`<button class=\"mini\" data-nick=\"${u.id}\">保存昵称</button>`:''}${u.role===ROLE.USER?`<button class=\"mini\" data-mute=\"${u.id}\" data-muted=\"${u.muted?'1':'0'}\">${u.muted?'解除禁言':'禁言'}</button>`:''}</div></div>`}).join(''):'<div class=\"empty\">暂无用户</div>';$$('[data-nick]').forEach(b=>b.onclick=async()=>{const id=b.dataset.nick,nick=$('#nick-'+id).value.trim();b.disabled=true;try{const{data,error}=await sb.from('profiles').update({nickname:nick||null}).eq('id',id).select('*').maybeSingle();if(error)throw error;state.adminNicknames[id]=nick;if(state.profile?.id===id)state.profile.nickname=nick;try{await sb.from('products').update({uploader_nickname:nick||null}).eq('created_by',id)}catch(e){console.warn('同步产品昵称失败',e)}renderAll();toast('昵称已保存并同步')}catch(e){console.error(e);toast(e.message||'昵称保存失败',true)}finally{b.disabled=false}});$$('[data-mute]').forEach(b=>b.onclick=async()=>{let muted=b.dataset.muted==='1',id=b.dataset.mute;const{error}=await sb.from('profiles').update({muted:!muted}).eq('id',id);if(error)toast(error.message,true);else{toast(muted?'已解除禁言':'已禁言');await refreshUserManagement()}})}
+$('#userManageBtn').onclick=async()=>{if(!isSuper())return toast('只有超级管理员可以管理用户',true);try{await refreshUserManagement();openModal('usersModal')}catch(e){toast(e.message||'读取用户失败',true)}};"""
+          if old2 not in s:
+              raise SystemExit('user manage block not found')
+          s=s.replace(old2,new2,1)
+          marker="/* PI_ADMIN_NICKNAME_HELPER_V1 */"
+          helper="""/* PI_ADMIN_NICKNAME_HELPER_V2 */\nfunction getAdminNickname(id){try{if(!id)return '';return state.adminNicknames?.[id]||''}catch{return ''}}\n"""
+          if 'PI_ADMIN_NICKNAME_HELPER_V2' not in s:
+              s=s.replace(marker,helper,1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit fix and remove temporary files
+        run: |
+          rm -f fix-admin-nickname-save.trigger .github/workflows/fix-admin-nickname-save.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html fix-admin-nickname-save.trigger .github/workflows/fix-admin-nickname-save.yml
+          git commit -m "fix: make admin nickname saving reliable" || exit 0
+          git push
