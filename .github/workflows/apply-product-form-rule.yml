@@ -1,0 +1,100 @@
+name: Apply product form category rules
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "product-form-rule.trigger"
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch index.html
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          marker = '/* PI_PRODUCT_FORM_CATEGORY_RULE_V1 */'
+          if marker in s:
+              print('patch already applied')
+              raise SystemExit(0)
+          patch = r'''<script>
+          /* PI_PRODUCT_FORM_CATEGORY_RULE_V1 */
+          (function(){
+            function boot(){
+              const q=s=>document.querySelector(s), escv=(v)=>String(v??'');
+              const modal=q('#productModal'); if(!modal)return;
+              function ensureFields(){
+                if(q('#piExtraFields'))return;
+                const box=document.createElement('div'); box.id='piExtraFields'; box.innerHTML=`
+                  <div class="grid2">
+                    <div class="field"><label>供应商名称</label><input id="pSupplier" maxlength="100" placeholder="供应商名称"></div>
+                    <div class="field" id="piNormalPriceField"><label>产品价格</label><input id="pPrice" type="number" min="0" step="0.01" placeholder="例如 29.00"></div>
+                    <div class="field" id="piPriceCompositionField"><label>价格构成</label><input id="pPriceComposition" maxlength="200" placeholder="例如 产品价+包装+配件"></div>
+                    <div class="field"><label>MOQ</label><input id="pMOQ" maxlength="60" placeholder="例如 100 件"></div>
+                    <div class="field" id="piDeliveryField"><label>交期</label><input id="pDelivery" maxlength="80" placeholder="例如 7-10 天"></div>
+                    <div class="field" id="piCartonField"><label>装箱规格</label><input id="pCarton" maxlength="120" placeholder="例如 20pcs/箱"></div>
+                    <div class="field" id="piMaxOutputField"><label>最大输出功率</label><input id="pMaxOutputPower" maxlength="60" placeholder="例如 22.5W"></div>
+                  </div>`;
+                const firstGrid=modal.querySelector('.grid2');
+                firstGrid.parentNode.insertBefore(box, firstGrid.nextSibling);
+              }
+              function isPB(){return q('#pCategory')?.value==='powerbank'}
+              function toggle(){
+                ensureFields(); const pb=isPB();
+                const cost=q('#powerbankCostGrid'); if(cost)cost.style.display=pb?'grid':'none';
+                ['piNormalPriceField','piPriceCompositionField','piDeliveryField','piCartonField'].forEach(id=>{const e=q('#'+id);if(e)e.style.display=pb?'none':'block'});
+                const mo=q('#piMaxOutputField'); if(mo)mo.style.display=pb?'block':'none';
+              }
+              function getExtra(p){try{return JSON.parse(p?.description||'{}')||{}}catch{return{}}}
+              const oldInit=window.initForm;
+              window.initForm=function(p){
+                if(oldInit)oldInit(p); ensureFields();
+                const x=getExtra(p); q('#pSupplier').value=x.supplier||''; q('#pPrice').value=p?.price??'';
+                q('#pPriceComposition').value=x.priceComposition||''; q('#pMOQ').value=x.moq||'';
+                q('#pDelivery').value=x.delivery||''; q('#pCarton').value=x.carton||''; q('#pMaxOutputPower').value=x.maxOutputPower||'';
+                toggle();
+              };
+              ensureFields(); toggle();
+              q('#pCategory')?.addEventListener('change',toggle);
+              q('#newProductBtn')?.addEventListener('click',()=>setTimeout(toggle,30),true);
+              q('#saveProductBtn').onclick=async()=>{
+                if(!isAdmin())return toast('无权限',true);
+                const name=q('#pName').value.trim(); if(name.length<2)return toast('产品名称至少需要 2 个字符',true);
+                const cat=q('#pCategory').value,pb=cat==='powerbank',old=state.products.find(x=>x.id===state.editingId);
+                const extra={supplier:q('#pSupplier').value.trim(),priceComposition:pb?'':q('#pPriceComposition').value.trim(),moq:q('#pMOQ').value.trim(),delivery:pb?'':q('#pDelivery').value.trim(),carton:pb?'':q('#pCarton').value.trim(),maxOutputPower:pb?q('#pMaxOutputPower').value.trim():''};
+                const payload={name,model:q('#pModel').value.trim(),category:cat,price:pb?null:Number(q('#pPrice').value||0),description:JSON.stringify(extra),kit_price:pb?Number(q('#pKitPrice').value||0):0,cell_model:pb?q('#pCellModel').value.trim():null,cell_count:pb?Number(q('#pCellCount').value||0):0,actual_cell_capacity:pb?Number(q('#pActualCellCapacity').value||0):0,cell_price:pb?Number(q('#pCellPrice').value||0):0,assembly_fee:pb?Number(q('#pAssemblyFee').value||0):0,other_cost:pb?Number(q('#pOtherCost').value||0):0,total_cost:pb?calcTotal():0,specs:q('#pSpecs').value.trim(),selling:old?.selling||'',updated_at:new Date().toISOString()};
+                try{let id=state.editingId;if(id){const r=await sb.from('products').update(payload).eq('id',id);if(r.error)throw r.error}else{const nick=getAdminNickname(state.user.id)||state.profile.username;const r=await sb.from('products').insert({...payload,published:true,created_by:state.user.id,uploader_nickname:nick}).select().single();if(r.error)throw r.error;id=r.data.id}await uploadFiles(id);closeModal();await loadProducts();renderAll();toast(state.editingId?'产品已更新':'产品已创建')}catch(e){console.error(e);toast(e.message||'保存失败',true)}
+              };
+              function renderCatalogFixed(){
+                const a=filtered(); q('#catalog').innerHTML=a.length?a.map(p=>{const imgs=media(p,'image'),vids=media(p,'video'),cv=imgs[0]?.public_url;return `<article class="card"><div class="cover">${cv?`<img src="${esc(cv)}" loading="lazy" alt="${esc(p.name)}">`:'<div style="height:100%;display:grid;place-items:center;color:#899aaa">暂无图片</div>'}<span class="tag">${esc(catName(p.category))}</span></div><div class="body"><div class="ptop"><div><h3>${esc(p.name)}</h3><div class="meta">型号：${esc(p.model||'未填写')}</div></div><div class="price">${p.category==='powerbank'?'¥'+money(p.total_cost):(p.price!=null?'¥'+money(p.price):'—')}</div></div>${p.category==='powerbank'?`<div class="costline">套料 ¥${money(p.kit_price)} · ${esc(p.cell_model||'未填写')} · ${num(p.cell_count)} 颗 · ${p.actual_cell_capacity?num(p.actual_cell_capacity)+'mAh':'容量未填'}</div>`:`<div class="costline">价格：${p.price!=null?'¥'+money(p.price):'未填写'}</div>`}${(!state.profile||isAdmin())&&(getAdminNickname(p.created_by)||p.uploader_nickname)?`<div class="uploader">上传者 <b>${esc(getAdminNickname(p.created_by)||p.uploader_nickname)}</b></div>`:''}<div class="pc-actions"><button class="mini" data-open="${p.id}">查看资料</button><button class="mini" data-copy="${p.id}">复制资料</button>${state.profile?`<button class="mini" data-comment="${p.id}">留言</button>`:''}${isAdmin()?`<button class="mini" data-edit="${p.id}">编辑</button>`:''}${isSuper()?`<button class="mini danger" data-delete="${p.id}">删除</button>`:''}</div><div class="viewnote">${imgs.length} 张图片 · ${vids.length?'含视频':'暂无视频'}</div></div></article>`}).join(''):'<div class="empty">当前没有找到匹配的产品资料。<br>换一个关键词或切换其他分类试试。</div>';
+                $$('[data-open]').forEach(b=>b.onclick=()=>showProduct(b.dataset.open));$$('[data-copy]').forEach(b=>b.onclick=()=>copyProduct(b.dataset.copy));$$('[data-comment]').forEach(b=>b.onclick=()=>openComments(b.dataset.comment));$$('[data-edit]').forEach(b=>b.onclick=()=>editProduct(b.dataset.edit));$$('[data-delete]').forEach(b=>b.onclick=()=>deleteProduct(b.dataset.delete));
+              }
+              window.renderCatalog=renderCatalogFixed;
+              window.copyProduct=async function(id){const p=state.products.find(x=>x.id===id);if(!p)return;const x=getExtra(p),lines=[`产品名称：${p.name}`,`型号：${p.model||'—'}`,`分类：${catName(p.category)}`,`供应商：${x.supplier||'—'}`];if(p.category==='powerbank'){lines.push(`套料价格：¥${money(p.kit_price)}`,`电芯型号：${p.cell_model||'—'}`,`电芯数量：${num(p.cell_count)} 颗`,`电芯价格：¥${money(p.cell_price)} / 颗`,`组装费：¥${money(p.assembly_fee)}`,`其他费用预估：¥${money(p.other_cost)}`,`合计成本：¥${money(p.total_cost)}`,`MOQ：${x.moq||'—'}`,`最大输出功率：${x.maxOutputPower||'—'}`)}else{lines.push(`产品价格：¥${money(p.price)}`,`价格构成：${x.priceComposition||'—'}`,`MOQ：${x.moq||'—'}`,`交期：${x.delivery||'—'}`,`装箱规格：${x.carton||'—'}`)}lines.push('',`产品参数：`,p.specs||'—');try{await navigator.clipboard.writeText(lines.join('\n'));toast('产品资料已复制')}catch{toast('复制失败，请手动复制',true)}};
+              window.showProduct=function(id){const p=state.products.find(x=>x.id===id);if(!p)return;const x=getExtra(p),imgs=media(p,'image'),vids=media(p,'video');const base=p.category==='powerbank'?`<dt>供应商名称</dt><dd>${esc(x.supplier||'—')}</dd><dt>成本明细</dt><dd>套料价格：¥${money(p.kit_price)}<br>电芯型号：${esc(p.cell_model||'—')}<br>电芯数量：${num(p.cell_count)} 颗<br>实际使用电芯容量：${p.actual_cell_capacity?num(p.actual_cell_capacity)+' mAh':'—'}<br>电芯价格：¥${money(p.cell_price)} / 颗<br>组装费：¥${money(p.assembly_fee)}<br>其他费用预估：¥${money(p.other_cost)}<br><strong>合计成本：¥${money(p.total_cost)}</strong></dd><dt>MOQ</dt><dd>${esc(x.moq||'—')}</dd><dt>最大输出功率</dt><dd>${esc(x.maxOutputPower||'—')}</dd>`:`<dt>供应商名称</dt><dd>${esc(x.supplier||'—')}</dd><dt>产品价格</dt><dd>¥${money(p.price)}</dd><dt>价格构成</dt><dd>${esc(x.priceComposition||'—')}</dd><dt>MOQ</dt><dd>${esc(x.moq||'—')}</dd><dt>交期</dt><dd>${esc(x.delivery||'—')}</dd><dt>装箱规格</dt><dd>${esc(x.carton||'—')}</dd>`;q('#detailContent').innerHTML=`<div class="ptop"><div><div class="eyebrow" style="color:var(--g)">${esc(catName(p.category))}</div><h2>${esc(p.name)}</h2><div class="meta">型号：${esc(p.model||'未填写')} · ${p.category==='powerbank'?'合计成本 ¥'+money(p.total_cost):(p.price!=null?'价格 ¥'+money(p.price):'价格未填写')}</div>${(!state.profile||isAdmin())&&(getAdminNickname(p.created_by)||p.uploader_nickname)?`<div class="uploader">上传者 <b>${esc(getAdminNickname(p.created_by)||p.uploader_nickname)}</b></div>`:''}</div><button class="btn gold" id="copyAllBtn">一键复制图片</button></div><div class="gallery">${imgs.length?imgs.map(x=>`<img src="${esc(x.public_url)}">`).join(''):'<div class="notice" style="grid-column:1/-1">暂无图片</div>'}</div>${vids.map(v=>`<video controls style="width:100%;max-height:500px;margin-top:10px;border-radius:12px;background:#0b2034" src="${esc(v.public_url)}"></video>`).join('')}<div style="height:1px;background:#e8eef3;margin:18px 0"></div><dl class="info">${base}<dt>产品参数</dt><dd>${esc(p.specs||'—').replace(/\n/g,'<br>')}</dd></dl><div class="pc-actions">${state.profile?'<button class="btn primary" id="detailCommentBtn">留言</button>':''}<button class="btn" id="detailContactBtn">联系我们</button></div>`;q('#copyAllBtn').onclick=()=>copyImages(imgs.map(x=>x.public_url));if(state.profile)q('#detailCommentBtn').onclick=()=>{closeModal();openComments(p.id)};q('#detailContactBtn').onclick=()=>{closeModal();state.profile?(renderContactMethods(),openModal('contactModal')):openModal('loginModal')};openModal('detailModal')};
+            }
+            if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+          })();
+          </script>'''
+          if '</body>' not in s:
+              raise SystemExit('index.html has no closing body tag')
+          s=s.replace('</body>', patch+'\n</body>', 1)
+          p.write_text(s,encoding='utf-8')
+          print('patched index.html')
+          PY
+      - name: Commit patch and remove one-shot trigger
+        run: |
+          rm -f product-form-rule.trigger
+          rm -f .github/workflows/apply-product-form-rule.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html product-form-rule.trigger .github/workflows/apply-product-form-rule.yml
+          git commit -m "fix: separate powerbank costs from normal product pricing" || exit 0
+          git push
