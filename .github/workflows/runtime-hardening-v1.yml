@@ -1,0 +1,87 @@
+name: Runtime Hardening V1
+on:
+  push:
+    paths:
+      - 'runtime-hardening-v1.trigger'
+      - '.github/workflows/runtime-hardening-v1.yml'
+permissions:
+  contents: write
+jobs:
+  harden:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix runtime initialization and product save contract
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+
+          # The old hero was removed by the Apple homepage redesign; keep the legacy renderer harmless.
+          s=s.replace("function renderHero(){let n=state.products.length;", "function renderHero(){if(!$('#heroEyebrow')||!$('#heroTitle')||!$('#heroText')||!$('#heroStats'))return;let n=state.products.length;", 1)
+
+          # Expose state for the standalone homepage metric script.
+          s=s.replace("let state={user:null,profile:null,products:[],q:'',cat:'all',editingId:null,commentProduct:null,pendingImages:[],pendingVideo:null};", "let state={user:null,profile:null,products:[],q:'',cat:'all',editingId:null,commentProduct:null,pendingImages:[],pendingVideo:null,adminNicknames:{}};window.state=state;", 1)
+
+          # Product form must persist the current selling-point textarea rather than an old product value.
+          s=s.replace("selling:old?.selling||''", "selling:q('#pSelling').value.trim()", 1)
+
+          # Include selling points in copy output.
+          s=s.replace("lines.push('',`产品参数：`,p.specs||'—');", "lines.push('',`产品参数：`,p.specs||'—',``,`产品卖点：`,p.selling||'—');", 1)
+
+          # Avoid runtime crash in the legacy hero renderer when the new homepage is active.
+          p.write_text(s,encoding='utf-8')
+          PY
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('index.html').read_text(encoding='utf-8')
+          js='\n'.join(re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',s,re.S|re.I))
+          Path('/tmp/page.js').write_text(js,encoding='utf-8')
+          checks={
+            'renderHero_guard':"function renderHero(){if(!$('#heroEyebrow')" in s,
+            'window_state':"window.state=state;" in s,
+            'selling_write':"selling:q('#pSelling').value.trim()" in s,
+            'description_column':"description:JSON.stringify" in s,
+          }
+          print(checks)
+          if not all(checks.values()): raise SystemExit('runtime hardening checks failed')
+          PY
+          node --check /tmp/page.js
+
+      - name: Align canonical schema with live database
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('supabase/schema.sql')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace("  description text,\n  specs text,", "  description text,\n  specs text,")
+          marker="  updated_at timestamptz not null default now()\n);"
+          replacement="""  updated_at timestamptz not null default now(),
+  kit_price numeric not null default 0,
+  cell_model text,
+  cell_count integer not null default 0,
+  actual_cell_capacity integer not null default 0,
+  cell_price numeric not null default 0,
+  assembly_fee numeric not null default 0,
+  other_cost numeric not null default 0,
+  total_cost numeric not null default 0,
+  uploader_nickname text
+);"""
+          if marker in s and 'kit_price numeric not null default 0' not in s:
+              s=s.replace(marker,replacement,1)
+          s=s.replace("returns public.user_role language sql immutable as $$", "returns public.user_role language sql immutable set search_path=public as $$", 1)
+          p.write_text(s,encoding='utf-8')
+          PY
+
+      - name: Commit runtime hardening
+        run: |
+          rm -f runtime-hardening-v1.trigger
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html supabase/schema.sql runtime-hardening-v1.trigger
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'fix: harden runtime initialization and product saving'
+          git push origin main
