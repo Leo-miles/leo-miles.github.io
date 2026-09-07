@@ -25,22 +25,18 @@ jobs:
           new2="""function renderNav(){\n  if(!state.user){\n    $('#navActions').innerHTML='<button class=\"btn\" id=\"loginBtn\">登录</button><button class=\"btn primary\" id=\"regBtn\">注册</button>'\n  }else{\n    let rc=state.profile?.role===ROLE.SUPER?'role-super':state.profile?.role===ROLE.ADMIN?'role-admin':'';\n    let label=state.profile?.nickname||state.profile?.username||((state.user.email||'').split('@')[0]||'用户');\n    let role=state.profile?.role||'user';\n    $('#navActions').innerHTML=`<button class=\"btn\">${esc(label)} <span class=\"badge ${rc}\">${roleText(role)}</span></button><button class=\"btn\" id=\"logoutBtn\">退出</button>`;\n    $('#logoutBtn').onclick=async()=>{let{error}=await sb.auth.signOut();if(error)toast(error.message,true)}\n  }\n  $('#loginBtn')?.addEventListener('click',openLogin);$('#regBtn')?.addEventListener('click',openRegister);\n  $('#adminbar').classList.toggle('show',isAdmin());\n  if(isAdmin()){\n    $('#adminWelcome').textContent=(state.profile?.nickname||state.profile?.username)+' · '+roleText(state.profile.role);\n    $('#adminHint').textContent=isSuper()?'完整管理权限：产品、用户、留言与删除产品':'产品管理权限：新增、修改及留言处理';\n    $('#userManageBtn').style.display=isSuper()?'':'none'\n  }\n}"""
           if old2 not in s: raise SystemExit('renderNav target not found')
           s=s.replace(old2,new2,1)
-          old3="""const loggedIn=!!document.querySelector('.rolebar.show');"""
-          new3="""const loggedIn=!!document.querySelector('#logoutBtn');"""
-          s=s.replace(old3,new3,1)
-          old4="""if(login){login.classList.toggle('hidden',loggedIn);login.textContent='登录';}"""
-          new4="""if(login){login.classList.toggle('hidden',loggedIn);login.textContent=loggedIn?'已登录':'登录';}"""
-          s=s.replace(old4,new4,1)
+          s=s.replace("const loggedIn=!!document.querySelector('.rolebar.show');","const loggedIn=!!document.querySelector('#logoutBtn');",1)
+          s=s.replace("if(login){login.classList.toggle('hidden',loggedIn);login.textContent='登录';}","if(login){login.classList.toggle('hidden',loggedIn);login.textContent=loggedIn?'已登录':'登录';}",1)
           p.write_text(s,encoding='utf-8')
           PY
-          node --check <(python3 - <<'PY'
+          python3 - <<'PY'
           import re
           from pathlib import Path
           s=Path('index.html').read_text(encoding='utf-8')
-          Path('/tmp/all.js').write_text('\n'.join(re.findall(r'<script(?:\\s[^>]*)?>(.*?)</script>',s,re.S|re.I)),encoding='utf-8')
-          print(Path('/tmp/all.js').read_text(encoding='utf-8'))
+          js='\n'.join(re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',s,re.S|re.I))
+          Path('/tmp/all.js').write_text(js,encoding='utf-8')
           PY
-          )
+          node --check /tmp/all.js
       - name: Commit frontend repair
         run: |
           rm -f auth-profile-repair.trigger
