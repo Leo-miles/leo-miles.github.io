@@ -77,8 +77,44 @@ function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 $$('[data-close]').forEach(b=>b.onclick=closeModal);$$('.modal').forEach(m=>m.onclick=e=>{if(e.target===m)closeModal()});
 function media(p,t){return(p.product_media||[]).filter(x=>t?x.media_type===t:true).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0))}function money(n){return Number(n||0).toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2})}function num(n){return Number(n||0).toLocaleString('zh-CN')}
 function calcTotal(){return Number($('#pKitPrice').value||0)+(Number($('#pCellCount').value||0)*Number($('#pCellPrice').value||0))+Number($('#pAssemblyFee').value||0)+Number($('#pOtherCost').value||0)}function refreshTotal(){$('#pTotalCostPreview').textContent='¥'+money(calcTotal());return calcTotal()}function resetPendingImages(){state.pendingImages=[];if($('#pendingGallery'))$('#pendingGallery').innerHTML=''}function previewPending(){let g=$('#pendingGallery');if(!g)return;g.innerHTML='';state.pendingImages.forEach((f,i)=>{let w=document.createElement('div');w.className='prev';let im=document.createElement('img');im.src=URL.createObjectURL(f);let b=document.createElement('button');b.textContent='×';b.onclick=()=>{state.pendingImages.splice(i,1);previewPending()};w.append(im,b);g.appendChild(w)})}function addImageFiles(files){let fs=[...files].filter(f=>f.type.startsWith('image/'));if(!fs.length)return;state.pendingImages.push(...fs);previewPending();toast('已加入 '+fs.length+' 张图片')}function setupPaste(){let z=$('#pasteZone');if(!z||z.dataset.bound)return;z.dataset.bound='1';z.addEventListener('paste',e=>{let items=[...(e.clipboardData?.items||[])],fs=[];items.forEach(it=>{if(it.type.startsWith('image/')){let f=it.getAsFile();if(f)fs.push(f)}});if(fs.length){addImageFiles(fs);e.preventDefault()}});z.onclick=()=>z.focus();$('#pImages')?.addEventListener('change',e=>addImageFiles(e.target.files))}function setupVideoPaste(){let z=$('#videoPasteZone');if(!z||z.dataset.bound)return;z.dataset.bound='1';z.addEventListener('paste',e=>{let items=[...(e.clipboardData?.items||[])],item=items.find(x=>x.type.startsWith('video/'));if(item){let f=item.getAsFile();if(f){state.pendingVideo=f;$('#videoPasteStatus').textContent='已粘贴视频：'+(f.name||'剪贴板视频');z.classList.add('active');e.preventDefault();return}}let f=[...(e.clipboardData?.files||[])].find(x=>x.type.startsWith('video/'));if(f){state.pendingVideo=f;$('#videoPasteStatus').textContent='已粘贴视频：'+f.name;z.classList.add('active')}});z.onclick=()=>z.focus();$('#pVideo')?.addEventListener('change',e=>{state.pendingVideo=e.target.files[0]||null;$('#videoPasteStatus').textContent=state.pendingVideo?'已选择视频：'+state.pendingVideo.name:''})}
-async function loadProfile(u){if(!u){state.profile=null;return}let{data,error}=await sb.from('profiles').select('*').eq('id',u.id).maybeSingle();if(error)throw error;state.profile=data||null}async function loadProducts(){let q=sb.from('products').select('*,product_media(*)').order('created_at',{ascending:false});if(!isAdmin())q=q.eq('published',true);let{data,error}=await q;if(error)throw error;state.products=data||[]}
-function renderNav(){if(!state.profile){$('#navActions').innerHTML='<button class="btn" id="loginBtn">登录</button><button class="btn primary" id="regBtn">注册</button>'}else{let rc=state.profile.role===ROLE.SUPER?'role-super':state.profile.role===ROLE.ADMIN?'role-admin':'';$('#navActions').innerHTML=`<button class="btn">${esc(state.profile.nickname||state.profile.username)} <span class="badge ${rc}">${roleText(state.profile.role)}</span></button><button class="btn" id="logoutBtn">退出</button>`;$('#logoutBtn').onclick=async()=>{let{error}=await sb.auth.signOut();if(error)toast(error.message,true)}}$('#loginBtn')?.addEventListener('click',openLogin);$('#regBtn')?.addEventListener('click',openRegister);$('#adminbar').classList.toggle('show',isAdmin());if(isAdmin()){$('#adminWelcome').textContent=(state.profile.nickname||state.profile.username)+' · '+roleText(state.profile.role);$('#adminHint').textContent=isSuper()?'完整管理权限：产品、用户、留言与删除产品':'产品管理权限：新增、修改及留言处理';$('#userManageBtn').style.display=isSuper()?'':'none'}}
+async function loadProfile(u){
+  if(!u){state.profile=null;state.profileError=null;return}
+  state.profileError=null;
+  let{data,error}=await sb.from('profiles').select('*').eq('id',u.id).maybeSingle();
+  if(error){
+    console.error('profiles load failed',error);
+    state.profileError=error;
+    const uname=u.user_metadata?.username||((u.email||'').split('@')[0]||'用户');
+    state.profile={id:u.id,username:uname,role:'user',muted:false,note:null,created_at:null};
+    return
+  }
+  if(!data){
+    const uname=u.user_metadata?.username||((u.email||'').split('@')[0]||'用户');
+    state.profile={id:u.id,username:uname,role:'user',muted:false,note:null,created_at:null};
+    state.profileMissing=true;
+    return
+  }
+  state.profileMissing=false;
+  state.profile=data
+}async function loadProducts(){let q=sb.from('products').select('*,product_media(*)').order('created_at',{ascending:false});if(!isAdmin())q=q.eq('published',true);let{data,error}=await q;if(error)throw error;state.products=data||[]}
+function renderNav(){
+  if(!state.user){
+    $('#navActions').innerHTML='<button class="btn" id="loginBtn">登录</button><button class="btn primary" id="regBtn">注册</button>'
+  }else{
+    let rc=state.profile?.role===ROLE.SUPER?'role-super':state.profile?.role===ROLE.ADMIN?'role-admin':'';
+    let label=state.profile?.nickname||state.profile?.username||((state.user.email||'').split('@')[0]||'用户');
+    let role=state.profile?.role||'user';
+    $('#navActions').innerHTML=`<button class="btn">${esc(label)} <span class="badge ${rc}">${roleText(role)}</span></button><button class="btn" id="logoutBtn">退出</button>`;
+    $('#logoutBtn').onclick=async()=>{let{error}=await sb.auth.signOut();if(error)toast(error.message,true)}
+  }
+  $('#loginBtn')?.addEventListener('click',openLogin);$('#regBtn')?.addEventListener('click',openRegister);
+  $('#adminbar').classList.toggle('show',isAdmin());
+  if(isAdmin()){
+    $('#adminWelcome').textContent=(state.profile?.nickname||state.profile?.username)+' · '+roleText(state.profile.role);
+    $('#adminHint').textContent=isSuper()?'完整管理权限：产品、用户、留言与删除产品':'产品管理权限：新增、修改及留言处理';
+    $('#userManageBtn').style.display=isSuper()?'':'none'
+  }
+}
 function renderHero(){let n=state.products.length;if(!state.profile){$('#heroEyebrow').textContent='PRODUCT INTELLIGENCE';$('#heroTitle').textContent='新品资料，集中管理。';$('#heroText').textContent='快速浏览新品、参数、图片与产品卖点，让产品信息更快被找到、更方便被使用.';$('#heroStats').innerHTML=`<div class="stat"><small>产品资料</small><strong>${n}</strong><i>当前可浏览</i></div><div class="stat"><small>分类</small><strong>${CATS.length}</strong><i>产品方向</i></div><div class="stat"><small>使用方式</small><strong>快速检索</strong><i>名称 / 型号 / 参数</i></div><div class="stat"><small>资料状态</small><strong>持续更新</strong><i>集中呈现</i></div>`}else if(isSuper()){$('#heroEyebrow').textContent='SUPER ADMIN / CONTROL CENTER';$('#heroTitle').textContent='欢迎回来，超级管理员。';$('#heroText').textContent='你可以管理产品资料、用户、昵称、留言以及产品删除。';$('#heroStats').innerHTML=`<div class="stat"><small>产品</small><strong>${n}</strong><i>资料中心</i></div><div class="stat"><small>分类</small><strong>${CATS.length}</strong><i>产品方向</i></div><div class="stat"><small>权限</small><strong>最高</strong><i>超级管理员</i></div><div class="stat"><small>管理能力</small><strong>全局</strong><i>产品 / 用户 / 留言</i></div>`}else if(state.profile.role===ROLE.ADMIN){$('#heroEyebrow').textContent='PRODUCT MANAGEMENT';$('#heroTitle').textContent='欢迎回来，管理员。';$('#heroText').textContent='集中维护产品资料，让新品信息、成本、参数与卖点保持清晰。';$('#heroStats').innerHTML=`<div class="stat"><small>产品</small><strong>${n}</strong><i>当前资料</i></div><div class="stat"><small>分类</small><strong>${CATS.length}</strong><i>产品方向</i></div><div class="stat"><small>权限</small><strong>编辑</strong><i>新增 / 修改</i></div><div class="stat"><small>工作区</small><strong>资料库</strong><i>产品与留言</i></div>`}else{$('#heroEyebrow').textContent='PRODUCT INTELLIGENCE';$('#heroTitle').textContent=`欢迎回来，${state.profile.nickname||state.profile.username}。`;$('#heroText').textContent='继续浏览产品资料、查看成本、参数与卖点，并留下你的需求或问题。';$('#heroStats').innerHTML=`<div class="stat"><small>产品</small><strong>${n}</strong><i>可浏览资料</i></div><div class="stat"><small>分类</small><strong>${CATS.length}</strong><i>快速筛选</i></div><div class="stat"><small>资料</small><strong>查看</strong><i>成本 / 图片 / 视频</i></div><div class="stat"><small>互动</small><strong>留言</strong><i>需求 / 反馈</i></div>`}}
 function renderRole(){let el=$('#roleBanner');if(!state.profile){el.classList.remove('show');return}let title=isSuper()?'超级管理员模式':isAdmin()?'管理员模式':'会员模式';let text=isSuper()?'产品、用户、昵称、留言与删除功能已解锁。':isAdmin()?'可新增和修改产品，删除权限保留给超级管理员。':'可以浏览产品资料并留言。';el.innerHTML=`<div class="roleicon">${isSuper()?'S':isAdmin()?'A':'U'}</div><div><strong>${title}</strong><span>${text}</span></div>`;el.classList.add('show')}
 function renderSection(){if(!state.profile){$('#sectionSub').textContent='公开产品资料库';$('#sideNotice').textContent='搜索产品名称、型号、参数或卖点，可以快速定位资料。'}else if(isAdmin()){$('#sectionSub').textContent='管理员产品工作区';$('#sideNotice').textContent='维护产品资料、成本、图片、视频和卖点。删除产品只有超级管理员可以操作。'}else{$('#sectionSub').textContent='你的产品资料中心';$('#sideNotice').textContent='查看产品成本、参数、图片和视频，并直接留言。'}}
@@ -207,9 +243,9 @@ $('#search').oninput=e=>{state.q=e.target.value.trim();renderCatalog()};$('#brow
  const q=(s)=>document.querySelector(s);
  const login=q('#piLoginShortcut'),upload=q('#piUploadShortcut'),admin=q('#piAdminShortcut');
  const refresh=()=>{
-   const loggedIn=!!document.querySelector('.rolebar.show');
+   const loggedIn=!!document.querySelector('#logoutBtn');
    const adminMode=!!document.querySelector('.adminbar.show');
-   if(login){login.classList.toggle('hidden',loggedIn);login.textContent='登录';}
+   if(login){login.classList.toggle('hidden',loggedIn);login.textContent=loggedIn?'已登录':'登录';}
    if(upload) upload.classList.toggle('hidden',!adminMode);
    if(admin) admin.classList.toggle('hidden',!adminMode);
  };
