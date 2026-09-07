@@ -117,7 +117,7 @@ $('#search').oninput=e=>{state.q=e.target.value.trim();renderCatalog()};$('#brow
     window.copyProduct=async function(id){
   const p=state.products.find(x=>x.id===id);if(!p)return;
   const x=getExtra(p),lines=[`产品名称：${p.name}`,`型号：${p.model||'—'}`,`分类：${catName(p.category)}`,`供应商：${x.supplier||'—'}`];
-  if(p.category==='powerbank'){lines.push(`套料价格：¥${money(p.kit_price)}`,`电芯型号：${p.cell_model||'—'}`,`电芯数量：${num(p.cell_count)} 颗`,`电芯价格：¥${money(p.cell_price)} / 颗`,`组装费：¥${money(p.assembly_fee)}`,`其他费用预估：¥${money(p.other_cost)}`,`合计成本：¥${money(p.total_cost)}`,`MOQ：${x.moq||'—'}`,`最大输出功率：${x.maxOutputPower||'—'}`)}else{lines.push(`产品价格：¥${money(p.price)}`,`价格构成：${x.priceComposition||'—'}`,`MOQ：${x.moq||'—'}`,`交期：${x.delivery||'—'}`,`装箱规格：${x.carton||'—'`)}
+  if(p.category==='powerbank'){lines.push(`套料价格：¥${money(p.kit_price)}`,`电芯型号：${p.cell_model||'—'}`,`电芯数量：${num(p.cell_count)} 颗`,`电芯价格：¥${money(p.cell_price)} / 颗`,`组装费：¥${money(p.assembly_fee)}`,`其他费用预估：¥${money(p.other_cost)}`,`合计成本：¥${money(p.total_cost)}`,`MOQ：${x.moq||'—'}`,`最大输出功率：${x.maxOutputPower||'—'}`)}else{lines.push(`产品价格：¥${money(p.price)}`,`价格构成：${x.priceComposition||'—'}`,`MOQ：${x.moq||'—'}`,`交期：${x.delivery||'—'}`,`装箱规格：${x.carton||'—'}`)}
   lines.push('',`产品参数：`,p.specs||'—');
   const text=lines.join('\n');
   const imgs=media(p,'image').filter(m=>m.public_url);
