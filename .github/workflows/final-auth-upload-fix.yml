@@ -1,0 +1,106 @@
+name: Final Auth Upload Fix
+on:
+  push:
+    paths:
+      - 'final-auth-upload-fix.trigger'
+      - '.github/workflows/final-auth-upload-fix.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Repair auth state and upload flow
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+
+          old_profile="""async function loadProfile(u){if(!u){state.profile=null;return}let{data,error}=await sb.from('profiles').select('*').eq('id',u.id).maybeSingle();if(error)throw error;state.profile=data||null}"""
+          new_profile="""async function loadProfile(u){
+            if(!u){state.profile=null;state.profileError=null;return}
+            state.profileError=null;
+            let{data,error}=await sb.from('profiles').select('*').eq('id',u.id).maybeSingle();
+            if(error){
+              console.error('profiles load failed',error);
+              state.profileError=error;
+              state.profile={id:u.id,username:u.user_metadata?.username||((u.email||'').split('@')[0]||'用户'),role:'user',muted:false,note:null,created_at:null};
+              return
+            }
+            state.profile=data||{id:u.id,username:u.user_metadata?.username||((u.email||'').split('@')[0]||'用户'),role:'user',muted:false,note:null,created_at:null}
+          }"""
+          if old_profile not in s:
+              raise SystemExit('profile target not found')
+          s=s.replace(old_profile,new_profile,1)
+
+          old_nav="""function renderNav(){if(!state.profile){$('#navActions').innerHTML='<button class=\"btn\" id=\"loginBtn\">登录</button><button class=\"btn primary\" id=\"regBtn\">注册</button>'}else{let rc=state.profile.role===ROLE.SUPER?'role-super':state.profile.role===ROLE.ADMIN?'role-admin':'';$('#navActions').innerHTML=`<button class=\"btn\">${esc(state.profile.nickname||state.profile.username)} <span class=\"badge ${rc}\">${roleText(state.profile.role)}</span></button><button class=\"btn\" id=\"logoutBtn\">退出</button>`;$('#logoutBtn').onclick=async()=>{let{error}=await sb.auth.signOut();if(error)toast(error.message,true)}}$('#loginBtn')?.addEventListener('click',openLogin);$('#regBtn')?.addEventListener('click',openRegister);$('#adminbar').classList.toggle('show',isAdmin());if(isAdmin()){$('#adminWelcome').textContent=(state.profile.nickname||state.profile.username)+' · '+roleText(state.profile.role);$('#adminHint').textContent=isSuper()?'完整管理权限：产品、用户、留言与删除产品':'产品管理权限：新增、修改及留言处理';$('#userManageBtn').style.display=isSuper()?'':'none'}}"""
+          new_nav="""function renderNav(){
+            if(!state.user){
+              $('#navActions').innerHTML='<button class=\"btn\" id=\"loginBtn\">登录</button><button class=\"btn primary\" id=\"regBtn\">注册</button>'
+            }else{
+              let rc=state.profile?.role===ROLE.SUPER?'role-super':state.profile?.role===ROLE.ADMIN?'role-admin':'';
+              let label=state.profile?.nickname||state.profile?.username||((state.user.email||'').split('@')[0]||'用户');
+              let role=state.profile?.role||'user';
+              $('#navActions').innerHTML=`<button class=\"btn\">${esc(label)} <span class=\"badge ${rc}\">${roleText(role)}</span></button><button class=\"btn\" id=\"logoutBtn\">退出</button>`;
+              $('#logoutBtn').onclick=async()=>{let{error}=await sb.auth.signOut();if(error)toast(error.message,true)}
+            }
+            $('#loginBtn')?.addEventListener('click',openLogin);$('#regBtn')?.addEventListener('click',openRegister);
+            $('#adminbar').classList.toggle('show',isAdmin());
+            if(isAdmin()){
+              $('#adminWelcome').textContent=(state.profile?.nickname||state.profile?.username)+' · '+roleText(state.profile.role);
+              $('#adminHint').textContent=isSuper()?'完整管理权限：产品、用户、留言与删除产品':'产品管理权限：新增、修改及留言处理';
+              $('#userManageBtn').style.display=isSuper()?'':'none'
+            }
+          }"""
+          if old_nav not in s:
+              raise SystemExit('nav target not found')
+          s=s.replace(old_nav,new_nav,1)
+
+          old_auth="""sb.auth.onAuthStateChange(async(_e,s)=>{state.user=s?.user||null;try{await loadProfile(state.user);await loadProducts();renderAll()}catch(e){console.error(e)}});(async()=>{try{let{data}=await sb.auth.getUser();state.user=data.user||null;await loadProfile(state.user);await loadProducts();renderAll()}catch(e){console.error(e);toast(e.message||'初始化失败',true)}})();"""
+          new_auth="""sb.auth.onAuthStateChange(async(_e,s)=>{
+            state.user=s?.user||null;
+            renderNav();
+            renderRole();
+            renderSection();
+            try{await loadProfile(state.user)}catch(e){console.error('profile sync',e)}
+            renderAll();
+            try{await loadProducts();renderAll()}catch(e){console.error('product load',e);toast(e.message||'产品资料读取失败',true)}
+          });
+          (async()=>{
+            try{
+              let{data}=await sb.auth.getUser();
+              state.user=data.user||null;
+              renderNav();
+              try{await loadProfile(state.user)}catch(e){console.error('profile init',e)}
+              renderAll();
+              try{await loadProducts();renderAll()}catch(e){console.error('product init',e);toast(e.message||'产品资料读取失败',true)}
+            }catch(e){console.error(e);toast(e.message||'初始化失败',true)}
+          })();"""
+          if old_auth not in s:
+              raise SystemExit('auth target not found')
+          s=s.replace(old_auth,new_auth,1)
+
+          old_dock="""const loggedIn=!!document.querySelector('.rolebar.show');"""
+          new_dock="""const loggedIn=!!document.querySelector('#logoutBtn');"""
+          s=s.replace(old_dock,new_dock,1)
+          old_dock2="""if(login){login.classList.toggle('hidden',loggedIn);login.textContent='登录';}"""
+          new_dock2="""if(login){login.classList.toggle('hidden',loggedIn);login.textContent=loggedIn?'已登录':'登录';}"""
+          s=s.replace(old_dock2,new_dock2,1)
+
+          p.write_text(s,encoding='utf-8')
+          scripts='\n'.join(re.findall(r'<script(?:\\s[^>]*)?>(.*?)</script>',s,re.S|re.I))
+          Path('/tmp/index-js.js').write_text(scripts,encoding='utf-8')
+          PY
+          node --check /tmp/index-js.js
+      - name: Commit repair
+        run: |
+          rm -f final-auth-upload-fix.trigger
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A index.html final-auth-upload-fix.trigger
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Repair login state and product upload flow'
+          git push origin main
