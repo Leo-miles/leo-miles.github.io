@@ -207,12 +207,11 @@ $('#search').oninput=e=>{state.q=e.target.value.trim();renderCatalog()};$('#brow
  const q=(s)=>document.querySelector(s);
  const login=q('#piLoginShortcut'),upload=q('#piUploadShortcut'),admin=q('#piAdminShortcut');
  const refresh=()=>{
-   const profile=window.state?.profile;
-   const isAdmin=typeof window.isAdmin==='function'&&window.isAdmin();
-   if(login) login.classList.toggle('hidden',!!profile);
-   if(upload) upload.classList.toggle('hidden',!isAdmin);
-   if(admin) admin.classList.toggle('hidden',!isAdmin);
-   if(profile&&login) login.textContent='已登录';
+   const loggedIn=!!document.querySelector('.rolebar.show');
+   const adminMode=!!document.querySelector('.adminbar.show');
+   if(login){login.classList.toggle('hidden',loggedIn);login.textContent='登录';}
+   if(upload) upload.classList.toggle('hidden',!adminMode);
+   if(admin) admin.classList.toggle('hidden',!adminMode);
  };
  login?.addEventListener('click',()=>{if(typeof window.openModal==='function')window.openModal('loginModal')});
  upload?.addEventListener('click',()=>{q('#newProductBtn')?.click()});
