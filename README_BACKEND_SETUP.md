@@ -1,52 +1,47 @@
-# 产品智库 V3 后端接入说明
+# LeoMiles Product Intelligence Hub v4
 
-## 架构
+这是一个纯 GitHub Pages 前端 + Supabase 后端的产品资料库。
 
-- 前端：GitHub Pages（`index.html`）
-- Auth：Supabase Auth
-- 数据库：Supabase Postgres
-- 图片/视频：Supabase Storage
-- 权限：RLS + `profiles.role`
-- 角色：`user` / `admin` / `superadmin`
+## 当前结构
 
-GitHub Pages 只能托管静态页面，无法安全地永久保存账号、图片和视频。因此生产环境要把数据移到后端。
+- `index.html`：唯一前端应用，不再叠加旧版本补丁。
+- `supabase/schema.sql`：最终业务表结构说明。
+- Supabase migration `rebuild_product_hub_v4_2`：已在项目中执行，用于重建业务表、RLS、Storage 和 Auth profile trigger。
 
-## 管理员
+## Supabase
 
-固定账号按需求设计为：
+Project: `zzkujghfxbjafvmlkwqz`
+URL: `https://zzkujghfxbjafvmlkwqz.supabase.co`
 
-- 超级管理员：`Leo`
-- 管理员：`User1` ~ `User10`
+前端只使用 publishable key，不包含 service role / secret key。
 
-请不要把管理员密码写入网页源码。管理员应在 Supabase Auth 中一次性创建，之后账号会长期存在于后台，不需要重新注册。
+## 主要表
 
-## 一次性初始化
-
-1. 创建 Supabase 项目。
-2. 执行 `supabase/schema.sql`。
-3. 在 Authentication → Users 创建 `Leo`、`User1`…`User10`。
-4. 在 `public.profiles` 将 `Leo` 设为 `superadmin`，其余设为 `admin`。
-5. 创建 Storage bucket：`product-media`。
-6. 把前端接入 Supabase Auth / Postgres / Storage。
-
-浏览器端只能使用公开 `anon` key；不要把 `service_role` key 写进 `index.html`。
-
-## 产品资料
-
-每个产品包含：名称、型号、分类、价格、简介、参数、卖点、多张图片、视频、发布状态、创建人和更新时间。
-
-销售端支持分类浏览、关键词搜索、一键复制图片以及批量下载兜底。
+`profiles`、`categories`、`products`、`product_media`、`comments`、`contact_messages`、`moderation_logs`
 
 ## 权限
 
-普通用户：查看已发布产品、留言、联系我们。
+- 访客：浏览已发布产品、搜索、查看图片和视频。
+- 普通用户：登录、评论、提交联系/需求信息。
+- 管理员：发布、编辑、删除产品，上传/管理媒体。
+- 超级管理员：全部管理权限，并可处理用户状态。
 
-管理员：新增、编辑、删除产品、上传图片和视频、查看留言。
+## 产品字段
 
-超级管理员：以上全部权限 + 查看账号资料 + 禁言/解除禁言 + 管理管理员权限 + 审核/删除内容。
+名称、型号、分类、供应商、价格、MOQ、交期、包装/装箱、自定义参数、卖点、说明，以及充电宝电芯/组装/其他成本和总成本。
 
-## 当前版本说明
+## 媒体
 
-当前 `index.html` 已完成界面重构、角色 UI、产品资料录入、分类、搜索、图片/视频选择、用户管理、留言中心等前端能力，并保留无后端预览模式。
+产品编辑器支持拖拽、文件选择和 Ctrl+V 粘贴图片；文件进入 `product-media` Storage，再通过 `product_media` 表绑定到产品。
 
-要满足“普通用户注册一次永久保存”“Leo 与 User1-User10 固定存在”“图片视频永久保存”等生产要求，还需要完成 Supabase 的一次性连接。
+## 发布流程
+
+1. 先保存产品记录。
+2. 再上传媒体。
+3. 最后写入媒体绑定记录。
+4. 任一步出错都会在页面显示明确错误，不会静默失败。
+
+## 现有账号
+
+为了不让重建后用户因为密码未知而无法登录，本次保留了 Supabase Auth 中已有账号，只重建业务数据和角色资料。
+现有账号登录框仍支持直接填写账号名，例如 `leo`、`user1`，系统会内部映射到原有账号邮箱格式。
