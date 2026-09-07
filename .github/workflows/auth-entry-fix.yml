@@ -1,0 +1,41 @@
+name: Auth Entry Fix
+on:
+  push:
+    paths:
+      - 'auth-entry-fix.trigger'
+      - '.github/workflows/auth-entry-fix.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add visible login and admin upload entry
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          css='''\n<style id="pi-auth-entry-v1">\n.pi-auth-dock{position:fixed;right:20px;top:76px;z-index:90;display:flex;gap:8px;align-items:center;padding:7px;border:1px solid rgba(210,210,215,.9);border-radius:999px;background:rgba(255,255,255,.86);backdrop-filter:blur(20px);box-shadow:0 12px 38px rgba(0,0,0,.12)}\n.pi-auth-dock button{border:0;border-radius:999px;padding:9px 15px;font-weight:700;font-size:12px;cursor:pointer;background:#1d1d1f;color:#fff;transition:.2s}\n.pi-auth-dock button:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.12)}\n.pi-auth-dock .upload{background:#0071e3}.pi-auth-dock .account{background:#f5f5f7;color:#1d1d1f}.pi-auth-dock .hidden{display:none}\n@media(max-width:700px){.pi-auth-dock{right:10px;top:auto;bottom:12px}.pi-auth-dock button{padding:9px 12px}.pi-auth-dock .account{display:none}}\n</style>\n'''
+          if 'id="pi-auth-entry-v1"' not in s:
+              s=s.replace('</head>',css+'</head>',1)
+          html='''\n<div class="pi-auth-dock" id="piAuthDock" aria-label="账户操作">\n  <button id="piLoginShortcut" type="button">登录</button>\n  <button id="piUploadShortcut" class="upload hidden" type="button">＋ 新增产品</button>\n  <button id="piAdminShortcut" class="account hidden" type="button">管理中心</button>\n</div>\n<script id="pi-auth-entry-v1-js">\n(()=>{\n const q=(s)=>document.querySelector(s);\n const login=q('#piLoginShortcut'),upload=q('#piUploadShortcut'),admin=q('#piAdminShortcut');\n const refresh=()=>{\n   const profile=window.state?.profile;\n   const isAdmin=typeof window.isAdmin==='function'&&window.isAdmin();\n   if(login) login.classList.toggle('hidden',!!profile);\n   if(upload) upload.classList.toggle('hidden',!isAdmin);\n   if(admin) admin.classList.toggle('hidden',!isAdmin);\n   if(profile&&login) login.textContent='已登录';\n };\n login?.addEventListener('click',()=>{if(typeof window.openModal==='function')window.openModal('loginModal')});\n upload?.addEventListener('click',()=>{q('#newProductBtn')?.click()});\n admin?.addEventListener('click',()=>{q('#userAdminModal')?.classList.add('show');});\n refresh();setTimeout(refresh,800);setInterval(refresh,1500);\n})();\n</script>\n'''
+          if 'id="piAuthDock"' not in s:
+              s=s.replace('</body>',html+'</body>',1)
+          p.write_text(s,encoding='utf-8')
+          s2=p.read_text(encoding='utf-8')
+          js='\n'.join(re.findall(r'<script(?:\\s[^>]*)?>(.*?)</script>',s2,re.S|re.I))
+          Path('/tmp/pi-auth.js').write_text(js,encoding='utf-8')
+          PY
+          node --check /tmp/pi-auth.js
+      - name: Commit auth entry fix
+        run: |
+          rm -f auth-entry-fix.trigger
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A index.html auth-entry-fix.trigger
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Add visible login and admin upload controls'
+          git push origin main
