@@ -1,0 +1,80 @@
+name: Fix copy product with images
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-copy-all.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch index.html
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          pattern=r"window\.copyProduct=async function\(id\)\{.*?\};"
+          replacement=r'''window.copyProduct=async function(id){
+            const p=state.products.find(x=>x.id===id);if(!p)return;
+            const x=getExtra(p),lines=[`产品名称：${p.name}`,`型号：${p.model||'—'}`,`分类：${catName(p.category)}`,`供应商：${x.supplier||'—'}`];
+            if(p.category==='powerbank'){lines.push(`套料价格：¥${money(p.kit_price)}`,`电芯型号：${p.cell_model||'—'}`,`电芯数量：${num(p.cell_count)} 颗`,`电芯价格：¥${money(p.cell_price)} / 颗`,`组装费：¥${money(p.assembly_fee)}`,`其他费用预估：¥${money(p.other_cost)}`,`合计成本：¥${money(p.total_cost)}`,`MOQ：${x.moq||'—'}`,`最大输出功率：${x.maxOutputPower||'—'}`)}else{lines.push(`产品价格：¥${money(p.price)}`,`价格构成：${x.priceComposition||'—'}`,`MOQ：${x.moq||'—'}`,`交期：${x.delivery||'—'}`,`装箱规格：${x.carton||'—'`)}
+            lines.push('',`产品参数：`,p.specs||'—');
+            const text=lines.join('\\n');
+            const imgs=media(p,'image').filter(m=>m.public_url);
+            try{
+              if(!navigator.clipboard?.write){throw new Error('clipboard-write-unsupported')}
+              const htmlBody=lines.map(v=>esc(v)).join('<br>');
+              const imgHtml=imgs.map(m=>`<p><img src="${esc(m.public_url)}" alt="${esc(p.name)}" style="max-width:900px;height:auto"></p>`).join('');
+              const html=`<div>${htmlBody}${imgHtml}</div>`;
+              const item={
+                'text/plain':new Blob([text],{type:'text/plain'}),
+                'text/html':new Blob([html],{type:'text/html'})
+              };
+              if(imgs.length){
+                try{
+                  const r=await fetch(imgs[0].public_url,{mode:'cors'});if(r.ok){
+                    const b=await r.blob();
+                    const type=b.type&&b.type.startsWith('image/')?b.type:'image/png';
+                    item[type]=new Blob([b],{type});
+                  }
+                }catch(_e){}
+              }
+              await navigator.clipboard.write([new ClipboardItem(item)]);
+              toast(imgs.length?`资料和${imgs.length}张图片已复制`:'产品资料已复制');
+            }catch(e){
+              try{await navigator.clipboard.writeText(text);toast(imgs.length?'文字资料已复制；当前浏览器暂不支持同时复制图片，请使用“查看资料”中的复制图片功能':'产品资料已复制')}catch(_e){toast('复制失败，请手动复制',true)}
+            }
+          };'''
+          ns,n=re.subn(pattern,replacement,s,count=1,flags=re.S)
+          if n!=1:
+            raise SystemExit('copyProduct function not found')
+          p.write_text(ns,encoding='utf-8')
+          PY
+      - name: Validate HTML script syntax
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('index.html').read_text(encoding='utf-8')
+          m=re.search(r'<script>(.*?)</script>',s,re.S)
+          if not m: raise SystemExit('script block not found')
+          Path('/tmp/page.js').write_text(m.group(1),encoding='utf-8')
+          PY
+          node --check /tmp/page.js
+      - name: Commit fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Make copy product include images' || exit 0
+          git push origin main
+      - name: Remove temporary workflow
+        run: |
+          rm -f .github/workflows/fix-copy-all.yml
+          git add .github/workflows/fix-copy-all.yml
+          git commit -m 'Remove temporary copy fix workflow' || exit 0
+          git push origin main
