@@ -89,7 +89,7 @@ create table if not exists public.moderation_logs(
 );
 
 create or replace function public.resolve_role(p_username text)
-returns public.user_role language sql immutable as $$
+returns public.user_role language sql immutable set search_path=public as $$
   select case
     when lower(p_username)='leo' then 'superadmin'::public.user_role
     when lower(p_username) in('user1','user2','user3','user4','user5','user6','user7','user8','user9','user10') then 'admin'::public.user_role
