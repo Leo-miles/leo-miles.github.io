@@ -1,0 +1,61 @@
+name: Upgrade Apple-style Product Intelligence Home
+on:
+  push:
+    paths:
+      - 'sci-fi-home.trigger'
+      - '.github/workflows/sci-fi-home-v1.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch homepage
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          if '<!-- PI_APPLE_HOME_V1 -->' not in s:
+              css=r'''\n<!-- PI_APPLE_HOME_V1 -->\n<style id="pi-apple-home-v1">\n:root{--apple-ink:#101116;--apple-soft:#6e6e73;--apple-blue:#0071e3;--apple-bg:#f5f5f7;--apple-card:#fff;--apple-line:#d2d2d7}\nbody{background:var(--apple-bg);color:var(--apple-ink)}\n.pi-home{position:relative;overflow:hidden;margin:0 0 28px;border-radius:34px;background:#000;color:#fff;min-height:690px;display:grid;align-items:center;isolation:isolate;box-shadow:0 30px 90px rgba(0,0,0,.16)}\n.pi-home:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 70% 25%,rgba(91,165,255,.32),transparent 28%),radial-gradient(circle at 25% 75%,rgba(107,74,255,.22),transparent 28%),linear-gradient(135deg,#050505,#101114 55%,#030303);z-index:-3}\n.pi-grid{position:absolute;inset:-20%;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:54px 54px;mask-image:radial-gradient(circle at center,#000 35%,transparent 80%);transform:perspective(900px) rotateX(64deg) translateY(22%);opacity:.5;z-index:-2}\n.pi-orb{position:absolute;width:520px;height:520px;right:-110px;top:50%;transform:translateY(-50%);border-radius:50%;border:1px solid rgba(255,255,255,.12);box-shadow:inset 0 0 100px rgba(90,150,255,.13),0 0 100px rgba(0,113,227,.16);z-index:-1}\n.pi-orb:before,.pi-orb:after{content:"";position:absolute;border-radius:50%;inset:10%;border:1px solid rgba(255,255,255,.08)}\n.pi-orb:after{inset:24%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.12),transparent 45%),rgba(0,113,227,.08);box-shadow:0 0 80px rgba(0,113,227,.25)}\n.pi-orbit{position:absolute;inset:17%;border:1px solid rgba(255,255,255,.1);border-radius:50%;animation:piSpin 18s linear infinite}\n.pi-orbit:after{content:"";position:absolute;right:7%;top:19%;width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 16px #fff}\n@keyframes piSpin{to{transform:rotate(360deg)}}\n.pi-copy{padding:88px 8%;max-width:880px;z-index:2}\n.pi-kicker{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#a1a1a6;margin-bottom:18px}\n.pi-title{font-size:clamp(46px,7vw,92px);line-height:.98;letter-spacing:-.055em;margin:0;max-width:900px;background:linear-gradient(180deg,#fff,#bfc1c7);-webkit-background-clip:text;background-clip:text;color:transparent}\n.pi-sub{max-width:650px;margin:25px 0 0;color:#a9abb1;font-size:18px;line-height:1.55}\n.pi-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}\n.pi-btn{border:0;border-radius:999px;padding:13px 20px;font-weight:700;font-size:14px;transition:.25s;display:inline-flex;align-items:center;gap:9px}\n.pi-btn.primary{background:#fff;color:#111}.pi-btn.secondary{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff}.pi-btn:hover{transform:translateY(-2px) scale(1.015)}\n.pi-note{display:flex;gap:18px;flex-wrap:wrap;margin-top:28px;color:#8d8f95;font-size:11px}.pi-note span{display:inline-flex;gap:7px;align-items:center}.pi-dot{width:7px;height:7px;border-radius:50%;background:#31d158;box-shadow:0 0 12px rgba(49,209,88,.65)}\n.pi-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:0 0 28px}.pi-feature{padding:28px;border-radius:26px;background:#fff;border:1px solid var(--apple-line);min-height:170px;transition:.3s;position:relative;overflow:hidden}.pi-feature:after{content:"";position:absolute;inset:auto -30% -55% 35%;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(0,113,227,.12),transparent 65%)}.pi-feature:hover{transform:translateY(-5px);box-shadow:0 20px 50px rgba(0,0,0,.08)}.pi-feature small{color:var(--apple-soft);font-size:11px}.pi-feature strong{display:block;font-size:34px;letter-spacing:-.04em;margin-top:26px}.pi-feature span{display:block;color:var(--apple-soft);font-size:12px;margin-top:3px}\n.pi-section-title{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:34px 0 14px}.pi-section-title h2{font-size:30px;letter-spacing:-.04em;margin:0}.pi-section-title p{margin:0;color:var(--apple-soft);font-size:12px}\n.layout.pi-content{position:relative}.catalog .card{transition:transform .35s,box-shadow .35s,border-color .35s;border-radius:24px;overflow:hidden}.catalog .card:hover{transform:translateY(-7px);box-shadow:0 26px 55px rgba(0,0,0,.12);border-color:#c8c8cc}.catalog .cover{height:290px;background:#f0f0f2;overflow:hidden}.catalog .cover img{transition:transform .55s cubic-bezier(.2,.65,.2,1)}.catalog .card:hover .cover img{transform:scale(1.045)}.catalog .body{padding:18px}.catalog .body h3{font-size:21px;letter-spacing:-.02em}.catalog .pc-actions .mini{border-radius:999px}.tabs .tab,.cat{transition:.2s}.tabs .tab:hover,.cat:hover{transform:translateY(-1px)}\n.pi-float-login{position:fixed;right:20px;bottom:20px;z-index:60;padding:10px 14px;border-radius:999px;border:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.82);backdrop-filter:blur(18px);box-shadow:0 14px 36px rgba(0,0,0,.12);font-size:11px;color:#111;display:none}.pi-float-login.show{display:block}\n@media(max-width:900px){.pi-home{min-height:610px}.pi-copy{padding:64px 26px}.pi-orb{right:-260px;opacity:.6}.pi-strip{grid-template-columns:1fr}.pi-feature{min-height:140px}.pi-title{font-size:54px}.pi-sub{font-size:16px}}\n@media(prefers-reduced-motion:reduce){.pi-orbit{animation:none}.pi-btn,.pi-feature,.catalog .card,.catalog .cover img{transition:none}}\n</style>\n'''
+              s=s.replace('</head>',css+'</head>',1)
+          start=s.find('<section class="hero">')
+          if start<0: raise SystemExit('hero start not found')
+          end=s.find('</section>',start)
+          if end<0: raise SystemExit('hero end not found')
+          end+=len('</section>')
+          home='''<section class="pi-home" id="piHome">\n  <div class="pi-grid"></div><div class="pi-orb"><div class="pi-orbit"></div></div>\n  <div class="pi-copy">\n    <div class="pi-kicker" id="piKicker">PRODUCT INTELLIGENCE HUB · ONLINE</div>\n    <h1 class="pi-title">新品资料，<br>一眼找到。</h1>\n    <p class="pi-sub">把产品、参数、图片、视频与卖点集中到一个优雅的工作空间。无需登录即可探索资料库。</p>\n    <div class="pi-actions">\n      <button class="pi-btn primary" id="piExplore">进入产品智库 <span>↗</span></button>\n      <button class="pi-btn secondary" id="piLatest">探索新品</button>\n    </div>\n    <div class="pi-note"><span><i class="pi-dot"></i><b id="piStatus">DATA LINK ONLINE</b></span><span id="piVisitors">访客模式 · 可直接浏览</span></div>\n  </div>\n</section>\n<div class="pi-strip" id="piMetrics">\n  <div class="pi-feature"><small>PRODUCTS</small><strong id="piCountProducts">—</strong><span>产品资料</span></div>\n  <div class="pi-feature"><small>CATEGORIES</small><strong id="piCountCats">—</strong><span>产品分类</span></div>\n  <div class="pi-feature"><small>ACCESS</small><strong>OPEN</strong><span>无需登录即可浏览</span></div>\n</div>\n<div class="pi-section-title"><div><h2>探索产品</h2><p>像使用 Apple 产品一样，快速找到需要的资料。</p></div></div>\n'''
+          s=s[:start]+home+s[end:]
+          if '<div class="pi-float-login"' not in s:
+              s=s.replace('</body>','<div class="pi-float-login" id="piFloatLogin">🔐 登录以解锁更多功能</div>\n<script id="pi-apple-home-js">\n(()=>{\n const $=s=>document.querySelector(s);\n const home=$('#piHome'), countP=$('#piCountProducts'),countC=$('#piCountCats');\n const update=()=>{try{const ps=Array.isArray(window.state?.products)?window.state.products:[]; const cats=new Set(ps.map(p=>p.category).filter(Boolean)); if(countP)countP.textContent=ps.length||0; if(countC)countC.textContent=cats.size||0;}catch(e){}};\n const scrollToCatalog=()=>{document.querySelector('.layout')?.scrollIntoView({behavior:'smooth',block:'start'})};\n $('#piExplore')?.addEventListener('click',scrollToCatalog);\n $('#piLatest')?.addEventListener('click',()=>{document.querySelector('.catalog')?.scrollIntoView({behavior:'smooth',block:'start'});});\n home?.addEventListener('mousemove',e=>{const r=home.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5; const orb=home.querySelector('.pi-orb'),copy=home.querySelector('.pi-copy'); if(orb)orb.style.transform=`translateY(-50%) translate(${x*18}px,${y*12}px)`; if(copy)copy.style.transform=`translate(${x*-5}px,${y*-3}px)`;});\n home?.addEventListener('mouseleave',()=>{const orb=home.querySelector('.pi-orb'),copy=home.querySelector('.pi-copy');if(orb)orb.style.transform='translateY(-50%)';if(copy)copy.style.transform='none'});\n window.addEventListener('load',()=>setTimeout(update,700));\n setInterval(update,2500);\n document.addEventListener('keydown',e=>{if(e.key==='/'&&!['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)){e.preventDefault();document.querySelector('.search input')?.focus();}});\n})();\n</script>\n</body>',1)
+          Path('index.html').write_text(s,encoding='utf-8')
+          PY
+      - name: Fix invalid nickname field references
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html'); s=p.read_text(encoding='utf-8')
+          s=s.replace('state.profile.nickname || state.profile.username','(getAdminNickname(state.profile.id)||state.profile.username)',1)
+          s=s.replace('u.nickname||u.username','(getAdminNickname(u.id)||u.username)')
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Syntax check
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('index.html').read_text(encoding='utf-8')
+          js='\n'.join(re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',s,re.S|re.I))
+          Path('/tmp/pi.js').write_text(js,encoding='utf-8')
+          PY
+          node --check /tmp/pi.js
+      - name: Commit homepage upgrade
+        run: |
+          rm -f sci-fi-home.trigger
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html sci-fi-home.trigger
+          git diff --cached --quiet && exit 0 || true
+          git commit -m 'Redesign homepage with Apple-inspired product experience'
+          git push
