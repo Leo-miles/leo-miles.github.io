@@ -1,0 +1,38 @@
+name: Fix powerbank-only cost fields
+on:
+  push:
+    branches: [main]
+    paths:
+      - "fix-powerbank-fields.trigger"
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch powerbank cost block visibility
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          old='<div class="costgrid">'
+          new='<div class="costgrid" id="powerbankCostGrid">'
+          if 'id="powerbankCostGrid"' not in s:
+              if old not in s:
+                  raise SystemExit('costgrid marker not found')
+              s=s.replace(old,new,1)
+          # Make every non-powerbank form state explicitly hide the entire cost block.
+          # The existing category rule script already toggles #powerbankCostGrid.
+          p.write_text(s,encoding='utf-8')
+          print('patched')
+          PY
+      - name: Commit and clean trigger
+        run: |
+          rm -f fix-powerbank-fields.trigger .github/workflows/fix-powerbank-fields.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html fix-powerbank-fields.trigger .github/workflows/fix-powerbank-fields.yml
+          git commit -m "fix: hide powerbank-only cost fields for other categories" || exit 0
+          git push
