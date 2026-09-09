@@ -1,0 +1,84 @@
+name: Optimize performance
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply performance-only optimizations
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          marker = '<!-- LEOMILES_PERF_V1 -->'
+          if marker in s:
+              print('Performance optimizations already present; nothing to do.')
+              raise SystemExit(0)
+
+          # Keep all existing UI/feature behavior; only reduce browser/network work.
+          s = s.replace('<head>\n<meta charset="utf-8">', '<head>\n<meta charset="utf-8">\n'+marker, 1)
+
+          s = s.replace('.product{background:#fff;border:1px solid #e7e7eb;border-radius:20px;overflow:hidden;transition:.25s}', '.product{background:#fff;border:1px solid #e7e7eb;border-radius:20px;overflow:hidden;transition:.25s;content-visibility:auto;contain-intrinsic-size:520px}', 1)
+          s = s.replace('.image-grid-item{border:1px solid #e5e5e8;border-radius:14px;overflow:hidden;background:#f2f3f4;aspect-ratio:4/3;', '.image-grid-item{border:1px solid #e5e5e8;border-radius:14px;overflow:hidden;background:#f2f3f4;aspect-ratio:4/3;content-visibility:auto;contain-intrinsic-size:180px;', 1)
+
+          old = "function dbOpen(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('draftFiles'))r.result.createObjectStore('draftFiles',{keyPath:'key'});};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}"
+          new = "let dbOpenPromise=null;function dbOpen(){if(dbOpenPromise)return dbOpenPromise;dbOpenPromise=new Promise((resolve,reject)=>{const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('draftFiles'))r.result.createObjectStore('draftFiles',{keyPath:'key'});};r.onsuccess=()=>resolve(r.result);r.onerror=()=>{dbOpenPromise=null;reject(r.error)}});return dbOpenPromise}"
+          if old not in s: raise RuntimeError('dbOpen pattern not found')
+          s = s.replace(old,new,1)
+
+          s = s.replace("autoSaveTimer=setTimeout(saveDraftNow,350)", "autoSaveTimer=setTimeout(saveDraftNow,500)", 1)
+
+          s = s.replace("const visual=url?(m.media_type==='video'?'<video src=\"'+esc(url)+'\" muted playsinline preload=\"metadata\"></video>':'<img src=\"'+esc(url)+'\" alt=\"产品图片\">')", "const visual=url?(m.media_type==='video'?'<video src=\"'+esc(url)+'\" muted playsinline preload=\"none\"></video>':'<img loading=\"lazy\" decoding=\"async\" src=\"'+esc(url)+'\" alt=\"产品图片\">')", 1)
+
+          old = "function filterProducts(q){const a=products.filter(p=>(p.name+' '+(p.sku||'')+' '+(p.description||'')).toLowerCase().includes(q.toLowerCase()));document.getElementById('grid').innerHTML=a.length?a.map(card).join(''):'<div class=\"empty\">没有找到匹配产品</div>'}"
+          new = "let filterTimer=null;function filterProducts(q){clearTimeout(filterTimer);filterTimer=setTimeout(()=>{const term=q.toLowerCase().trim();const a=products.filter(p=>(p.name+' '+(p.sku||'')+' '+(p.description||'')).toLowerCase().includes(term));const grid=document.getElementById('grid');if(!grid)return;grid.innerHTML=a.length?a.map(card).join(''):'<div class=\"empty\">没有找到匹配产品</div>'},90)}"
+          if old not in s: raise RuntimeError('filterProducts pattern not found')
+          s = s.replace(old,new,1)
+
+          old = "async function loadProducts(){let q=db.from('products').select('*,product_media(*)').order('updated_at',{ascending:false});if(role==='sales')q=q.eq('status','published');const {data,error}=await q;if(error){toast(error.message);return[]}products=data||[];return products}"
+          new = "let productsCacheAt=0;let productsCacheRole=null;async function loadProducts(force=false){const now=Date.now();if(!force&&productsCacheRole===role&&now-productsCacheAt<8000&&products.length)return products;let q=db.from('products').select('id,name,sku,category,description,highlights,specs,purchase_price,suggested_price,moq,supplier,internal_notes,status,created_by,updated_by,updated_at,product_media(id,product_id,storage_path,media_type,sort_order)').order('updated_at',{ascending:false});if(role==='sales')q=q.eq('status','published');const {data,error}=await q;if(error){toast(error.message);return[]};products=data||[];productsCacheAt=Date.now();productsCacheRole=role;return products}"
+          if old not in s: raise RuntimeError('loadProducts pattern not found')
+          s = s.replace(old,new,1)
+
+          s = s.replace("toast(isEditing?'产品已修改并保存':'产品已保存并发布');view='products';await productsPage()", "productsCacheAt=0;productsCacheRole=null;toast(isEditing?'产品已修改并保存':'产品已保存并发布');view='products';await productsPage()", 1)
+          s = s.replace("toast('产品已删除');productsPage()", "productsCacheAt=0;productsCacheRole=null;toast('产品已删除');productsPage()", 1)
+
+          old = "function bindUploadArea(){const dz=document.getElementById('imageDrop'),vz=document.getElementById('videoDrop');const bind=(zone,handler,inputId)=>{zone.addEventListener('click',()=>document.getElementById(inputId).click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag')});zone.addEventListener('dragleave',()=>zone.classList.remove('drag'));zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag');handler(e.dataTransfer.files)})};bind(dz,previewImageFiles,'images');bind(vz,previewVideoFiles,'videos');document.getElementById('images').addEventListener('change',e=>previewImageFiles(e.target.files));document.getElementById('videos').addEventListener('change',e=>previewVideoFiles(e.target.files));document.getElementById('uploadForm').addEventListener('input',scheduleDraftSave);document.addEventListener('paste',handlePaste)}"
+          new = "let pasteHandlerBound=false;function bindUploadArea(){const dz=document.getElementById('imageDrop'),vz=document.getElementById('videoDrop');const bind=(zone,handler,inputId)=>{zone.addEventListener('click',()=>document.getElementById(inputId).click());zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag')});zone.addEventListener('dragleave',()=>zone.classList.remove('drag'));zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag');handler(e.dataTransfer.files)})};bind(dz,previewImageFiles,'images');bind(vz,previewVideoFiles,'videos');document.getElementById('images').addEventListener('change',e=>previewImageFiles(e.target.files));document.getElementById('videos').addEventListener('change',e=>previewVideoFiles(e.target.files));document.getElementById('uploadForm').addEventListener('input',scheduleDraftSave);if(!pasteHandlerBound){document.addEventListener('paste',handlePaste);pasteHandlerBound=true}}"
+          if old not in s: raise RuntimeError('bindUploadArea pattern not found')
+          s = s.replace(old,new,1)
+
+          s = s.replace("<img src=\"'+esc(publicUrl(m.storage_path))+'\" alt=\"产品图片\"></div>", "<img loading=\"lazy\" decoding=\"async\" src=\"'+esc(publicUrl(m.storage_path))+'\" alt=\"产品图片\"></div>", 1)
+          s = s.replace("videos.map((m,i)=>'<div class=\"video-grid-item\"><video controls playsinline preload=\"metadata\" src=\"'+esc(publicUrl(m.storage_path))+'\"></video>", "videos.map((m,i)=>'<div class=\"video-grid-item\"><video controls playsinline preload=\"none\" src=\"'+esc(publicUrl(m.storage_path))+'\"></video>", 1)
+
+          # Lazy-load expanded gallery images too.
+          s = s.replace("<img src=\"'+esc(publicUrl(m.storage_path))+'\" alt=\"产品图片\"></div>').join('');const gallery", "<img loading=\"lazy\" decoding=\"async\" src=\"'+esc(publicUrl(m.storage_path))+'\" alt=\"产品图片\"></div>').join('');const gallery", 1)
+
+          p.write_text(s,encoding='utf-8')
+          print('Applied performance optimizations to index.html')
+      - name: Commit and clean up
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "No changes."
+            exit 0
+          fi
+          git add index.html
+          git commit -m "perf: reduce page rendering and media overhead"
+          git push
+          rm -f .github/workflows/optimize-performance.yml
+          git add .github/workflows/optimize-performance.yml
+          git commit -m "chore: remove one-time performance optimizer"
+          git push
