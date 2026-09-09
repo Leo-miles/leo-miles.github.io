@@ -78,3 +78,6 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;back
   const observer=new MutationObserver(()=>{const main=document.querySelector('.main');if(main&&!main.dataset.lmObserved){main.dataset.lmObserved='1';requestAnimationFrame(()=>{main.classList.remove('route-enter');void main.offsetWidth;main.classList.add('route-enter');});}});
   observer.observe(document.documentElement,{subtree:true,childList:true});
 })();
+
+/* stronger cinematic interaction layer */
+if(!document.querySelector('script[data-future-theme]')){const s=document.createElement('script');s.src='future-theme.js';s.defer=true;s.dataset.futureTheme='1';document.head.appendChild(s)}
