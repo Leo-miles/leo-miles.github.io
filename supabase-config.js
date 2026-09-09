@@ -81,3 +81,72 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;back
 
 /* stronger cinematic interaction layer */
 if(!document.querySelector('script[data-future-theme]')){const s=document.createElement('script');s.src='future-theme.js';s.defer=true;s.dataset.futureTheme='1';document.head.appendChild(s)}
+
+/* LEOMILES performance layer: behavior-preserving browser optimizations. */
+(()=>{
+  // The upload page used to attach the same document-level paste handler every time it opened.
+  // Keep exactly one listener so repeated navigation never multiplies paste work.
+  const nativeAddEventListener=EventTarget.prototype.addEventListener;
+  let documentPasteListenerRegistered=false;
+  EventTarget.prototype.addEventListener=function(type,listener,options){
+    if(this===document&&type==='paste'){
+      if(documentPasteListenerRegistered)return;
+      documentPasteListenerRegistered=true;
+    }
+    return nativeAddEventListener.call(this,type,listener,options);
+  };
+
+  // Avoid eagerly decoding/loading every product image and every card video.
+  const optimizeMedia=()=>{
+    document.querySelectorAll('.pimg img,.image-grid img,.stack-card img,.preview-wrap img').forEach(img=>{
+      if(!img.hasAttribute('loading'))img.loading='lazy';
+      if(!img.hasAttribute('decoding'))img.decoding='async';
+    });
+    document.querySelectorAll('.pimg video,.video-grid-item video').forEach(video=>{
+      if(!video.hasAttribute('preload')||video.getAttribute('preload')!=='none')video.setAttribute('preload','none');
+    });
+  };
+  const mediaObserver=new MutationObserver(()=>requestAnimationFrame(optimizeMedia));
+  mediaObserver.observe(document.documentElement,{subtree:true,childList:true});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',optimizeMedia,{once:true});else optimizeMedia();
+
+  // Coalesce duplicate product-list requests caused by rapid page switching.
+  const patchDataLoading=()=>{
+    if(typeof window.loadProducts!=='function'||window.loadProducts.__lmPerf)return false;
+    const originalLoadProducts=window.loadProducts;
+    let cache=null,cacheAt=0,inflight=null,cacheRole=null;
+    const patched=async function(){
+      const now=Date.now();
+      if(cache&&cacheRole===window.role&&now-cacheAt<5000)return window.products;
+      if(inflight)return inflight;
+      inflight=(async()=>{
+        const result=await originalLoadProducts();
+        cache=window.products;
+        cacheAt=Date.now();
+        cacheRole=window.role;
+        return result;
+      })();
+      try{return await inflight}finally{inflight=null}
+    };
+    patched.__lmPerf=true;
+    patched.__lmInvalidate=()=>{cache=null;cacheAt=0;cacheRole=null};
+    window.loadProducts=patched;
+    const wrapMutation=name=>{
+      const original=window[name];
+      if(typeof original!=='function'||original.__lmPerf)return;
+      const wrapped=async function(...args){
+        patched.__lmInvalidate();
+        return original.apply(this,args);
+      };
+      wrapped.__lmPerf=true;
+      window[name]=wrapped;
+    };
+    wrapMutation('saveProduct');
+    wrapMutation('deleteProduct');
+    return true;
+  };
+  let patchAttempts=0;
+  const patchTimer=setInterval(()=>{
+    if(patchDataLoading()||++patchAttempts>30)clearInterval(patchTimer);
+  },100);
+})();
