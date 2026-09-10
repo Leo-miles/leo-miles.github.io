@@ -14,7 +14,7 @@ html,body{background:linear-gradient(180deg,#fafdff 0%,#eef6ff 100%)!important;c
 
   const client=window.supabase.createClient(window.LEOMILES_SUPABASE_URL,window.LEOMILES_SUPABASE_PUBLISHABLE_KEY);
   let currentUser=null,currentRole=null,categoryCache=null;
-  const esc=s=>String(s??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));
+  const esc=s=>String(s??'').replace(/[&<>\\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\\"':'&quot;',"'":'&#39;'}[m]));
   const money=n=>n==null||n===''?'—':'¥'+Number(n).toFixed(2);
   const roleLabel=r=>r==='admin'?'超级管理员':r==='selector'?'选品人员':'销售人员';
   const dateText=s=>{if(!s)return'—';const d=new Date(s);return Number.isNaN(d.getTime())?'—':d.toLocaleString('zh-CN',{hour12:false})};
@@ -38,3 +38,6 @@ html,body{background:linear-gradient(180deg,#fafdff 0%,#eef6ff 100%)!important;c
   window.lmSendPasswordReset=lmSendPasswordReset;window.lmAdminTab=lmAdminTab;window.lmChangeRole=lmChangeRole;window.lmAddCategory=lmAddCategory;window.lmToggleCategory=lmToggleCategory;
   boot();
 })();
+
+// LEOMILES_V2_ENHANCEMENTS_LOADER
+(()=>{const s=document.createElement('script');s.src='enhancements-v2.js?v=20260910';s.async=false;document.head.appendChild(s)})();
