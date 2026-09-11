@@ -41,3 +41,6 @@ html,body{background:linear-gradient(180deg,#fafdff 0%,#eef6ff 100%)!important;c
 
 // LEOMILES_V2_ENHANCEMENTS_LOADER
 (()=>{const s=document.createElement('script');s.src='enhancements-v2.js?v=20260910';s.async=false;document.head.appendChild(s)})();
+
+// LEOMILES_PRIVATE_MEDIA_LOADER
+(()=>{const s=document.createElement('script');s.src='private-media-secure.js?v=20260911';s.async=false;document.head.appendChild(s)})();
