@@ -1,193 +1,55 @@
 (()=>{
   const client=window.supabase.createClient(window.LEOMILES_SUPABASE_URL,window.LEOMILES_SUPABASE_PUBLISHABLE_KEY);
-  const state={role:'sales',categories:[],category:'全部',status:'全部',refreshing:false,bound:false};
-
-  const css=`
-/* ===== LEOMILES 增强层统一样式 ===== */
-.lm-filter-wrap{display:flex;flex-direction:column;gap:10px;margin:0 0 20px}
-.lm-filter-line{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.lm-filter-title{font-size:12px;color:#7d8b9a;min-width:42px;font-weight:700}
-.lm-filter-btn{border:1px solid #d7e9fb;background:#fff;border-radius:18px;padding:8px 12px;color:#5f7184;font-size:12px;font-weight:700;cursor:pointer;transition:background .14s ease,color .14s ease,border-color .14s ease,box-shadow .14s ease}
-.lm-filter-btn:hover{border-color:#9bcfff;box-shadow:0 5px 16px rgba(22,119,255,.07)}
-.lm-filter-btn.active{background:#111;color:#fff;border-color:#111;box-shadow:none}
-.lm-filter-summary{font-size:12px;color:#8492a0;margin-top:2px}
-.lm-filter-summary strong{color:#16365b}
-.lm-publish-btn{border:1px solid #d7e9fb;background:#fff;color:#0b66b1;border-radius:9px;padding:8px 10px;font-size:12px;font-weight:700}
-.lm-publish-btn.off{color:#8a4d18;border-color:#f1dcc0;background:#fffaf3}
-.lm-detail-copy{margin-top:10px}
-
-/* 上传产品页：保留原有字段，只重做视觉层级与辅助交互 */
-.upload{max-width:1050px!important;padding-bottom:96px!important}
-.upload .head{margin-bottom:16px!important}
-.upload .head h2{font-size:34px!important}
-.upload .head p{max-width:760px!important;line-height:1.6!important;color:#718196!important}
-.upload .section{padding:28px 30px!important;border-radius:22px!important;margin-bottom:18px!important;background:rgba(255,255,255,.97)!important;box-shadow:0 10px 30px rgba(49,119,177,.045)!important}
-.upload .section h3{font-size:18px!important;margin:0 0 18px!important;color:#0a2140!important;display:flex;align-items:center;gap:10px}
-.upload .section h3:before{content:'';width:4px;height:18px;border-radius:4px;background:linear-gradient(180deg,#1677ff,#58d8ff);display:inline-block}
-.upload .two{grid-template-columns:minmax(0,1.35fr) minmax(250px,.65fr)!important;gap:20px!important}
-.upload .field{margin:0 0 18px!important}
-.upload .field:last-child{margin-bottom:0!important}
-.upload .field label{color:#0d2a4d!important;margin-bottom:8px!important;font-size:12px!important}
-.upload .field input,.upload .field textarea,.upload .field select{min-height:46px!important;border-radius:12px!important;background:#fbfdff!important}
-.upload .field textarea{min-height:128px!important}
-.upload .field textarea#specs{min-height:300px!important}
-.upload .draft-box{margin:0 0 14px!important;padding:10px 13px!important;border-radius:12px!important;background:#f6fbff!important;border-color:#d8eaf9!important;color:#607286!important;box-shadow:none!important}
-.upload .draft-box .btn{padding:8px 11px!important;border-radius:9px!important}
-.upload .drop{padding:34px 24px!important;border-radius:16px!important;background:linear-gradient(145deg,#fbfdff,#f3f9ff)!important;border-color:#bcdcf8!important}
-.upload .drop strong{font-size:26px!important;color:#1677ff!important}
-.upload .drop small{color:#77889b!important;line-height:1.6!important}
-.upload .previews{gap:12px!important;margin-top:14px!important}
-.upload .preview-wrap{width:118px!important}
-.upload .preview{width:118px!important;height:90px!important;border-radius:11px!important;background:#eef6ff!important;border:1px solid #dcecff!important}
-.upload .video-meta{background:#f8fbff!important;padding:4px 5px!important;border-radius:6px!important}
-.upload .hint{padding:10px 12px!important;background:#f7fbff!important;border-radius:10px!important;border:1px solid #e5f0fb!important}
-.upload .actions{position:sticky;bottom:14px;z-index:8;justify-content:flex-end!important;padding:12px 14px!important;margin:10px 0 0!important;border:1px solid #dcecff!important;background:rgba(255,255,255,.95)!important;backdrop-filter:blur(14px)!important;border-radius:16px!important;box-shadow:0 12px 35px rgba(31,110,183,.10)!important}
-.upload .actions .btn{min-width:108px!important}
-.upload .save-state{margin-right:auto!important;color:#7c8c9c!important}
-.upload .lm-upload-guide{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 16px}
-.upload .lm-upload-guide-item{display:flex;gap:9px;align-items:flex-start;padding:12px 13px;border:1px solid #e1edf8;border-radius:13px;background:#fafdff}
-.upload .lm-upload-guide-item>div:first-child{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:#eaf5ff;color:#1677ff;font-size:11px;font-weight:800;flex:none}
-.upload .lm-upload-guide-item b{display:block;font-size:12px;color:#17385f;margin-bottom:3px}
-.upload .lm-upload-guide-item span{font-size:11px;color:#8292a2;line-height:1.5}
-.upload .lm-upload-topnote{margin:0 0 16px;padding:12px 15px;border:1px solid #dcecff;border-radius:14px;background:linear-gradient(90deg,#f5faff,#fbfdff);font-size:12px;color:#61758a}
-.upload .lm-upload-topnote strong{color:#0c4f96}
-.upload .lm-upload-section-note{font-size:12px;color:#8090a0;line-height:1.6;margin:-8px 0 18px}
-@media(max-width:760px){.upload .two{grid-template-columns:1fr!important}.upload .lm-upload-guide{grid-template-columns:1fr}.upload .section{padding:22px 18px!important}.upload .actions{bottom:10px;flex-wrap:wrap}.upload .actions .btn{flex:1;min-width:120px!important}}
-`;
-  const style=document.createElement('style');style.id='leomiles-enhancements-v2';style.textContent=css;document.head.appendChild(style);
-
+  const S={role:'sales',user:null,cats:[],cat:'全部',status:'全部',busy:false};
   const esc=s=>String(s??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));
-  const roleLabel=r=>r==='admin'?'超级管理员':r==='selector'?'选品人员':'销售人员';
+  const money=n=>n==null||n===''?'—':'¥'+Number(n).toFixed(2);
+  const roleName=r=>r==='admin'?'超级管理员':r==='selector'?'选品人员':'销售人员';
+  const css=`
+.lm-filter-wrap{display:flex;flex-direction:column;gap:10px;margin:0 0 20px}.lm-filter-line{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.lm-filter-title{font-size:12px;color:#8a96a3;min-width:42px;font-weight:700}.lm-filter-btn{border:1px solid #d7e9fb;background:#fff;border-radius:18px;padding:8px 12px;color:#607083;font-size:12px;font-weight:700;cursor:pointer}.lm-filter-btn.active{background:#111;color:#fff;border-color:#111}.lm-filter-summary{font-size:12px;color:#8492a0;margin-top:2px}.lm-publish-btn{border:1px solid #d7e9fb;background:#fff;color:#0b66b1;border-radius:9px;padding:8px 10px;font-size:12px;font-weight:700}.lm-publish-btn.off{color:#8a4d18;border-color:#f1dcc0;background:#fffaf3}.lm-draft-btn{border:1px solid #d4e5f4!important;background:#fff!important;color:#244965!important}.lm-draft-state{font-size:12px;color:#72869a}.lm-detail-copy{margin-top:10px}.lm-product-extra{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:12px 0 0}.lm-product-extra div{padding:7px 9px;border:1px solid #e7eff7;border-radius:10px;background:#f9fcff}.lm-product-extra small{display:block;color:#8996a4;font-size:10px;margin-bottom:2px}.lm-product-extra b{font-size:12px}.lm-product-margin{margin-top:8px;font-size:11px;color:#208348}.lm-admin-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:20px}.lm-stat{background:linear-gradient(145deg,#fff,#f4f9ff);border:1px solid #dcecff;border-radius:18px;padding:18px}.lm-stat small{display:block;color:#7d8a98;font-size:12px;margin-bottom:7px}.lm-stat strong{font-size:27px}.lm-stat span{display:block;color:#8b98a6;font-size:12px;margin-top:5px}.lm-panel{background:#fff;border:1px solid #dcecff;border-radius:20px;padding:20px;margin-bottom:18px}.lm-panel-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:15px}.lm-panel-head h3{margin:0}.lm-panel-head p{margin:4px 0 0;color:#8a96a3;font-size:12px}.lm-table{width:100%;border-collapse:collapse;font-size:13px}.lm-table th,.lm-table td{text-align:left;padding:12px 10px;border-bottom:1px solid #edf2f7}.lm-table th{color:#7a8794;font-size:12px}.lm-role{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:700;background:#edf7ff;color:#1166b1}.lm-role.admin{background:#eef3ff;color:#4f56b5}.lm-role.selector{background:#effaf3;color:#208348}.lm-form-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.lm-form-row input,.lm-form-row select{min-width:180px;padding:10px 12px;border:1px solid #d6e8fa;border-radius:10px;background:#fafcff}.lm-category-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.lm-cat{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid #e2edf8;border-radius:14px;background:#fbfdff}.lm-cat-name{font-weight:700}.lm-cat-meta{font-size:11px;color:#8a96a3;margin-top:3px}.lm-pill-off{background:#f4f4f5;color:#8b8b8b!important}.lm-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.lm-info{background:#f8fbff;border:1px solid #e5eff8;border-radius:14px;padding:14px}.lm-info small{display:block;color:#8b98a6;font-size:11px;margin-bottom:5px}.lm-info b{font-size:14px}.lm-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.lm-tab{border:1px solid #d7e9fb;background:#fff;border-radius:10px;padding:9px 12px;font-size:12px;font-weight:700;cursor:pointer}.lm-tab.active{background:#111;color:#fff;border-color:#111}.lm-empty{padding:30px;text-align:center;color:#8b98a6;border:1px dashed #dbe8f4;border-radius:14px}.lm-safe-banner{padding:12px 15px;border:1px solid #d7e9fb;background:#f7fbff;border-radius:14px;color:#5f7388;font-size:12px;margin-bottom:18px}.lm-sales-tools{display:flex;gap:10px;align-items:center;margin-bottom:18px}.lm-sales-tools .search{flex:1;max-width:520px}.lm-sales-note{font-size:12px;color:#7d8c9a;margin-left:auto}.lm-sales-card-note{border-top:1px solid #edf2f7;margin-top:12px;padding-top:10px;font-size:11px;color:#78899a}@media(max-width:900px){.lm-admin-grid{grid-template-columns:1fr 1fr}.lm-category-list{grid-template-columns:1fr}}@media(max-width:620px){.lm-admin-grid,.lm-info-grid{grid-template-columns:1fr}.lm-product-extra{grid-template-columns:1fr 1fr}.lm-sales-tools{flex-direction:column;align-items:stretch}.lm-sales-note{margin-left:0}.lm-table{display:block;overflow:auto;white-space:nowrap}}
+`;
+  const style=document.createElement('style');style.id='leomiles-enhancements-v3';style.textContent=css;document.head.appendChild(style);
 
-  async function syncRole(){
-    try{const {data}=await client.auth.getUser();if(!data?.user){state.role='sales';return}const {data:p}=await client.from('profiles').select('role').eq('id',data.user.id).single();state.role=p?.role||'sales'}catch(e){state.role='sales'}
-  }
+  async function sync(){try{const {data}=await client.auth.getUser();S.user=data.user||null;S.role='sales';if(S.user){const {data:p}=await client.from('profiles').select('role').eq('id',S.user.id).single();S.role=p?.role||'sales'}}catch(e){S.role='sales'}}
+  async function cats(force=false){if(!force&&S.cats.length)return S.cats;const {data}=await client.from('product_categories').select('id,name,sort_order,is_active').order('sort_order',{ascending:true}).order('name',{ascending:true});S.cats=data||[];return S.cats}
+  async function fillCategory(){const el=document.getElementById('category');if(!el)return;const all=await cats();const active=all.filter(x=>x.is_active||x.name===el.value);const cur=el.value;el.innerHTML=active.map(x=>`<option value="${esc(x.name)}">${esc(x.name)}</option>`).join('');if(cur)el.value=cur}
+  function pageType(){if(document.getElementById('uploadForm'))return'upload';if(document.querySelector('.detail'))return'detail';if(document.querySelector('[data-lm-page="admin"]')||document.querySelector('.page h2')?.textContent?.trim()==='管理中心')return'admin';if(document.querySelector('[data-lm-page="profile"]')||document.querySelector('.page h2')?.textContent?.trim()==='个人中心')return'profile';if(document.querySelector('.saleshero'))return'sales';if(document.getElementById('grid'))return'products';return'products'}
+  function nav(){const map={products:'产品库',upload:'上传产品',sales:'销售端',profile:'个人中心',admin:'管理中心'};const t=map[pageType()]||'产品库';document.querySelectorAll('.sidebar .nav button').forEach(b=>b.classList.remove('active'));const b=[...document.querySelectorAll('.sidebar .nav button')].find(x=>(x.textContent||'').trim().includes(t));if(b)b.classList.add('active')}
+  function currentProduct(){return document.querySelector('.upload')}
 
-  async function loadCategories(){
-    const {data,error}=await client.from('product_categories').select('id,name,sort_order,is_active').eq('is_active',true).order('sort_order',{ascending:true}).order('name',{ascending:true});
-    state.categories=error?[]:(data||[]);return state.categories;
-  }
+  async function saveDraft(){if(!S.user||!['admin','selector'].includes(S.role))return toast('当前账号没有操作权限');const btn=document.querySelector('.lm-draft-btn');if(btn)btn.disabled=true;try{const v=id=>document.getElementById(id)?.value??'';const specs={};(v('specs')||'').split(/\n/).map(x=>x.trim()).filter(Boolean).forEach(line=>{const m=line.split(/[:：]/);if(m.length>=2){const k=m.shift().trim();if(k)specs[k]=m.join(':').trim()}});const payload={name:v('pname').trim(),sku:v('sku').trim()||null,category:v('category')||null,description:v('desc').trim()||null,highlights:[...document.querySelectorAll('.highlight')].map(x=>x.value.trim()).filter(Boolean),specs,purchase_price:v('purchase')===''?null:Number(v('purchase')),suggested_price:v('suggested')===''?null:Number(v('suggested')),moq:v('moq')===''?null:Number(v('moq')),supplier:v('supplier').trim()||null,internal_notes:v('notes').trim()||null};if(!payload.name)return toast('请先填写产品名称');let p;if(window.editingProduct){const {data,error}=await client.from('products').update({...payload,status:'draft',updated_by:S.user.id}).eq('id',window.editingProduct.id).select().single();if(error)throw error;p=data}else{const {data,error}=await client.rpc('create_product_draft',{p_name:payload.name,p_sku:payload.sku,p_category:payload.category,p_description:payload.description,p_highlights:payload.highlights,p_specs:payload.specs,p_purchase_price:payload.purchase_price,p_suggested_price:payload.suggested_price,p_moq:payload.moq,p_supplier:payload.supplier,p_internal_notes:payload.internal_notes});if(error)throw error;p=data}try{localStorage.removeItem(window.DRAFT_KEY?.()||'')}catch(e){}toast('草稿已保存');window.view='products';window.go('products')}catch(e){console.error(e);toast(e.message||'保存草稿失败')}finally{if(btn)btn.disabled=false}}
+  function addDraftBtn(){if(!['admin','selector'].includes(S.role))return;const a=document.querySelector('.upload .actions');if(!a||a.querySelector('.lm-draft-btn'))return;const pub=a.querySelector('button[type="submit"]');const b=document.createElement('button');b.type='button';b.className='btn lm-draft-btn';b.textContent='保存草稿';b.onclick=saveDraft;if(pub)a.insertBefore(b,pub);else a.appendChild(b);const st=document.getElementById('saveState');if(st&&!st.nextElementSibling?.classList?.contains('lm-draft-state'))st.insertAdjacentHTML('afterend',' <span class="lm-draft-state">草稿与正式发布相互独立</span>')}
 
-  async function fillUploadCategory(){
-    const el=document.getElementById('category');if(!el)return;
-    const cats=await loadCategories();if(!cats.length)return;
-    const current=el.value;el.innerHTML=cats.map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('');
-    if(current&&cats.some(c=>c.name===current))el.value=current;
-  }
+  function salesCard(p){const media=p._media?.[0],img=media?`<img loading="lazy" decoding="async" src="${esc(client.storage.from('product-media').getPublicUrl(media.storage_path).data.publicUrl)}" alt="产品图片">`:'<div class="mock">LM</div>';return `<article class="product"><div class="pimg">${img}</div><div class="pbody"><span class="tag">● 已发布</span><h3>${esc(p.name)}</h3><p>${esc((p.description||'').slice(0,100))}</p><div class="row"><span class="price">${money(p.suggested_price)}</span><button class="more" onclick="lmSafeSalesDetail('${p.id}')">查看详情 →</button></div><div class="card-actions"><button class="tiny dark" onclick="lmSafeSalesDetail('${p.id}')">查看产品资料</button></div></div></article>`}
+  async function safeSales(){await sync();const {data,error}=await client.rpc('get_sales_products');if(error)return toast(error.message||'销售端加载失败');const list=await loadSalesMedia(data||[]);if(typeof window.shell!=='function')return;window.shell(`<div class="page"><div class="saleshero"><h2>销售端</h2><p>这里仅展示已发布产品资料，不读取采购价、供应商和内部备注。</p></div><div class="lm-safe-banner">销售展示数据与选品内部数据已分离</div><div class="lm-sales-tools"><div class="search"><input id="lmSalesSearch" placeholder="搜索产品名称、编号、关键词……"></div><span class="lm-sales-note">共 ${list.length} 个已发布产品</span></div><div id="lmSalesGrid" class="grid">${list.length?list.map(salesCard).join(''):'<div class="empty">暂无已发布产品</div>'}</div></div>`);const input=document.getElementById('lmSalesSearch');if(input)input.oninput=()=>{const q=input.value.trim().toLowerCase();document.querySelectorAll('#lmSalesGrid .product').forEach(a=>a.style.display=!q||a.innerText.toLowerCase().includes(q)?'':'none')};nav()}
+  async function loadSalesMedia(list){for(const p of list){const {data}=await client.rpc('get_sales_product_media',{p_product_id:p.id});p._media=data||[]}return list}
+  window.lmSafeSalesPage=safeSales;
+  window.lmSafeSalesDetail=async id=>{await sync();const {data,error}=await client.rpc('get_sales_product',{p_product_id:id});if(error||!data?.[0])return toast(error?.message||'产品不存在');const p=data[0];const {data:media}=await client.rpc('get_sales_product_media',{p_product_id:id});p.product_media=media||[];const images=p.product_media.filter(x=>x.media_type==='image').sort((a,b)=>a.sort_order-b.sort_order),videos=p.product_media.filter(x=>x.media_type==='video').sort((a,b)=>a.sort_order-b.sort_order),url=m=>client.storage.from('product-media').getPublicUrl(m.storage_path).data.publicUrl;window.shell(`<div class="page"><div class="head"><button class="btn" onclick="lmSafeSalesPage()">← 返回销售端</button></div><div class="detail" style="margin-top:22px"><div><div class="hero">${images[0]?`<img src="${esc(url(images[0]))}" alt="产品图片">`:'<div class="mock">LM</div>'}</div>${images.length?`<div class="media-gallery"><div class="media-gallery-head"><div><strong>产品图片</strong><span>${images.length} 张</span></div></div><div style="display:flex;gap:10px;flex-wrap:wrap">${images.map(m=>`<img loading="lazy" src="${esc(url(m))}" style="width:110px;height:85px;object-fit:contain;border:1px solid #dbe9f5;border-radius:10px;background:#f7fbff">`).join('')}</div></div>`:''}${videos.length?`<div class="video-gallery"><div class="media-gallery-head"><div><strong>产品视频</strong><span>${videos.length} 个</span></div></div><div class="video-grid">${videos.map(m=>`<div class="video-grid-item"><video controls playsinline preload="none" src="${esc(url(m))}"></video><div>视频</div></div>`).join('')}</div></div>`:''}</div><div><span class="tag">● 已发布</span><h1>${esc(p.name)}</h1><p class="muted">${esc(p.description||'')}</p><ul class="bullets">${(p.highlights||[]).map(h=>`<li>${esc(h)}</li>`).join('')}</ul><div class="spec-grid"><div><small>产品编号</small><b>${esc(p.sku||'—')}</b></div><div><small>产品类目</small><b>${esc(p.category||'—')}</b></div><div><small>起订量</small><b>${esc(p.moq??'—')}</b></div><div><small>建议售价</small><b>${money(p.suggested_price)}</b></div></div>${Object.keys(p.specs||{}).length?`<div class="section" style="margin-top:18px"><h3>产品参数</h3><div class="spec-grid">${Object.entries(p.specs).map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(v)}</b></div>`).join('')}</div></div>`:''}</div></div></div>`);nav()};
 
-  function pageType(){
-    if(document.getElementById('uploadForm'))return'upload';
-    if(document.querySelector('.detail'))return'detail';
-    if(document.querySelector('.saleshero'))return'sales';
-    if(document.getElementById('grid'))return'products';
-    const h=document.querySelector('.page h2')?.textContent?.trim()||'';
-    if(h==='管理中心')return'admin';if(h==='个人中心')return'profile';return'other';
-  }
+  function addFilters(){const toolbar=document.querySelector('.page .toolbar');const grid=document.getElementById('grid');if(!toolbar||!grid)return;if(toolbar.querySelector('.chips'))toolbar.querySelector('.chips').remove();toolbar.parentElement.querySelector('.lm-filter-wrap')?.remove();const wrap=document.createElement('div');wrap.className='lm-filter-wrap';const cl=document.createElement('div');cl.className='lm-filter-line';cl.innerHTML='<span class="lm-filter-title">类目</span>';['全部',...S.cats.filter(c=>c.is_active).map(c=>c.name)].forEach(n=>{const b=document.createElement('button');b.type='button';b.className='lm-filter-btn'+(S.cat===n?' active':'');b.textContent=n;b.onclick=()=>{S.cat=n;reloadProducts()};cl.appendChild(b)});wrap.appendChild(cl);if(S.role!=='sales'){const sl=document.createElement('div');sl.className='lm-filter-line';sl.innerHTML='<span class="lm-filter-title">状态</span>';['全部','已发布','草稿'].forEach(n=>{const b=document.createElement('button');b.type='button';b.className='lm-filter-btn'+(S.status===n?' active':'');b.textContent=n;b.onclick=()=>{S.status=n;reloadProducts()};sl.appendChild(b)});wrap.appendChild(sl)}const sum=document.createElement('div');sum.className='lm-filter-summary';sum.id='lmFilterSummary';wrap.appendChild(sum);toolbar.insertAdjacentElement('afterend',wrap);updateFilters()}
+  function matches(p){const q=(document.querySelector('.page .search input')?.value||'').trim().toLowerCase();return (!q||((p.name||'')+' '+(p.sku||'')+' '+(p.description||'')).toLowerCase().includes(q))&&(S.cat==='全部'||p.category===S.cat)&&(S.role==='sales'||S.status==='全部'||p.status===(S.status==='已发布'?'published':'draft'))}
+  async function reloadProducts(){if(S.busy)return;const grid=document.getElementById('grid');if(!grid)return;S.busy=true;try{let q=client.from('products').select('id,name,sku,category,description,highlights,specs,purchase_price,suggested_price,moq,supplier,internal_notes,status,created_by,updated_by,updated_at,product_media(id,product_id,storage_path,media_type,sort_order)').order('updated_at',{ascending:false});if(S.role==='sales')q=q.eq('status','published');if(S.cat!=='全部')q=q.eq('category',S.cat);if(S.role!=='sales'&&S.status!=='全部')q=q.eq('status',S.status==='已发布'?'published':'draft');const {data,error}=await q;if(error)return toast(error.message);const list=data||[];grid.innerHTML=list.length?list.map(x=>cardEnhanced(x)).join(''):'<div class="empty">当前筛选条件下没有产品</div>';updateFilters()}finally{S.busy=false}}
+  function updateFilters(){const grid=document.getElementById('grid');if(!grid)return;const articles=[...grid.querySelectorAll('.product')];let v=0;articles.forEach(a=>{const ok=matches(a.__lmProduct||{});a.style.display=ok?'':'none';if(ok)v++});const s=document.getElementById('lmFilterSummary');if(s)s.textContent=`共 ${articles.length} 个产品 · 当前显示 ${v} 个`}
+  function cardEnhanced(p){const media=(p.product_media||[]).slice().sort((a,b)=>a.sort_order-b.sort_order)[0],url=media?client.storage.from('product-media').getPublicUrl(media.storage_path).data.publicUrl:null,visual=url?(media.media_type==='video'?`<video src="${esc(url)}" muted playsinline preload="none"></video>`:`<img loading="lazy" decoding="async" src="${esc(url)}" alt="产品图片">`):`<div class="mock">${esc(p.sku||'LM')}</div>`,margin=S.role==='sales'||p.purchase_price==null||p.suggested_price==null?'':`<div class="lm-product-margin">参考毛利 ${money(Number(p.suggested_price)-Number(p.purchase_price))}</div>`,manage=S.role==='admin'||S.role==='selector'?`<button class="tiny" onclick="editProduct('${p.id}')">修改</button>${S.role==='admin'?`<button class="tiny danger" onclick="deleteProduct('${p.id}')">删除</button>`:''}<button class="tiny" onclick="lmTogglePublish('${p.id}')">${p.status==='published'?'下架':'发布'}</button>`:'';const article=`<article class="product"><div class="pimg">${visual}</div><div class="pbody"><span class="tag">● ${p.status==='published'?'已发布':'草稿'}</span><h3>${esc(p.name)}</h3><p>${esc((p.description||'').slice(0,80))}</p><div class="row"><span class="price">${money(p.suggested_price??p.purchase_price)}</span><button class="more" onclick="openDetail('${p.id}')">查看详情 →</button></div><div class="lm-product-extra"><div><small>类目</small><b>${esc(p.category||'—')}</b></div><div><small>SKU</small><b>${esc(p.sku||'—')}</b></div><div><small>MOQ</small><b>${esc(p.moq??'—')}</b></div></div>${margin}<div class="card-actions">${manage}<button class="tiny dark" onclick="copyProductSpecs('${p.id}')">复制产品参数</button></div></div></article>`;const t=document.createElement('template');t.innerHTML=article.trim();const el=t.content.firstElementChild;if(el)el.__lmProduct=p;return el?el.outerHTML:article}
+  window.lmTogglePublish=async id=>{if(!['admin','selector'].includes(S.role))return toast('当前账号没有权限');const {data,error}=await client.from('products').select('status').eq('id',id).single();if(error)return toast(error.message);const fn=data.status==='published'?'unpublish_product':'publish_product';const {error:e}=await client.rpc(fn,{p_product_id:id});if(e)return toast(e.message);toast(data.status==='published'?'产品已下架':'产品已发布');await reloadProducts()};
 
-  function syncNav(){
-    const type=pageType();document.querySelectorAll('.sidebar .nav button').forEach(b=>b.classList.remove('active'));
-    const map={products:'产品库',upload:'上传产品',sales:'销售端',detail:'产品库',profile:'个人中心',admin:'管理中心'};
-    const targetText=map[type]||'产品库';
-    const btn=[...document.querySelectorAll('.sidebar .nav button')].find(b=>(b.textContent||'').trim().includes(targetText));
-    if(btn)btn.classList.add('active');
-    const userBox=document.querySelector('.top .user');
-    if(userBox&&state.role){
-      let label=userBox.querySelector('.lm-role-label');
-      if(!label){label=document.createElement('span');label.className='lm-role-label';userBox.insertBefore(label,userBox.firstChild)}
-      label.textContent=roleLabel(state.role);
-    }
-  }
+  function cardPatch(){if(typeof window.card!=='function'||window.card.__lmV3)return;window.card=(p)=>cardEnhanced(p);window.card.__lmV3=true}
+  function searchPatch(){if(typeof window.filterProducts!=='function'||window.filterProducts.__lmV3)return;window.filterProducts.__lmV3=true;window.filterProducts=function(){reloadProducts()}}
+  function goPatch(){if(typeof window.go!=='function'||window.go.__lmV3)return;const original=window.go;const wrapped=function(v){if(v==='sales'){window.view='sales';safeSales();return}return original(v)};wrapped.__lmV3=true;window.go=wrapped}
+  function shellPatch(){if(typeof window.shell!=='function'||window.shell.__lmV3)return;const original=window.shell;window.shell=function(content){original(content);setTimeout(afterRender,0)};window.shell.__lmV3=true}
 
-  function productMatches(article){
-    if(!article)return false;const text=(article.innerText||'').toLowerCase();
-    const category=(article.querySelector('.lm-product-extra div:first-child b')?.textContent||'').trim();
-    const status=(article.querySelector('.tag')?.textContent||'').trim();const search=(document.querySelector('.search input')?.value||'').trim().toLowerCase();
-    const catOk=state.category==='全部'||category===state.category;
-    const statusOk=state.status==='全部'||(state.status==='已发布'&&status.includes('已发布'))||(state.status==='草稿'&&status.includes('草稿'));
-    return catOk&&statusOk&&(!search||text.includes(search));
-  }
+  function profilePage(){window.shell(`<div class="page"><div class="head"><div><h2>个人中心</h2><p class="muted">查看账号资料、当前身份与安全设置。</p></div></div><div class="lm-panel"><div class="lm-panel-head"><div><h3>账号资料</h3><p>基础信息用于账号识别，不影响产品业务。</p></div></div><div class="lm-info-grid"><div class="lm-info"><small>登录邮箱</small><b>${esc(S.user?.email||'—')}</b></div><div class="lm-info"><small>当前身份</small><b>${esc(roleName(S.role))}</b></div><div class="lm-info"><small>账号编号</small><b>${esc(S.user?.id?.slice(0,8)||'—')}…</b></div><div class="lm-info"><small>创建时间</small><b>${esc(S.user?.created_at?new Date(S.user.created_at).toLocaleString('zh-CN',{hour12:false}):'—')}</b></div></div></div><div class="lm-panel"><div class="lm-panel-head"><div><h3>权限说明</h3><p>销售端只展示已发布产品。</p></div></div><table class="lm-table"><thead><tr><th>身份</th><th>查看</th><th>上传/修改</th><th>删除</th><th>用户管理</th><th>类目管理</th></tr></thead><tbody><tr><td><span class="lm-role admin">超级管理员</span></td><td>全部</td><td>可以</td><td>可以</td><td>可以</td><td>可以</td></tr><tr><td><span class="lm-role selector">选品人员</span></td><td>全部</td><td>可以</td><td>不可以</td><td>不可以</td><td>不可以</td></tr><tr><td><span class="lm-role">销售人员</span></td><td>已发布</td><td>不可以</td><td>不可以</td><td>不可以</td><td>不可以</td></tr></tbody></table></div><div class="lm-panel"><div class="lm-panel-head"><div><h3>安全设置</h3><p>通过邮箱发送安全的密码重置链接。</p></div><button class="btn dark" onclick="lmPasswordReset()">发送密码重置邮件</button></div></div></div>`)}
+  window.lmPasswordReset=async()=>{if(!S.user?.email)return toast('没有读取到登录邮箱');const {error}=await client.auth.resetPasswordForEmail(S.user.email,{redirectTo:location.origin+location.pathname});if(error)return toast(error.message);toast('密码重置邮件已发送')};
+  async function adminPage(){if(S.role!=='admin')return toast('只有超级管理员可以进入管理中心');const [u,p,c]=await Promise.all([client.from('profiles').select('id,display_name,email,role,created_at').order('created_at',{ascending:true}),client.from('products').select('id,status,category'),cats(true)]);const users=u.data||[],ps=p.data||[],cs=c||[],pub=ps.filter(x=>x.status==='published').length;window.__lmAdmin={users,ps,cats:cs};window.shell(`<div class="page"><div class="head"><div><h2>管理中心</h2><p class="muted">集中管理用户权限、产品类目和基础数据。</p></div></div><div class="lm-admin-grid"><div class="lm-stat"><small>产品总数</small><strong>${ps.length}</strong><span>已发布 ${pub} · 草稿 ${ps.length-pub}</span></div><div class="lm-stat"><small>用户总数</small><strong>${users.length}</strong><span>当前角色：${esc(roleName(S.role))}</span></div><div class="lm-stat"><small>启用类目</small><strong>${cs.filter(x=>x.is_active).length}</strong><span>可用于上传产品</span></div></div><div class="lm-tabs"><button class="lm-tab active" onclick="lmAdminTab('users')">用户与权限</button><button class="lm-tab" onclick="lmAdminTab('categories')">产品类目</button><button class="lm-tab" onclick="lmAdminTab('rules')">权限规则</button></div><div id="lmAdminContent"></div></div>`);lmAdminTab('users')}
+  window.lmAdminTab=function(tab){document.querySelectorAll('.lm-tab').forEach((x,i)=>x.classList.toggle('active',['users','categories','rules'][i]===tab));const h=document.getElementById('lmAdminContent');if(!h)return;if(tab==='users'){const users=window.__lmAdmin?.users||[];h.innerHTML=`<div class="lm-panel"><div class="lm-panel-head"><div><h3>用户与权限</h3><p>可以调整身份，并保留至少一名超级管理员。</p></div></div><table class="lm-table"><thead><tr><th>用户</th><th>邮箱</th><th>身份</th><th>创建时间</th><th>修改身份</th></tr></thead><tbody>${users.map(p=>`<tr><td><b>${esc(p.display_name||'未设置')}</b></td><td>${esc(p.email||'—')}</td><td><span class="lm-role ${p.role==='admin'?'admin':p.role==='selector'?'selector':''}">${esc(roleName(p.role))}</span></td><td>${esc(p.created_at?new Date(p.created_at).toLocaleString('zh-CN',{hour12:false}):'—')}</td><td><select onchange="lmChangeRole('${p.id}',this.value)"><option value="admin" ${p.role==='admin'?'selected':''}>超级管理员</option><option value="selector" ${p.role==='selector'?'selected':''}>选品人员</option><option value="sales" ${p.role==='sales'?'selected':''}>销售人员</option></select></td></tr>`).join('')}</tbody></table></div>`}else if(tab==='categories'){const cs=window.__lmAdmin?.cats||[];h.innerHTML=`<div class="lm-panel"><div class="lm-panel-head"><div><h3>产品类目</h3><p>停用不会删除历史产品。</p></div></div><div class="lm-form-row"><input id="lmNewCat" placeholder="例如：充电宝"><input id="lmCatOrder" type="number" value="60" placeholder="排序"><button class="btn dark" onclick="lmAddCategory()">新增类目</button></div><div class="lm-category-list" style="margin-top:14px">${cs.map(c=>`<div class="lm-cat"><div><div class="lm-cat-name">${esc(c.name)}</div><div class="lm-cat-meta">排序 ${c.sort_order} · ${c.is_active?'使用中':'已停用'}</div></div><button class="tiny ${c.is_active?'':'lm-pill-off'}" onclick="lmToggleCategory('${c.id}',${!c.is_active})">${c.is_active?'停用':'启用'}</button></div>`).join('')}</div></div>`}else{h.innerHTML=`<div class="lm-panel"><div class="lm-panel-head"><div><h3>权限规则</h3><p>实际数据访问仍由数据库权限控制。</p></div></div><table class="lm-table"><thead><tr><th>能力</th><th>超级管理员</th><th>选品人员</th><th>销售人员</th></tr></thead><tbody><tr><td>查看全部产品</td><td>✓</td><td>✓</td><td>—</td></tr><tr><td>查看已发布产品</td><td>✓</td><td>✓</td><td>✓</td></tr><tr><td>上传/保存产品</td><td>✓</td><td>✓</td><td>—</td></tr><tr><td>修改产品</td><td>✓</td><td>✓</td><td>—</td></tr><tr><td>删除产品</td><td>✓</td><td>—</td><td>—</td></tr><tr><td>用户权限管理</td><td>✓</td><td>—</td><td>—</td></tr><tr><td>类目管理</td><td>✓</td><td>—</td><td>—</td></tr></tbody></table></div>`}}
+  window.lmChangeRole=async(id,r)=>{if(S.role!=='admin'||!['admin','selector','sales'].includes(r))return toast('没有权限');const us=window.__lmAdmin?.users||[],t=us.find(x=>x.id===id);if(!t)return;if(t.role==='admin'&&r!=='admin'&&us.filter(x=>x.role==='admin').length<=1)return toast('至少要保留一名超级管理员');const {error}=await client.from('profiles').update({role:r}).eq('id',id);if(error)return toast(error.message);t.role=r;if(id===S.user?.id)S.role=r;toast('用户权限已更新');lmAdminTab('users')};
+  window.lmAddCategory=async()=>{if(S.role!=='admin')return toast('没有权限');const name=document.getElementById('lmNewCat')?.value.trim();const sort=Number(document.getElementById('lmCatOrder')?.value||60);if(!name)return toast('请输入类目名称');const {error}=await client.from('product_categories').insert({name,sort_order:Number.isFinite(sort)?sort:60,is_active:true,created_by:S.user.id});if(error)return toast(error.message);await cats(true);window.__lmAdmin.cats=S.cats;toast('类目已新增');lmAdminTab('categories')};
+  window.lmToggleCategory=async(id,active)=>{if(S.role!=='admin')return toast('没有权限');const {error}=await client.from('product_categories').update({is_active:active}).eq('id',id);if(error)return toast(error.message);await cats(true);window.__lmAdmin.cats=S.cats;toast(active?'类目已启用':'类目已停用');lmAdminTab('categories')};
 
-  function applyDomFilters(){
-    const grid=document.getElementById('grid');if(!grid)return;const cards=[...grid.querySelectorAll('.product')];let visible=0;
-    cards.forEach(a=>{const ok=productMatches(a);a.style.display=ok?'':'none';if(ok)visible++});
-    let empty=grid.querySelector('.lm-filter-empty');
-    if(!visible&&cards.length){if(!empty){empty=document.createElement('div');empty.className='empty lm-filter-empty';grid.appendChild(empty)}empty.textContent='当前筛选条件下没有产品';empty.style.display='block'}else if(empty)empty.style.display='none';
-    const summary=document.getElementById('lmFilterSummary');if(summary)summary.innerHTML=cards.length?`共 <strong>${cards.length}</strong> 个产品 · 当前显示 <strong>${visible}</strong> 个`:'当前筛选条件下没有产品';
-  }
+  function detailPatch(){if(typeof window.detailPage!=='function'||window.detailPage.__lmV3)return;const original=window.detailPage;window.detailPage=function(p){original(p);setTimeout(()=>{const right=document.querySelector('.detail>div:nth-child(2)');if(!right||right.querySelector('.lm-detail-card'))return;const box=document.createElement('div');const margin=S.role==='sales'||p.purchase_price==null||p.suggested_price==null?'—':money(Number(p.suggested_price)-Number(p.purchase_price));box.className='lm-panel lm-detail-card';box.innerHTML=`<div class="lm-panel-head"><div><h3>产品资料卡</h3><p>把最常用的信息集中显示。</p></div></div><div class="lm-info-grid"><div class="lm-info"><small>产品编号</small><b>${esc(p.sku||'—')}</b></div><div class="lm-info"><small>产品类目</small><b>${esc(p.category||'—')}</b></div><div class="lm-info"><small>起订量</small><b>${esc(p.moq??'—')}</b></div><div class="lm-info"><small>建议售价</small><b>${money(p.suggested_price)}</b></div>${S.role!=='sales'?`<div class="lm-info"><small>采购价</small><b>${money(p.purchase_price)}</b></div><div class="lm-info"><small>参考毛利</small><b>${margin}</b></div><div class="lm-info"><small>供应商</small><b>${esc(p.supplier||'—')}</b></div>`:''}</div>`;right.appendChild(box)},0)};window.detailPage.__lmV3=true}
+  function copyFull(){const d=document.querySelector('.detail');if(!d||d.querySelector('.lm-detail-copy'))return;const b=d.querySelector('.card-actions button[onclick*="copyProductSpecs"]');if(!b)return;const m=(b.getAttribute('onclick')||'').match(/'([^']+)'/);if(!m)return;const x=document.createElement('button');x.className='btn lm-detail-copy';x.type='button';x.textContent='复制完整资料';x.onclick=async()=>{const {data,error}=await client.from('products').select('name,sku,category,description,highlights,specs,purchase_price,suggested_price,moq,supplier,status').eq('id',m[1]).single();if(error)return toast(error.message);const lines=['产品名称：'+(data.name||'—'),'产品编号：'+(data.sku||'—'),'产品类目：'+(data.category||'—'),'产品简介：'+(data.description||'—'),'状态：'+(data.status==='published'?'已发布':'草稿'),'建议售价：'+money(data.suggested_price),'MOQ：'+(data.moq??'—')];if(S.role!=='sales')lines.push('采购价：'+money(data.purchase_price),'供应商：'+(data.supplier||'—'));const hs=(data.highlights||[]).filter(Boolean);if(hs.length)lines.push('核心卖点：\n'+hs.map((v,i)=>`${i+1}. ${v}`).join('\n'));const sp=data.specs&&typeof data.specs==='object'?data.specs:{};const se=Object.entries(sp);if(se.length)lines.push('产品参数：\n'+se.map(([k,v])=>k+'：'+v).join('\n'));try{await navigator.clipboard.writeText(lines.join('\n'));toast('完整产品资料已复制')}catch(e){toast('复制失败，请检查浏览器剪贴板权限')}};b.parentElement?.appendChild(x)}
 
-  async function refreshProducts(){
-    if(state.refreshing)return;const grid=document.getElementById('grid');if(!grid||typeof window.card!=='function')return;state.refreshing=true;
-    try{
-      let q=client.from('products').select('id,name,sku,category,description,highlights,specs,purchase_price,suggested_price,moq,supplier,internal_notes,status,created_by,updated_by,updated_at,product_media(id,product_id,storage_path,media_type,sort_order)').order('updated_at',{ascending:false});
-      if(state.role==='sales')q=q.eq('status','published');if(state.category!=='全部')q=q.eq('category',state.category);if(state.status!=='全部'&&state.role!=='sales')q=q.eq('status',state.status==='已发布'?'published':'draft');
-      const {data,error}=await q;if(error){toast(error.message);return}grid.innerHTML=(data||[]).map(p=>window.card(p)).join('');applyDomFilters();
-    }finally{state.refreshing=false}
-  }
-
-  function buildFilters(){
-    const toolbar=document.querySelector('.page .toolbar');if(!toolbar)return;
-    toolbar.querySelector('.chips')?.remove();toolbar.parentElement?.querySelector('.lm-filter-wrap')?.remove();
-    const wrap=document.createElement('div');wrap.className='lm-filter-wrap';
-    const cat=document.createElement('div');cat.className='lm-filter-line';cat.innerHTML='<span class="lm-filter-title">类目</span>';
-    ['全部',...state.categories.map(c=>c.name)].forEach(name=>{const b=document.createElement('button');b.type='button';b.className='lm-filter-btn'+(state.category===name?' active':'');b.textContent=name;b.onclick=async()=>{state.category=name;await refreshProducts();buildFilters()};cat.appendChild(b)});wrap.appendChild(cat);
-    if(state.role!=='sales'){
-      const status=document.createElement('div');status.className='lm-filter-line';status.innerHTML='<span class="lm-filter-title">状态</span>';
-      ['全部','已发布','草稿'].forEach(name=>{const b=document.createElement('button');b.type='button';b.className='lm-filter-btn'+(state.status===name?' active':'');b.textContent=name;b.onclick=async()=>{state.status=name;await refreshProducts();buildFilters()};status.appendChild(b)});wrap.appendChild(status);
-    }else state.status='已发布';
-    const summary=document.createElement('div');summary.className='lm-filter-summary';summary.id='lmFilterSummary';wrap.appendChild(summary);toolbar.insertAdjacentElement('afterend',wrap);applyDomFilters();
-  }
-
-  async function enhanceProducts(){if(!document.querySelector('.page .toolbar')||!document.getElementById('grid'))return;await loadCategories();if(state.role==='sales')state.status='已发布';buildFilters()}
-
-  async function togglePublish(id){
-    if(!['admin','selector'].includes(state.role))return toast('当前账号没有权限');
-    const {data,error}=await client.from('products').select('id,status').eq('id',id).single();if(error||!data)return toast(error?.message||'产品不存在');
-    const next=data.status==='published'?'draft':'published';const {error:upErr}=await client.from('products').update({status:next}).eq('id',id);if(upErr)return toast(upErr.message);toast(next==='published'?'产品已发布':'产品已下架');await refreshProducts();await enhanceProducts();
-  }
-  window.lmTogglePublish=togglePublish;
-
-  async function copyFull(id){
-    const {data,error}=await client.from('products').select('name,sku,category,description,highlights,specs,purchase_price,suggested_price,moq,supplier,status').eq('id',id).single();if(error||!data)return toast(error?.message||'读取产品资料失败');
-    const lines=['产品名称：'+(data.name||'—'),'产品编号：'+(data.sku||'—'),'产品类目：'+(data.category||'—'),'产品简介：'+(data.description||'—'),'状态：'+(data.status==='published'?'已发布':'草稿'),'建议售价：'+(data.suggested_price??'—'),'MOQ：'+(data.moq??'—')];
-    if(state.role!=='sales')lines.push('采购价：'+(data.purchase_price??'—'),'供应商：'+(data.supplier||'—'));
-    const hs=(data.highlights||[]).filter(Boolean);if(hs.length)lines.push('核心卖点：\n'+hs.map((x,i)=>`${i+1}. ${x}`).join('\n'));const specs=data.specs&&typeof data.specs==='object'?data.specs:{};const se=Object.entries(specs).filter(([k,v])=>String(k).trim()&&String(v).trim()!=='');if(se.length)lines.push('产品参数：\n'+se.map(([k,v])=>k+'：'+v).join('\n'));
-    const text=lines.join('\n');try{await navigator.clipboard.writeText(text);toast('完整产品资料已复制')}catch(e){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('完整产品资料已复制')}
-  }
-  window.copyFullProductInfo=copyFull;
-
-  function addDetailCopy(){
-    const detail=document.querySelector('.detail');if(!detail||detail.querySelector('.lm-detail-copy'))return;const btn=detail.querySelector('.card-actions button[onclick*="copyProductSpecs"]');if(!btn)return;const m=(btn.getAttribute('onclick')||'').match(/'([^']+)'/);const id=m?.[1];if(!id)return;const box=btn.parentElement;if(!box)return;const b=document.createElement('button');b.type='button';b.className='btn lm-detail-copy';b.textContent='复制完整资料';b.onclick=()=>copyFull(id);box.appendChild(b);
-  }
-
-  function addPublishToCard(){
-    if(typeof window.card!=='function'||window.card.__lmV3)return;const original=window.card;
-    const wrapped=function(p){const html=original(p);if(!['admin','selector'].includes(state.role))return html;const action=p.status==='published'?'下架':'发布';const cls=p.status==='published'?'lm-publish-btn off':'lm-publish-btn';return html.replace('<div class="card-actions">','<div class="card-actions"><button type="button" class="'+cls+'" onclick="lmTogglePublish(\''+p.id+'\')">'+action+'</button>')};wrapped.__lmV3=true;window.card=wrapped;
-  }
-
-  function polishUpload(){
-    const root=document.querySelector('.upload');if(!root)return;
-    root.querySelector('.lm-upload-guide')||(()=>{const first=root.querySelector('.section');if(!first)return;const g=document.createElement('div');g.className='lm-upload-guide';g.innerHTML='<div class="lm-upload-guide-item"><div>1</div><div><b>填写基础信息</b><span>名称、编号、类目、产品简介</span></div></div><div class="lm-upload-guide-item"><div>2</div><div><b>完善产品资料</b><span>图片、视频、卖点、参数与商务信息</span></div></div><div class="lm-upload-guide-item"><div>3</div><div><b>保存或发布</b><span>未完成内容会继续保留，发布后销售端即可查看</span></div></div>';first.before(g)})();
-    if(!root.querySelector('.lm-upload-topnote')){const guide=root.querySelector('.lm-upload-guide');const n=document.createElement('div');n.className='lm-upload-topnote';n.innerHTML='<strong>上传提示：</strong> 产品资料填写过程中可以直接切换页面，系统会保留未完成内容。';(guide||root.firstElementChild)?.after(n)}
-    const p=root.closest('.page')?.querySelector('.head p');if(p)p.textContent='集中录入产品资料、图片与商务信息，完成后可保存草稿或发布。';
-    const draft=root.querySelector('.draft-box');if(draft){const node=draft.querySelector('span')||draft.firstChild;if(node&&node.textContent?.includes('检测到'))node.textContent='已恢复上次未完成的产品资料，并继续保留草稿。'}
-    const sections=[...root.querySelectorAll('.section')];sections.forEach((s,i)=>{if(i===0&&!s.querySelector('.lm-upload-section-note')){const note=document.createElement('div');note.className='lm-upload-section-note';note.textContent='建议先完成名称、编号、类目，再补充详细内容。';const h=s.querySelector('h3');if(h)h.after(note)}if(i===1&&!s.querySelector('.lm-upload-section-note')){const note=document.createElement('div');note.className='lm-upload-section-note';note.textContent='支持多张产品图片与视频，主图建议优先放最清晰的产品展示图。';const h=s.querySelector('h3');if(h)h.after(note)}});
-  }
-
-  function patchSearch(){
-    if(typeof window.filterProducts!=='function'||window.filterProducts.__lmV3)return;const original=window.filterProducts;const wrapped=function(q){original(q);setTimeout(applyDomFilters,80)};wrapped.__lmV3=true;window.filterProducts=wrapped;
-  }
-
-  async function applyPage(){
-    syncNav();addPublishToCard();const t=pageType();
-    if(t==='products'){state.category='全部';state.status='全部';await enhanceProducts();syncNav()}
-    else if(t==='upload'){await fillUploadCategory();polishUpload();syncNav()}
-    else if(t==='detail'){addDetailCopy();syncNav()}
-  }
-
-  async function boot(){
-    await syncRole();let tries=0;const timer=setInterval(()=>{addPublishToCard();patchSearch();syncNav();polishUpload();if(++tries>80)clearInterval(timer)},120);
-    window.enhanceProductFilters=enhanceProducts;document.addEventListener('click',()=>setTimeout(()=>{applyPage().catch(()=>{})},60),true);
-    setTimeout(()=>applyPage().catch(()=>{}),250);
-  }
+  function afterRender(){nav();const t=pageType();if(t==='upload'){fillCategory();addDraftBtn()}else if(t==='products'){cats().then(()=>{S.cat='全部';S.status='全部';addFilters()})}else if(t==='detail'){detailPatch();copyFull()}else if(t==='admin'){}else if(t==='profile'){} }
+  function patch(){cardPatch();searchPatch();goPatch();shellPatch();detailPatch();nav();}
+  async function boot(){await sync();let n=0;const timer=setInterval(()=>{patch();if(['upload','products'].includes(pageType()))afterRender();if(++n>80)clearInterval(timer)},120);window.lmOpenProfile=()=>{window.view='profile';profilePage()};window.lmOpenAdmin=()=>{window.view='admin';adminPage()}}
   boot();
 })();
